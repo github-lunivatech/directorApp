@@ -7,54 +7,93 @@ import {
   ScrollView,
 } from "react-native";
 import theme from "../theme";
+import Icon from "react-native-vector-icons/MaterialIcons";
+
 const MISScreen = ({ navigation }) => {
-  const handlePress = (key) => {
-    let routeName = "";
-    switch (key) {
-      case "touchable1":
-        routeName = "TotalSales";
-        break;
-      case "touchable2":
-        routeName = "PartyWiseSales";
-        break;
-      case "touchable3":
-        routeName = "GeographyReport";
-        break;
-      case "touchable4":
-        routeName = "CashSales";
-        break;
-      case "touchable5":
-        routeName = "DymanicReport";
-        break;
-
-      default:
-        // Handle default case or do nothing
-        break;
-    }
-
-    // Navigate to the determined route
+  const handlePress = (routeName) => {
     if (routeName) {
       navigation.navigate(routeName);
     }
   };
 
-  const touchableData = {
-    touchable1: "Age Wise Report By Date Range",
-    touchable2: "Total Male, Female, Others Report",
-    touchable3: "Geographical Report ",
-    touchable4: "Positive/Negative, Reactive non reactive count Report",
-    touchable5: "Dynamic Report With input Date Range and Report Type",
-  };
+  const touchableData = [
+    {
+      key: "touchable1",
+      heading: "Age Wise Report By Date Range",
+      description: "View the age-wise report based on a specific date range.",
+      icon: "date-range",
+    },
+    {
+      key: "touchable2",
+      heading: "Total Male, Female, Others Report",
+      description: "Check the total count of male, female, and others.",
+      icon: "people",
+    },
+    {
+      key: "touchable3",
+      heading: "Geographical Report",
+      description: "Explore geographical distribution data.",
+      icon: "location-on",
+    },
+    {
+      key: "touchable4",
+      heading: "Positive/Negative, Reactive non reactive count Report",
+      description:
+        "Get counts of positive, negative, reactive, and non-reactive.",
+      icon: "check-circle",
+    },
+    {
+      key: "touchable5",
+      heading: "Dynamic Report With input Date Range and Report Type",
+      description:
+        "Generate dynamic reports based on input date range and report type.",
+      icon: "dynamic-feed",
+    },
+  ];
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {Object.keys(touchableData).map((key) => (
+      {touchableData.map(({ key, heading, description, icon }, index) => (
         <TouchableOpacity
           key={key}
-          style={styles.touchable}
+          style={[
+            styles.touchable,
+            { backgroundColor: index % 2 === 0 ? "#F6F5FB" : "#FFF4F4" },
+          ]}
           onPress={() => handlePress(key)}
         >
-          <Text style={styles.touchableText}>{touchableData[key]}</Text>
+          <View style={styles.touchableContent}>
+            <Icon
+              name={icon}
+              size={20}
+              color={index % 2 === 0 ? "#403572" : "#FF5648"}
+              style={styles.icon}
+            />
+            <View style={styles.touchableTextContainer}>
+              <Text
+                style={[
+                  styles.touchableHeading,
+                  { color: index % 2 === 0 ? "#403572" : "#FF5648" },
+                ]}
+              >
+                {heading}
+              </Text>
+              <Text
+                style={[
+                  styles.touchableDescription,
+                  { color: index % 2 === 0 ? "#403572" : "#A27A7A" },
+                ]}
+              >
+                {description}
+              </Text>
+            </View>
+          </View>
+          <Icon
+            name="keyboard-arrow-right"
+            size={24}
+            color="grey"
+            style={styles.arrowIcon}
+          />
         </TouchableOpacity>
       ))}
     </ScrollView>
@@ -68,23 +107,41 @@ const styles = StyleSheet.create({
   },
   touchable: {
     width: "90%",
-    height: 50, // You can adjust the height as needed
-    backgroundColor: theme.primaryColor,
-    justifyContent: "center",
-    alignItems: "center",
-    marginVertical: 5,
+    marginVertical: 10,
     borderRadius: 5,
+    padding: 10,
+    flexDirection: "row",
+    position: "relative",
+    height: 130,
   },
-  touchableText: {
+  touchableContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+  },
+  icon: {
+    marginRight: 10,
+  },
+  touchableTextContainer: {
+    flex: 1,
+  },
+  touchableHeading: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: "bold",
+    marginBottom: 5,
+    marginTop: 10,
   },
-  counterText: {
-    marginTop: 20,
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#2c3e50",
+  touchableDescription: {
+    color: "#fff",
+    fontSize: 12,
+    marginRight: 40,
+    marginTop: 10,
+  },
+  arrowIcon: {
+    position: "absolute",
+    right: 10,
+    top: 55,
   },
 });
 

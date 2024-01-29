@@ -9,9 +9,13 @@ import {
   ScrollView,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import logo from "../assets/96-96.png";
 import theme from "../theme";
 import { makeApiRequest, apiEndpoints } from "../services/constants/url";
+import BottomTabNagivator from "../components/BottomTabNagivator";
+import sales from "../assets/sales.png";
+import patient from "../assets/patient.png";
+import staff from "../assets/staff.png";
+
 const HomeScreen = ({ navigation }) => {
   const [companyDetails, setCompanyDetails] = useState(null);
   useEffect(() => {
@@ -45,6 +49,8 @@ const HomeScreen = ({ navigation }) => {
       navigation.navigate("Inventory");
     } else if (props === "f") {
       navigation.navigate("Setting");
+    } else if (props === "g") {
+      navigation.navigate("Home");
     }
   };
 
@@ -61,101 +67,225 @@ const HomeScreen = ({ navigation }) => {
               style={styles.logo}
             />
           )}
-          <Text>{`Company Name: ${companyDetails.CompanyName}`}</Text>
+          {/* <Text>{`Company Name: ${companyDetails.CompanyName}`}</Text>
           <Text>{`Address: ${companyDetails.COmpanyAddress}`}</Text>
-          <Text>{`Contact No: ${companyDetails.COmpanyContactNo}`}</Text>
+          <Text>{`Contact No: ${companyDetails.COmpanyContactNo}`}</Text> */}
 
           {/* Add more details as needed */}
         </View>
       )}
-      {/* Main Content */}
 
+      {/* Main Content */}
+      <View style={styles.headingTextContainer}>
+        <Text style={styles.headingText}>Weekly Analysis</Text>
+        <Text style={styles.headingTextDate}>Jan 1 Jan 6</Text>
+      </View>
       {/* Dashboard */}
       <View style={styles.dashboardButtons}>
-        <TouchableOpacity style={styles.dasButton}>
-          <Icon name="bar-chart" size={40} color="#fff" />
-          <Text style={styles.navButtonText}>Sales</Text>
-          <Text style={styles.navButtonText}>1000</Text>
+        <TouchableOpacity
+          style={{ ...styles.dasButton, backgroundColor: "#F6F5FB" }}
+        >
+          <View style={styles.iconContainer}>
+            <Icon name="bar-chart" size={15} color="#61598B" />
+            <Text style={{ ...styles.dasButtonText, color: "#61598B" }}>
+              Sales
+            </Text>
+          </View>
+          <Text
+            style={{
+              ...styles.dasButtonText,
+              color: "#61598B",
+              alignSelf: "center",
+            }}
+          >
+            1000
+          </Text>
+          <Image source={sales} style={styles.salesImage} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.dasButton}>
-          <Icon name="user" size={40} color="#fff" />
-          <Text style={styles.navButtonText}>Patient</Text>
-          <Text style={styles.navButtonText}>500</Text>
+        <TouchableOpacity
+          style={{ ...styles.dasButton, backgroundColor: "#FFF4F4" }}
+        >
+          <View style={styles.iconContainer}>
+            <Icon name="user" size={15} color="#FF3726" />
+            <Text style={{ ...styles.dasButtonText, color: "#FF3726" }}>
+              Patient
+            </Text>
+          </View>
+          <Text
+            style={{
+              ...styles.dasButtonText,
+              color: "#FF3726",
+              alignSelf: "center",
+            }}
+          >
+            500
+          </Text>
+          <Image source={patient} style={styles.salesImage} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.dasButton}>
-          <Icon name="users" size={40} color="#fff" />
-          <Text style={styles.navButtonText}>Staff</Text>
-          <Text style={styles.navButtonText}>50</Text>
+        <TouchableOpacity
+          style={{ ...styles.dasButton, backgroundColor: "#F5F9F9" }}
+        >
+          <View style={styles.iconContainer}>
+            <Icon name="users" size={15} color="#479696" />
+            <Text style={{ ...styles.dasButtonText, color: "#479696" }}>
+              Staff
+            </Text>
+          </View>
+          <Text
+            style={{
+              ...styles.dasButtonText,
+              color: "#479696",
+              alignSelf: "center",
+            }}
+          >
+            50
+          </Text>
+          <Image source={staff} style={styles.salesImage} />
         </TouchableOpacity>
       </View>
 
-      {/* Navigation Buttons */}
-      <View style={styles.navigationButtons}>
-        <View style={styles.row}>
-          <TouchableOpacity
-            style={styles.bigNavButton}
-            onPress={() => navigateToOtherScreen("a")}
-          >
-            <Icon name="line-chart" size={30} color="#fff" />
-            <Text style={styles.navButtonText}>Finance </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.bigNavButton}
-            onPress={() => navigateToOtherScreen("b")}
-          >
-            <Icon name="medkit" size={30} color="#fff" />
-            <Text style={styles.navButtonText}>Medical </Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.row}>
-          <TouchableOpacity
-            style={styles.bigNavButton}
-            onPress={() => navigateToOtherScreen("c")}
-          >
-            <Icon name="flask" size={30} color="#fff" />
-            <Text style={styles.navButtonText}>MIS </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.bigNavButton}
-            onPress={() => navigateToOtherScreen("d")}
-          >
-            <Icon name="pie-chart" size={30} color="#fff" />
-            <Text style={styles.navButtonText}>Analysis</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.row}>
-          <TouchableOpacity
-            style={styles.bigNavButton}
-            onPress={() => navigateToOtherScreen("e")}
-          >
-            <Icon name="cube" size={30} color="#fff" />
-            <Text style={styles.navButtonText}>Inventory</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.bigNavButton}
-            onPress={() => navigateToOtherScreen("f")}
-          >
-            <Icon name="gear" size={30} color="#fff" />
-            <Text style={styles.navButtonText}>Settings</Text>
-          </TouchableOpacity>
-        </View>
+      <View style={styles.headingTextContainer}>
+        <Text style={styles.headingText}>Reports:</Text>
       </View>
+      {/* Navigation Buttons */}
+      <ScrollView horizontal>
+        <View style={styles.navigationButtons}>
+          <View style={styles.row}>
+            <TouchableOpacity
+              style={{ ...styles.bigNavButton, backgroundColor: "#F6F5FB" }}
+              onPress={() => navigateToOtherScreen("a")}
+            >
+              <View style={styles.iconContainer}>
+                <Icon name="line-chart" size={30} color="#61598B" />
+              </View>
+              <Text style={{ ...styles.navButtonText, color: "#61598B" }}>
+                Financial Reports{" "}
+              </Text>
+              <Text style={{ color: "grey" }}>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+                eiusmod.
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{ ...styles.bigNavButton, backgroundColor: "#F5F9F9" }}
+              onPress={() => navigateToOtherScreen("b")}
+            >
+              <View style={styles.iconContainer}>
+                <Icon name="medkit" size={30} color="#479696" />
+              </View>
+              <Text
+                style={{
+                  ...styles.navButtonText,
+                  color: "#479696",
+                  alignSelf: "flex-start",
+                }}
+              >
+                Medical Reports{" "}
+              </Text>
+              <Text style={{ color: "grey" }}>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+                eiusmod.
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{ ...styles.bigNavButton, backgroundColor: "#FDF9FB" }}
+              onPress={() => navigateToOtherScreen("c")}
+            >
+              <View style={styles.iconContainer}>
+                <Icon name="flask" size={30} color="#C93F8D" />
+              </View>
+              <Text style={{ ...styles.navButtonText, color: "#C93F8D" }}>
+                MIS Reports{" "}
+              </Text>
+              <Text style={{ color: "grey" }}>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+                eiusmod.
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.row}>
+            <TouchableOpacity
+              style={{ ...styles.bigNavButton, backgroundColor: "#FDF9FB" }}
+              onPress={() => navigateToOtherScreen("d")}
+            >
+              <View style={styles.iconContainer}>
+                <Icon name="pie-chart" size={30} color="#C93F8D" />
+              </View>
+              <Text style={{ ...styles.navButtonText, color: "#C93F8D" }}>
+                Analysis Reports
+              </Text>
+              <Text style={{ color: "grey" }}>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+                eiusmod.
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{ ...styles.bigNavButton, backgroundColor: "#F6F5FB" }}
+              onPress={() => navigateToOtherScreen("e")}
+            >
+              <View style={styles.iconContainer}>
+                <Icon name="cube" size={30} color="#61598B" />
+              </View>
+              <Text style={{ ...styles.navButtonText, color: "#61598B" }}>
+                Inventory
+              </Text>
+              <Text style={{ color: "grey" }}>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+                eiusmod.
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{ ...styles.bigNavButton, backgroundColor: "#F5F9F9" }}
+              onPress={() => navigateToOtherScreen("f")}
+            >
+              <View style={styles.iconContainer}>
+                <Icon name="gear" size={30} color="#479696" />
+              </View>
+              <Text style={{ ...styles.navButtonText, color: "#479696" }}>
+                Settings
+              </Text>
+              <Text style={{ color: "grey" }}>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+                eiusmod.
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ScrollView>
+      <BottomTabNagivator navigation={navigation} />
     </View>
   );
 };
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "flex-start",
     alignItems: "center",
-    paddingVertical: 20,
     backgroundColor: "#fff", // Light background color
+  },
+  headingTextContainer: {
+    alignSelf: "flex-start",
+    marginLeft: 20,
+    flexDirection: "row",
+    alignContent: "space-around",
+    alignItems: "center",
+  },
+  headingText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    margin: 10,
+    color: "#595085",
+  },
+  headingTextDate: {
+    marginLeft: 8,
+    color: "grey",
+    fontSize: 18,
   },
   logo: {
     width: 200,
     height: 100,
-    marginBottom: 10,
     alignSelf: "center",
+    marginBottom: 20,
   },
   dashboardLabel: {
     fontSize: 16,
@@ -167,58 +297,38 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#fff", // Dashboard value text color
   },
-
-  subheading: {
-    fontSize: 16,
-    color: "#orange", // Subheading text color
-  },
-  navigationButtons: {
-    display: "flex",
-    justifyContent: "space-evenly",
-    width: "80%",
-    marginTop: 20,
-  },
-  navButton: {
-    backgroundColor: theme.primaryColor,
-    padding: 10,
-    borderRadius: 5,
-    alignItems: "center",
-  },
   navButtonText: {
-    color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
+    alignSelf: "flex-start",
   },
-  dashboardItem: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: "#3498db",
-    borderRadius: 10,
-    padding: 15,
-    margin: 5,
+  dasButtonText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    paddingLeft: 10,
+    alignSelf: "flex-start",
   },
   dasButton: {
-    backgroundColor: theme.primaryColor,
     padding: 10,
-    borderRadius: 5,
+    borderRadius: 10,
     alignItems: "center",
     width: 110,
   },
-
   bigNavButton: {
     backgroundColor: theme.primaryColor,
     padding: 15,
     borderRadius: 15,
     alignItems: "center",
     margin: 10,
-    width: 165,
+    width: 250,
+    height: 130,
   },
+
   dashboardButtons: {
     flexDirection: "row",
     justifyContent: "space-between",
     width: "90%",
+    height: "14%",
   },
   navigationButtons: {
     display: "flex",
@@ -227,14 +337,31 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
   },
-  rows: {
-    marginLeft: 90,
-  },
   companyDetails: {
     backgroundColor: "#fff",
-    padding: 10,
-    marginBottom: 20,
-    borderRadius: 5,
+  },
+  bottomTabNagivator: {
+    flexDirection: "row",
+    backgroundColor: theme.primaryColor,
+    height: "10%",
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    position: "absolute",
+    bottom: 0,
+  },
+  bottomTab: {
+    alignItems: "center",
+    width: 165,
+  },
+  iconContainer: {
+    alignSelf: "flex-start",
+    flexDirection: "row",
+  },
+  salesImage: {
+    elevation: 1,
+    objectFit: "fill",
+    maxWidth: "120%",
   },
 });
 

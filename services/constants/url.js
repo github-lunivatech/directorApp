@@ -35,6 +35,7 @@ export const apiEndpoints = {
   GetActualConsumptionReportByDateRange:
     "GetActualConsumptionReportByDateRange",
   GetDatametricReportType: "GetDatametricReportType",
+  GetGeographyWiseMISReports: "GetGeographyWiseMISReports",
 };
 
 // Utility function to make API requests

@@ -65,10 +65,14 @@ const GerographyReport = (route) => {
   const applyFilters = async () => {
     try {
       const response = await makeApiRequest(
-        apiEndpoints.getRequestorwiseTotalSalesSummaryByDate,
+        apiEndpoints.GetGeographyWiseMISReports,
         {
+          provinceid: stateFilter.Id,
+          districtid: districtFilter.Id,
+          municipalityId: municipalityFilter.Id,
           from: fromDate,
           to: toDate,
+          reportTypeId: requestorFilter.RId,
         }
       );
       console.log(fromDate, "This is the date");
@@ -176,7 +180,7 @@ const GerographyReport = (route) => {
           const districtListResponse = await makeApiRequest(
             apiEndpoints.GetDistrictsByStateId,
 
-            { stateId: stateFilter }
+            { stateId: stateFilter.Id }
           );
           console.log(districtListResponse);
           const districts = districtListResponse.DistrictList;
@@ -197,7 +201,7 @@ const GerographyReport = (route) => {
         try {
           const municipalityListResponse = await makeApiRequest(
             apiEndpoints.GetMunicipalitiesByDistrictId,
-            { districtId: districtFilter }
+            { districtId: districtFilter.Id }
           );
           const municipalities = municipalityListResponse.MunicipalList;
           setMunicipalityList(municipalities);
@@ -243,7 +247,7 @@ const GerographyReport = (route) => {
                 style={styles.button}
               >
                 <Text style={styles.buttonText}>
-                  {`State: ${stateFilter || "Select State"}`}
+                  {`State: ${stateFilter.Name || "Select State"}`}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -253,7 +257,7 @@ const GerographyReport = (route) => {
                 style={styles.button}
               >
                 <Text style={styles.buttonText}>
-                  {`District: ${districtFilter || "Select District"}`}
+                  {`District: ${districtFilter.Name || "Select District"}`}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -264,7 +268,7 @@ const GerographyReport = (route) => {
               >
                 <Text style={styles.buttonText}>
                   {`Municipality: ${
-                    municipalityFilter || "Select Municipality"
+                    municipalityFilter.Name || "Select Municipality"
                   }`}
                 </Text>
               </TouchableOpacity>
@@ -275,7 +279,9 @@ const GerographyReport = (route) => {
                 style={[styles.button]}
               >
                 <Text style={styles.buttonText}>
-                  {`Requestor: ${requestorFilter || "Select Datamertic"}`}
+                  {`Requestor: ${
+                    requestorFilter.ReportName || "Select Datamertic"
+                  }`}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -315,7 +321,7 @@ const GerographyReport = (route) => {
                 <Picker.Item
                   key={requestor.RId}
                   label={requestor.ReportName}
-                  value={requestor.RId}
+                  value={requestor}
                 />
               ))}
             </Picker>
@@ -335,11 +341,7 @@ const GerographyReport = (route) => {
             >
               <Picker.Item label="Select State" value="" />
               {stateList.map((state) => (
-                <Picker.Item
-                  key={state.Id}
-                  label={state.Name}
-                  value={state.Id}
-                />
+                <Picker.Item key={state.Id} label={state.Name} value={state} />
               ))}
             </Picker>
           </View>
@@ -363,7 +365,7 @@ const GerographyReport = (route) => {
                 <Picker.Item
                   key={district.Id}
                   label={district.Name}
-                  value={district.Id}
+                  value={district}
                 />
               ))}
             </Picker>
@@ -388,7 +390,7 @@ const GerographyReport = (route) => {
                 <Picker.Item
                   key={municipality.Id}
                   label={municipality.Name}
-                  value={municipality.Id}
+                  value={municipality}
                 />
               ))}
             </Picker>
