@@ -5,6 +5,7 @@ import HomeScreen from "./screens/HomeScreen"; // Import your Home screen compon
 import MessagesScreen from "./screens/login/LogoutScreen"; // Import your Messages screen component
 import CalendarScreen from "./screens/login/LogoutScreen"; // Import your Calendar screen component
 import ProfileScreen from "./screens/login/LogoutScreen"; // Import your Profile screen component
+import AppNavigator from "./AppNavigator";
 
 const Tab = createBottomTabNavigator();
 

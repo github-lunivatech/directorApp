@@ -359,7 +359,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   salesImage: {
-    elevation: 1,
     objectFit: "fill",
     maxWidth: "120%",
   },

@@ -19,17 +19,13 @@ import { makeApiRequest, apiEndpoints } from "../../../services/constants/url";
 UIManager.setLayoutAnimationEnabledExperimental &&
   UIManager.setLayoutAnimationEnabledExperimental(true);
 
-const RefererWiseSales = (route) => {
+const RefererWiseSales = () => {
   // State to manage filters
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
-  const [genderFilter, setGenderFilter] = useState("");
   const [requestorFilter, setRequestorFilter] = useState("");
-  const [selectedDate, setSelectedDate] = useState(new Date());
   // State to store filtered data for the table
   const [filteredData, setFilteredData] = useState([]);
-
-  const { state } = route.navigation;
 
   // State for dynamic columns from the backend
   const [columns, setColumns] = useState([]);
@@ -39,20 +35,14 @@ const RefererWiseSales = (route) => {
   const [selectedDateField, setSelectedDateField] = useState("");
 
   // State to manage modal visibility for Pickers
-  const [isGenderPickerVisible, setGenderPickerVisibility] = useState(false);
+
   const [isRequestorPickerVisible, setRequestorPickerVisibility] =
     useState(false);
 
   // Requestor list options
   const [requestorList, setRequestorList] = useState([]);
 
-  const [isTableVisible, setTableVisibility] = useState(false);
-
-  // Explabalde tablerows
-  const [expandedRowIndex, setExpandedRowIndex] = useState(null);
-  const toggleExpand = (index) => {
-    setExpandedRowIndex((prevIndex) => (prevIndex === index ? null : index));
-  };
+  const [isDataVisible, setDataVisibility] = useState(false);
 
   // Apply filters and update filteredData
   const applyFilters = async () => {
@@ -78,7 +68,7 @@ const RefererWiseSales = (route) => {
       // Set columns and filteredData
       setColumns(newColumns);
       setFilteredData(data);
-      setTableVisibility(true);
+      setDataVisibility(true);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -141,7 +131,18 @@ const RefererWiseSales = (route) => {
         : [...prevExpandedRows, index]
     );
   };
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [selectedData, setSelectedData] = useState(null);
 
+  const handleTouchableOpacityPress = (data) => {
+    setSelectedData(data);
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+    setSelectedData(null);
+  };
   return (
     <ScrollView>
       <View style={styles.container}>
@@ -224,44 +225,124 @@ const RefererWiseSales = (route) => {
         </Modal>
 
         {/* Table */}
+        {isDataVisible && (
+          <ScrollView>
+            {filteredData.map((item, index) => (
+              <TouchableOpacity
+                key={index}
+                onPress={() => handleTouchableOpacityPress(item)}
+                style={styles.touchableOpacity}
+              >
+                <View
+                  style={{
+                    flexDirection: "row",
+                  }}
+                >
+                  <Text
+                    style={[
+                      styles.touchableOpacityText,
+                      {
+                        flex: 1,
+                        alignSelf: "flex-start",
+                        marginRight: 40,
+                        fontWeight: "bold",
+                        color: "grey",
+                      },
+                    ]}
+                  >
+                    {item["Patient Name"]}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.touchableOpacityText,
+                      {
+                        flex: 1,
+                        alignSelf: "flex-start",
+                        justifyContent: "space-between",
+                        fontWeight: "bold",
+                        color: "grey",
+                      },
+                    ]}
+                  >
+                    Test
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    flexDirection: "row",
+                  }}
+                >
+                  <Text
+                    style={[
+                      styles.touchableOpacityText,
+                      {
+                        alignSelf: "flex-start",
+                        flex: 1,
+                        color: "grey",
+                        marginLeft: 10,
+                      },
+                    ]}
+                  >
+                    Requestor Name :
+                  </Text>
+                  <Text
+                    style={[
+                      styles.touchableOpacityText,
+                      {
+                        alignSelf: "flex-start",
+                        flex: 1,
+                        color: "grey",
+                        marginLeft: 10,
+                      },
+                    ]}
+                  >
+                    {item["Test"]}
+                  </Text>
+                </View>
+                <Text
+                  style={[
+                    styles.touchableOpacityText,
+                    {
+                      alignSelf: "flex-start",
 
-        {isTableVisible && (
-          <ScrollView horizontal>
-            <Table borderStyle={{ borderColor: "black" }}>
-              <Row
-                data={columns.map((column) => column.label)}
-                style={styles.header}
-                textStyle={styles.headerText} // Update this line
-                widthArr={columns.map(() => 160)} // Set a fixed width for each visible column
-              />
-              {filteredData.map((item, index) => (
-                <React.Fragment key={index}>
-                  <TouchableOpacity onPress={() => toggleExpand(index)}>
-                    <Row
-                      data={columns.map((column) => item[column.key])}
-                      style={styles.row}
-                      textStyle={styles.text} // Update this line
-                      widthArr={columns.map(() => 160)} // Set a fixed width for each visible column
-                    />
-                  </TouchableOpacity>
-                  {expandedRowIndex === index && (
-                    <View>
-                      {columns.slice(2).map((column) => (
-                        <Row
-                          key={column.key}
-                          data={[column.label, item[column.key]]}
-                          style={styles.expandedRow}
-                          textStyle={styles.text} // Update this line
-                          widthArr={[160, 160]} // Set a fixed width for the expanded columns
-                        />
-                      ))}
-                    </View>
-                  )}
-                </React.Fragment>
-              ))}
-            </Table>
+                      color: "grey",
+                      marginLeft: 10,
+                    },
+                  ]}
+                >
+                  Ref By: {item["Refer Name"]}
+                </Text>
+                <Text
+                  style={[
+                    styles.touchableOpacityText,
+                    {
+                      alignSelf: "flex-end",
+                      marginRight: 20,
+                      color: "green",
+                      fontWeight: "700",
+                    },
+                  ]}
+                >
+                  Price: {item.Price}
+                </Text>
+              </TouchableOpacity>
+            ))}
           </ScrollView>
         )}
+
+        {/* Modal to show entire data */}
+        <Modal isVisible={isModalVisible} onBackdropPress={closeModal}>
+          <View style={styles.modalContainer}>
+            {/* Render the selectedData in the modal */}
+            {selectedData &&
+              Object.entries(selectedData).map(([key, value]) => (
+                <View key={key} style={styles.modalRow}>
+                  <Text style={styles.modalKey}>{key}</Text>
+                  <Text style={styles.modalValue}>{value}</Text>
+                </View>
+              ))}
+          </View>
+        </Modal>
       </View>
     </ScrollView>
   );
@@ -312,9 +393,33 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 5,
   },
-  expandedRow: {
-    height: 60, // Adjust the height as needed
+  touchableOpacity: {
+    height: 110,
     backgroundColor: "#F1F8FF",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 5,
+  },
+  touchableOpacityText: {
+    textAlign: "center",
+    color: "black",
+  },
+  modalContainer: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+  },
+  modalRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 10,
+  },
+  modalKey: {
+    fontWeight: "bold",
+  },
+  modalValue: {
+    flex: 1,
+    textAlign: "right",
   },
 });
 
