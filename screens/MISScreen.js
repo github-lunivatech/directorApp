@@ -30,7 +30,7 @@ const MISScreen = ({ navigation }) => {
       icon: "people",
     },
     {
-      key: "touchable3",
+      key: "GeographyReport",
       heading: "Geographical Report",
       description: "Explore geographical distribution data.",
       icon: "location-on",
@@ -43,7 +43,7 @@ const MISScreen = ({ navigation }) => {
       icon: "check-circle",
     },
     {
-      key: "touchable5",
+      key: "DynamicReport",
       heading: "Dynamic Report With input Date Range and Report Type",
       description:
         "Generate dynamic reports based on input date range and report type.",

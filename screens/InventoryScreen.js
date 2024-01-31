@@ -18,7 +18,7 @@ const InventoryScreen = ({ navigation }) => {
 
   const touchableData = [
     {
-      key: "touchable1",
+      key: "ConsumptionReport",
       heading: "Consumption Report",
       description: "View the consumption report for inventory items.",
       icon: "local-bar",

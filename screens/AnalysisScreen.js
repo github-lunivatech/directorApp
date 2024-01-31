@@ -18,13 +18,13 @@ const AnalysisScreen = ({ navigation }) => {
 
   const touchableData = [
     {
-      key: "touchable1",
+      key: "Dummy",
       heading: "Sales Projection",
       description: "Analyze sales projections for future periods.",
       icon: "trending-up",
     },
     {
-      key: "touchable2",
+      key: "Dummy",
       heading: "Test Wise Sales Analysis",
       description: "View analysis based on different tests.",
       icon: "bar-chart",

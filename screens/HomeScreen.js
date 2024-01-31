@@ -253,7 +253,7 @@ const HomeScreen = ({ navigation }) => {
           </View>
         </View>
       </ScrollView>
-      <BottomTabNagivator navigation={navigation} />
+      {/* <BottomTabNagivator navigation={navigation} /> */}
     </View>
   );
 };

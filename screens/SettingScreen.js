@@ -9,8 +9,17 @@ import BottomTabNagivator from "../components/BottomTabNagivator";
 
 const Setting = ({ navigation }) => {
   const handleLogout = async () => {
-    await AsyncStorage.removeItem("userToken");
-    navigation.navigate("Auth");
+    try {
+      // Clear AsyncStorage
+      await AsyncStorage.clear();
+      console.log("AsyncStorage cleared successfully");
+
+      // Navigate to the login screen
+      navigation.navigate("Auth");
+      console.log("Navigated to Login screen");
+    } catch (error) {
+      console.error("Error clearing AsyncStorage:", error);
+    }
   };
 
   return (

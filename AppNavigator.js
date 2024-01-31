@@ -7,7 +7,7 @@ import HomeScreen from "./screens/HomeScreen";
 import FinancialScreen from "./screens/FinancialScreen";
 import AuthLoadingScreen from "./AuthLoadingScreen";
 import InventoryScreen from "./screens/InventoryScreen";
-import MedicalScreenScreen from "./screens/MedicalScreen";
+import MedicalScreen from "./screens/MedicalScreen";
 import AnalysisScreen from "./screens/AnalysisScreen";
 import MISScreen from "./screens/MISScreen";
 import Setting from "./screens/SettingScreen";
@@ -47,7 +47,7 @@ const AppStack = createStackNavigator(
     Financial: FinancialScreen,
     MIS: MISScreen,
     Analysis: AnalysisScreen,
-    Medical: MedicalScreenScreen,
+    Medical: MedicalScreen,
     Inventory: InventoryScreen,
     Setting: Setting,
 

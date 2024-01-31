@@ -21,7 +21,7 @@ const LogoutScreen = ({ navigation }) => {
   return (
     <View>
       <Text>Logout Screen</Text>
-      <Button title="Logout" onPress={handleLogout} />
+      <Button title="Logoutssss" onPress={handleLogout} />
     </View>
   );
 };
