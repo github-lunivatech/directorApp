@@ -25,11 +25,9 @@ const CashSales = (route) => {
   const [toDate, setToDate] = useState(null);
   const [genderFilter, setGenderFilter] = useState("");
   const [requestorFilter, setRequestorFilter] = useState("");
-  const [selectedDate, setSelectedDate] = useState(new Date());
+
   // State to store filtered data for the table
   const [filteredData, setFilteredData] = useState([]);
-
-  const { state } = route.navigation;
 
   // State for dynamic columns from the backend
   const [columns, setColumns] = useState([]);
@@ -46,49 +44,22 @@ const CashSales = (route) => {
   // Requestor list options
   const [requestorList, setRequestorList] = useState([]);
 
-  const [isTableVisible, setTableVisibility] = useState(false);
+  const [isDataVisible, setDataVisibility] = useState(false);
 
   // Explabalde tablerows
   const [expandedRowIndex, setExpandedRowIndex] = useState(null);
   const toggleExpand = (index) => {
     setExpandedRowIndex((prevIndex) => (prevIndex === index ? null : index));
   };
-  // Apply filters and update filteredData
-  // const applyFilters = async () => {
-  //   try {
-  //     const response = await makeApiRequest(
-  //       apiEndpoints.getDatewiseRequestorTransactionDetails,
-  //       {
-  //         from: fromDate,
-  //         to: toDate,
-  //         reqId: requestorFilter,
-  //       }
-  //     );
-  //     console.log(fromDate, "This is the date");
-  //     console.log("API Response:", response);
 
-  //     // Extract the array of data from the response
-  //     const data = response["ReportDetails"] || [];
-
-  //     // Use the keys of the first item as columns
-  //     const keys = Object.keys(data[0] || {});
-  //     const newColumns = keys.map((key) => ({ key, label: key }));
-
-  //     // Set columns and filteredData
-  //     setColumns(newColumns);
-  //     setFilteredData(data);
-  //     setTableVisibility(true);
-  //   } catch (error) {
-  //     console.error("Error fetching data:", error);
-  //   }
-  // };
   const applyFilters = async () => {
     try {
       const response = await makeApiRequest(
-        apiEndpoints.getRequestorwiseTotalSalesSummaryByDate,
+        apiEndpoints.GetDailyTransactionByUserIdAndDate,
         {
           from: fromDate,
           to: toDate,
+          userId: 0,
         }
       );
       console.log(fromDate, "This is the date");
@@ -104,7 +75,7 @@ const CashSales = (route) => {
       // Set columns and filteredData
       setColumns(newColumns);
       setFilteredData(data);
-      setTableVisibility(true);
+      setDataVisibility(true);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -138,27 +109,27 @@ const CashSales = (route) => {
     setRequestorPickerVisibility(!isRequestorPickerVisible);
   };
 
-  useEffect(() => {
-    // Fetch requestor list
-    const fetchRequestorList = async () => {
-      try {
-        const requestorListResponse = await makeApiRequest(
-          apiEndpoints.getRequestorList
-        );
-        // console.log("Requestor List:", requestorListResponse);
+  // useEffect(() => {
+  //   // Fetch requestor list
+  //   const fetchRequestorList = async () => {
+  //     try {
+  //       const requestorListResponse = await makeApiRequest(
+  //         apiEndpoints.getRequestorList
+  //       );
+  //       // console.log("Requestor List:", requestorListResponse);
 
-        // Extract the array of requestors from the response
-        const requestors = requestorListResponse["ReportType"] || [];
+  //       // Extract the array of requestors from the response
+  //       const requestors = requestorListResponse["ReportType"] || [];
 
-        // Update requestor list options
-        setRequestorList(requestors);
-      } catch (error) {
-        console.error("Error fetching requestor list:", error);
-      }
-    };
+  //       // Update requestor list options
+  //       setRequestorList(requestors);
+  //     } catch (error) {
+  //       console.error("Error fetching requestor list:", error);
+  //     }
+  //   };
 
-    fetchRequestorList();
-  }, []); // Empty dependency array ensures the effect runs only once on mount
+  //   fetchRequestorList();
+  // }, []); // Empty dependency array ensures the effect runs only once on mount
   const [expandedRows, setExpandedRows] = useState([]);
 
   // Handle row press to expand or collapse
@@ -171,6 +142,18 @@ const CashSales = (route) => {
         ? prevExpandedRows.filter((rowIndex) => rowIndex !== index)
         : [...prevExpandedRows, index]
     );
+  };
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [selectedData, setSelectedData] = useState(null);
+
+  const handleTouchableOpacityPress = (data) => {
+    setSelectedData(data);
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+    setSelectedData(null);
   };
 
   return (
@@ -212,7 +195,7 @@ const CashSales = (route) => {
                   </Text>
                 </TouchableOpacity>
               </View> */}
-            <View style={styles.filterItem}>
+            {/* <View style={styles.filterItem}>
               <TouchableOpacity
                 onPress={() => toggleRequestorPicker()}
                 style={[styles.button]}
@@ -221,7 +204,7 @@ const CashSales = (route) => {
                   {`Requestor: ${requestorFilter || "Select Requestor"}`}
                 </Text>
               </TouchableOpacity>
-            </View>
+            </View> */}
 
             <TouchableOpacity
               onPress={applyFilters}
@@ -239,28 +222,9 @@ const CashSales = (route) => {
           onConfirm={handleDatePickerChange}
           onCancel={() => setDatePickerVisibility(false)}
         />
-        {/* Gender Picker Modal */}
-        <Modal
-          isVisible={isGenderPickerVisible}
-          onBackdropPress={toggleGenderPicker}
-        >
-          <View style={styles.pickerModal}>
-            <Picker
-              selectedValue={genderFilter}
-              onValueChange={(itemValue) => {
-                setGenderFilter(itemValue);
-                toggleGenderPicker();
-              }}
-            >
-              <Picker.Item label="All Genders" value="" />
-              <Picker.Item label="Male" value="Male" />
-              <Picker.Item label="Female" value="Female" />
-            </Picker>
-          </View>
-        </Modal>
 
         {/* Requestor Picker Modal */}
-        <Modal
+        {/* <Modal
           isVisible={isRequestorPickerVisible}
           onBackdropPress={toggleRequestorPicker}
         >
@@ -282,47 +246,86 @@ const CashSales = (route) => {
               ))}
             </Picker>
           </View>
-        </Modal>
+        </Modal> */}
 
         {/* Table */}
 
-        {isTableVisible && (
-          <ScrollView horizontal>
-            <Table borderStyle={{ borderColor: "black" }}>
-              <Row
-                data={columns.map((column) => column.label)}
-                style={styles.header}
-                textStyle={styles.headerText} // Update this line
-                widthArr={columns.map(() => 160)} // Set a fixed width for each visible column
-              />
-              {filteredData.map((item, index) => (
-                <React.Fragment key={index}>
-                  {/* <TouchableOpacity onPress={() => toggleExpand(index)}> */}
-                  <Row
-                    data={columns.map((column) => item[column.key])}
-                    style={styles.row}
-                    textStyle={styles.text} // Update this line
-                    widthArr={columns.map(() => 160)} // Set a fixed width for each visible column
-                  />
-                  {/* </TouchableOpacity> */}
-                  {/* {expandedRowIndex === index && (
-            <View>
-              {columns.slice(2).map((column) => (
-                <Row
-                  key={column.key}
-                  data={[column.label, item[column.key]]}
-                  style={styles.expandedRow}
-                  textStyle={styles.text} // Update this line
-                  widthArr={[160, 160]} // Set a fixed width for the expanded columns
-                />
-              ))}
-            </View>
-          )} */}
-                </React.Fragment>
-              ))}
-            </Table>
+        {/* Replace Table with TouchableOpacity Components */}
+        {isDataVisible && (
+          <ScrollView>
+            {filteredData.map((item, index) => (
+              <TouchableOpacity
+                key={index}
+                onPress={() => handleTouchableOpacityPress(item)}
+                style={styles.touchableOpacity}
+              >
+                <Text
+                  style={[
+                    styles.touchableOpacityText,
+                    {
+                      alignSelf: "flex-start",
+                      fontWeight: "bold",
+                      color: "grey",
+                      marginLeft: 10,
+                    },
+                  ]}
+                >
+                  {item.Requestor}
+                </Text>
+                <Text
+                  style={[
+                    styles.touchableOpacityText,
+                    {
+                      alignSelf: "flex-end",
+                      marginRight: 10,
+                      color: "#990000",
+                    },
+                  ]}
+                >
+                  Total Price: {item.TotalPrice}
+                </Text>
+                <Text
+                  style={[
+                    styles.touchableOpacityText,
+                    {
+                      alignSelf: "flex-end",
+                      marginRight: 10,
+                      color: "#daa520",
+                    },
+                  ]}
+                >
+                  Discount Total: {item.DiscountTotal}
+                </Text>
+                <Text
+                  style={[
+                    styles.touchableOpacityText,
+                    {
+                      alignSelf: "flex-end",
+                      marginRight: 10,
+                      color: "#006633",
+                    },
+                  ]}
+                >
+                  Actual Total: {item.ActualTotal}
+                </Text>
+              </TouchableOpacity>
+            ))}
           </ScrollView>
         )}
+
+        {/* Modal to show entire data */}
+        <Modal isVisible={isModalVisible} onBackdropPress={closeModal}>
+          <View style={styles.modalContainer}>
+            {/* Render the selectedData in the modal */}
+            {selectedData &&
+              Object.entries(selectedData).map(([key, value]) => (
+                <View key={key} style={styles.modalRow}>
+                  <Text style={styles.modalKey}>{key}</Text>
+                  <Text style={styles.modalValue}>{value}</Text>
+                </View>
+              ))}
+          </View>
+        </Modal>
       </View>
     </ScrollView>
   );
@@ -373,9 +376,34 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 5,
   },
-  expandedRow: {
-    height: 60, // Adjust the height as needed
+  touchableOpacity: {
+    height: 110,
     backgroundColor: "#F1F8FF",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 5,
+  },
+  touchableOpacityText: {
+    textAlign: "center",
+    color: "black",
+  },
+
+  modalContainer: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+  },
+  modalRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 10,
+  },
+  modalKey: {
+    fontWeight: "bold",
+  },
+  modalValue: {
+    flex: 1,
+    textAlign: "right",
   },
 });
 

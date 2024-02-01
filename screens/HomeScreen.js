@@ -18,6 +18,7 @@ import staff from "../assets/staff.png";
 
 const HomeScreen = ({ navigation }) => {
   const [companyDetails, setCompanyDetails] = useState(null);
+  const [reportData, setReportData] = useState(null);
   useEffect(() => {
     const fetchCompanyDetails = async () => {
       try {
@@ -54,6 +55,52 @@ const HomeScreen = ({ navigation }) => {
     }
   };
 
+  useEffect(() => {
+    const currentDate = new Date();
+    const fromDate = new Date(currentDate);
+    fromDate.setDate(currentDate.getDate() - 7);
+
+    const formattedFromDate = formatDate(fromDate);
+    const formattedToDate = formatDate(currentDate);
+
+    // Make API request with the calculated date range and report type
+    const fetchData = async () => {
+      try {
+        const response = await makeApiRequest(
+          apiEndpoints.GetDataMetricReportByReportTypeAndDateRange,
+          {
+            from: formattedFromDate,
+            to: formattedToDate,
+            reportType: "DirectorAppDashboard",
+          }
+        );
+
+        setReportData(response.ReportDetails);
+        console.log(response);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    // Fetch data when the component mounts
+    fetchData();
+  }, []); // Empty dependency array ensures the effect runs only once on mount
+
+  // Helper function to format dates as 'YYYY/MM/DD'
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}/${month}/${day}`;
+  };
+  const formatSales = (sales) => {
+    if (sales >= 100000) {
+      const formattedSales = (sales / 1000).toFixed(1);
+      return `${formattedSales}K`;
+    }
+    return sales.toString();
+  };
+
   return (
     <View style={styles.container}>
       {/* Display Company Details on Top of Dashboard */}
@@ -78,74 +125,96 @@ const HomeScreen = ({ navigation }) => {
       {/* Main Content */}
       <View style={styles.headingTextContainer}>
         <Text style={styles.headingText}>Weekly Analysis</Text>
-        <Text style={styles.headingTextDate}>Jan 1 Jan 6</Text>
+        <Text style={styles.headingTextDate}>Jan 1 - Jan 6</Text>
       </View>
       {/* Dashboard */}
       <View style={styles.dashboardButtons}>
         <TouchableOpacity
           style={{ ...styles.dasButton, backgroundColor: "#F6F5FB" }}
         >
-          <View style={styles.iconContainer}>
-            <Icon name="bar-chart" size={15} color="#61598B" />
-            <Text style={{ ...styles.dasButtonText, color: "#61598B" }}>
-              Sales
+          <View style={styles.iconContainers}>
+            <Text
+              style={{
+                ...styles.dasButtonText,
+                color: "#61598B",
+                fontWeight: 400,
+              }}
+            >
+              TotalRevenue
             </Text>
           </View>
           <Text
             style={{
               ...styles.dasButtonText,
               color: "#61598B",
-              alignSelf: "center",
+              alignSelf: "flex-end",
+              fontSize: 20,
             }}
           >
-            1000
+            {formatSales(reportData[0].Sales)}
           </Text>
           <Image source={sales} style={styles.salesImage} />
         </TouchableOpacity>
         <TouchableOpacity
           style={{ ...styles.dasButton, backgroundColor: "#FFF4F4" }}
         >
-          <View style={styles.iconContainer}>
-            <Icon name="user" size={15} color="#FF3726" />
-            <Text style={{ ...styles.dasButtonText, color: "#FF3726" }}>
-              Patient
+          <View style={styles.iconContainers}>
+            <Text
+              style={{
+                ...styles.dasButtonText,
+                color: "#FF3726",
+                fontWeight: 400,
+              }}
+            >
+              Total Patient
             </Text>
           </View>
           <Text
             style={{
               ...styles.dasButtonText,
               color: "#FF3726",
-              alignSelf: "center",
+              alignSelf: "flex-end",
+              fontSize: 20,
             }}
           >
-            500
+            {reportData[0].Patient}
           </Text>
           <Image source={patient} style={styles.salesImage} />
         </TouchableOpacity>
         <TouchableOpacity
           style={{ ...styles.dasButton, backgroundColor: "#F5F9F9" }}
         >
-          <View style={styles.iconContainer}>
-            <Icon name="users" size={15} color="#479696" />
-            <Text style={{ ...styles.dasButtonText, color: "#479696" }}>
-              Staff
+          <View style={styles.iconContainers}>
+            <Text
+              style={{
+                ...styles.dasButtonText,
+                color: "#479696",
+                fontWeight: 400,
+              }}
+            >
+              Test
             </Text>
           </View>
           <Text
             style={{
               ...styles.dasButtonText,
               color: "#479696",
-              alignSelf: "center",
+              alignSelf: "flex-end",
+              fontSize: 20,
             }}
           >
-            50
+            {reportData[0].Test}
           </Text>
           <Image source={staff} style={styles.salesImage} />
         </TouchableOpacity>
       </View>
 
       <View style={styles.headingTextContainer}>
-        <Text style={styles.headingText}>Reports:</Text>
+        <Text
+          style={[styles.headingText, { marginTop: 30, marginBottom: -10 }]}
+        >
+          Reports:
+        </Text>
       </View>
       {/* Navigation Buttons */}
       <ScrollView horizontal>
@@ -156,12 +225,12 @@ const HomeScreen = ({ navigation }) => {
               onPress={() => navigateToOtherScreen("a")}
             >
               <View style={styles.iconContainer}>
-                <Icon name="line-chart" size={30} color="#61598B" />
+                <Icon name="line-chart" size={20} color="#61598B" />
               </View>
               <Text style={{ ...styles.navButtonText, color: "#61598B" }}>
                 Financial Reports{" "}
               </Text>
-              <Text style={{ color: "grey" }}>
+              <Text style={{ color: "#61598B" }}>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
                 eiusmod.
               </Text>
@@ -171,7 +240,7 @@ const HomeScreen = ({ navigation }) => {
               onPress={() => navigateToOtherScreen("b")}
             >
               <View style={styles.iconContainer}>
-                <Icon name="medkit" size={30} color="#479696" />
+                <Icon name="medkit" size={20} color="#479696" />
               </View>
               <Text
                 style={{
@@ -182,7 +251,7 @@ const HomeScreen = ({ navigation }) => {
               >
                 Medical Reports{" "}
               </Text>
-              <Text style={{ color: "grey" }}>
+              <Text style={{ color: "#479696" }}>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
                 eiusmod.
               </Text>
@@ -192,45 +261,43 @@ const HomeScreen = ({ navigation }) => {
               onPress={() => navigateToOtherScreen("c")}
             >
               <View style={styles.iconContainer}>
-                <Icon name="flask" size={30} color="#C93F8D" />
+                <Icon name="flask" size={20} color="#C93F8D" />
               </View>
               <Text style={{ ...styles.navButtonText, color: "#C93F8D" }}>
                 MIS Reports{" "}
               </Text>
-              <Text style={{ color: "grey" }}>
+              <Text style={{ color: "#C93F8D" }}>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
                 eiusmod.
               </Text>
             </TouchableOpacity>
-          </View>
 
-          <View style={styles.row}>
             <TouchableOpacity
-              style={{ ...styles.bigNavButton, backgroundColor: "#FDF9FB" }}
+              style={{ ...styles.bigNavButton, backgroundColor: "#F6F5FB" }}
               onPress={() => navigateToOtherScreen("d")}
             >
               <View style={styles.iconContainer}>
-                <Icon name="pie-chart" size={30} color="#C93F8D" />
+                <Icon name="pie-chart" size={20} color="#61598B" />
               </View>
-              <Text style={{ ...styles.navButtonText, color: "#C93F8D" }}>
+              <Text style={{ ...styles.navButtonText, color: "#61598B" }}>
                 Analysis Reports
               </Text>
-              <Text style={{ color: "grey" }}>
+              <Text style={{ color: "#61598B" }}>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
                 eiusmod.
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={{ ...styles.bigNavButton, backgroundColor: "#F6F5FB" }}
+              style={{ ...styles.bigNavButton, backgroundColor: "#FDF9FB" }}
               onPress={() => navigateToOtherScreen("e")}
             >
               <View style={styles.iconContainer}>
-                <Icon name="cube" size={30} color="#61598B" />
+                <Icon name="cube" size={20} color="#C93F8D" />
               </View>
-              <Text style={{ ...styles.navButtonText, color: "#61598B" }}>
+              <Text style={{ ...styles.navButtonText, color: "#C93F8D" }}>
                 Inventory
               </Text>
-              <Text style={{ color: "grey" }}>
+              <Text style={{ color: "#C93F8D" }}>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
                 eiusmod.
               </Text>
@@ -240,7 +307,7 @@ const HomeScreen = ({ navigation }) => {
               onPress={() => navigateToOtherScreen("f")}
             >
               <View style={styles.iconContainer}>
-                <Icon name="gear" size={30} color="#479696" />
+                <Icon name="gear" size={20} color="#479696" />
               </View>
               <Text style={{ ...styles.navButtonText, color: "#479696" }}>
                 Settings
@@ -301,11 +368,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     alignSelf: "flex-start",
+    marginBottom: 20,
   },
   dasButtonText: {
-    fontSize: 16,
+    fontSize: 10,
     fontWeight: "bold",
-    paddingLeft: 10,
+    marginLeft: -5,
     alignSelf: "flex-start",
   },
   dasButton: {
@@ -313,15 +381,16 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
     width: 110,
+    height: 110,
   },
   bigNavButton: {
     backgroundColor: theme.primaryColor,
     padding: 15,
     borderRadius: 15,
     alignItems: "center",
-    margin: 10,
+    marginLeft: 20,
     width: 250,
-    height: 130,
+    height: 170,
   },
 
   dashboardButtons: {
@@ -355,6 +424,11 @@ const styles = StyleSheet.create({
     width: 165,
   },
   iconContainer: {
+    alignSelf: "flex-start",
+    flexDirection: "row",
+    marginBottom: 10,
+  },
+  iconContainers: {
     alignSelf: "flex-start",
     flexDirection: "row",
   },

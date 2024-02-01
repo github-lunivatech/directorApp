@@ -55,10 +55,11 @@ const TotalSales = (route) => {
   const applyFilters = async () => {
     try {
       const response = await makeApiRequest(
-        apiEndpoints.getRequestorwiseTotalSalesSummaryByDate,
+        apiEndpoints.GetDailySummaryTransactionUserWiseByDate,
         {
           from: fromDate,
           to: toDate,
+          userId: requestorFilter.Id,
         }
       );
       console.log(fromDate, "This is the date");
@@ -108,7 +109,7 @@ const TotalSales = (route) => {
     const fetchRequestorList = async () => {
       try {
         const requestorListResponse = await makeApiRequest(
-          apiEndpoints.getRequestorList
+          apiEndpoints.GetListOfUserForMetric
         );
         // console.log("Requestor List:", requestorListResponse);
 
@@ -163,7 +164,16 @@ const TotalSales = (route) => {
                 </Text>
               </TouchableOpacity>
             </View>
-
+            <View style={styles.filterItem}>
+              <TouchableOpacity
+                onPress={() => toggleRequestorPicker()}
+                style={[styles.button]}
+              >
+                <Text style={styles.buttonText}>
+                  {`User: ${requestorFilter.usrFullName || "Select User"}`}
+                </Text>
+              </TouchableOpacity>
+            </View>
             <TouchableOpacity
               onPress={applyFilters}
               style={[styles.button, styles.applyButton]}
@@ -179,7 +189,32 @@ const TotalSales = (route) => {
           onConfirm={handleDatePickerChange}
           onCancel={() => setDatePickerVisibility(false)}
         />
-        {/* Table */}
+
+        {/* Requestor Picker Modal */}
+        <Modal
+          isVisible={isRequestorPickerVisible}
+          onBackdropPress={toggleRequestorPicker}
+        >
+          <View style={styles.pickerModal}>
+            <Picker
+              selectedValue={requestorFilter}
+              onValueChange={(itemValue) => {
+                setRequestorFilter(itemValue);
+                toggleRequestorPicker();
+              }}
+            >
+              <Picker.Item label="Select Requestor" value="" />
+              {requestorList.map((requestor) => (
+                <Picker.Item
+                  key={requestor.Id}
+                  label={requestor.usrFullName}
+                  value={requestor}
+                />
+              ))}
+            </Picker>
+          </View>
+        </Modal>
+
         {/* Replace Table with TouchableOpacity Components */}
         {isDataVisible && (
           <ScrollView>

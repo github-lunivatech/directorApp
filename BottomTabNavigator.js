@@ -1,9 +1,12 @@
-import React from "react";
+// BottomTabNavigator.js
+import React, { useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import { StatusBar } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import LoginScreen from "./screens/login/LoginScreen";
 
 import HomeScreen from "./screens/HomeScreen";
 import MessagesScreen from "./screens/login/LogoutScreen";
@@ -32,6 +35,12 @@ import DynamicReport from "./screens/tables/MisTable/DymanicReport";
 import DummyAnalysisScreen from "./screens/tables/InventoryTable/ConsumptionReport";
 
 import ConsumptionReport from "./screens/tables/InventoryTable/ConsumptionReport";
+
+import { Image } from "react-native";
+import homebutton from "./assets/home.png";
+import chat from "./assets/Profile.png";
+import calendar from "./assets/calendar.png";
+import profile from "./assets/Profile.png";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -82,7 +91,6 @@ const AnalysisStackNavigator = () => {
     <AnalysisStack.Navigator>
       <AnalysisStack.Screen name="Analysis" component={AnalysisScreen} />
       <AnalysisStack.Screen name="Dummy" component={DummyAnalysisScreen} />
-      {/* Add more screens for Analysis as needed */}
     </AnalysisStack.Navigator>
   );
 };
@@ -134,6 +142,35 @@ const HomeStack = () => {
 };
 
 const BottomTabNavigator = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    checkLoggedIn();
+  }, []);
+
+  const checkLoggedIn = async () => {
+    try {
+      const userDetailsString = await AsyncStorage.getItem("userDetails");
+      if (userDetailsString) {
+        // User is already logged in
+        setIsLoggedIn(true);
+      }
+    } catch (error) {
+      console.error("Error checking login status:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
+  };
+
+  if (loading) {
+    return null;
+  }
+
   return (
     <NavigationContainer>
       <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
@@ -141,23 +178,32 @@ const BottomTabNavigator = () => {
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ color, size }) => {
-            let iconName;
+            let iconSource;
 
             if (route.name === "Home") {
-              iconName = "home";
+              iconSource = homebutton;
             } else if (route.name === "Messages") {
-              iconName = "envelope";
+              iconSource = chat;
             } else if (route.name === "Calendar") {
-              iconName = "calendar";
+              iconSource = calendar;
             } else if (route.name === "Profile") {
-              iconName = "user";
+              iconSource = profile;
             }
 
-            return <Icon name={iconName} size={size} color={color} />;
+            return (
+              <Image
+                source={iconSource}
+                style={{
+                  width: 20,
+                  height: 20,
+                  tintColor: color,
+                }}
+              />
+            );
           },
         })}
         tabBarOptions={{
-          activeTintColor: "orange", // Set the active color to orange
+          activeTintColor: "tomato",
         }}
       >
         <Tab.Screen
@@ -172,5 +218,4 @@ const BottomTabNavigator = () => {
     </NavigationContainer>
   );
 };
-
 export default BottomTabNavigator;

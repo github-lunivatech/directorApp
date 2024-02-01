@@ -46,7 +46,7 @@ const TestWiseSales = (route) => {
   // Requestor list options
   const [requestorList, setRequestorList] = useState([]);
 
-  const [isTableVisible, setTableVisibility] = useState(false);
+  const [isDataVisible, setDataVisibility] = useState(false);
 
   // Explabalde tablerows
   const [expandedRowIndex, setExpandedRowIndex] = useState(null);
@@ -85,17 +85,17 @@ const TestWiseSales = (route) => {
   const applyFilters = async () => {
     try {
       const response = await makeApiRequest(
-        apiEndpoints.getRequestorwiseTotalSalesSummaryByDate,
+        apiEndpoints.GetDatewiseTotalSalesWithTestCount,
         {
-          from: fromDate,
-          to: toDate,
+          fromdate: fromDate,
+          todate: toDate,
+          fiscalYearId: requestorFilter.Id,
         }
       );
-      console.log(fromDate, "This is the date");
       console.log("API Response:", response);
 
       // Extract the array of data from the response
-      const data = response["ReportDetails"] || [];
+      const data = response["TestWiseSales"] || [];
 
       // Use the keys of the first item as columns
       const keys = Object.keys(data[0] || {});
@@ -104,7 +104,7 @@ const TestWiseSales = (route) => {
       // Set columns and filteredData
       setColumns(newColumns);
       setFilteredData(data);
-      setTableVisibility(true);
+      setDataVisibility(true);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -143,12 +143,12 @@ const TestWiseSales = (route) => {
     const fetchRequestorList = async () => {
       try {
         const requestorListResponse = await makeApiRequest(
-          apiEndpoints.getRequestorList
+          apiEndpoints.GetFiscalYearCodeList
         );
         // console.log("Requestor List:", requestorListResponse);
 
         // Extract the array of requestors from the response
-        const requestors = requestorListResponse["ReportType"] || [];
+        const requestors = requestorListResponse["FIscalYearCode"] || [];
 
         // Update requestor list options
         setRequestorList(requestors);
@@ -172,7 +172,18 @@ const TestWiseSales = (route) => {
         : [...prevExpandedRows, index]
     );
   };
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [selectedData, setSelectedData] = useState(null);
 
+  const handleTouchableOpacityPress = (data) => {
+    setSelectedData(data);
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+    setSelectedData(null);
+  };
   return (
     <ScrollView>
       <View style={styles.container}>
@@ -218,7 +229,7 @@ const TestWiseSales = (route) => {
                 style={[styles.button]}
               >
                 <Text style={styles.buttonText}>
-                  {`Requestor: ${requestorFilter || "Select Requestor"}`}
+                  {`Fiscal: ${requestorFilter.Year || "Select Fiscal Year"}`}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -272,12 +283,12 @@ const TestWiseSales = (route) => {
                 toggleRequestorPicker();
               }}
             >
-              <Picker.Item label="Select Requestor" value="" />
+              <Picker.Item label="Select Fiscal Year" value="" />
               {requestorList.map((requestor) => (
                 <Picker.Item
                   key={requestor.Id}
-                  label={requestor.Requestor}
-                  value={requestor.Id}
+                  label={requestor.Year}
+                  value={requestor}
                 />
               ))}
             </Picker>
@@ -286,43 +297,81 @@ const TestWiseSales = (route) => {
 
         {/* Table */}
 
-        {isTableVisible && (
-          <ScrollView horizontal>
-            <Table borderStyle={{ borderColor: "black" }}>
-              <Row
-                data={columns.map((column) => column.label)}
-                style={styles.header}
-                textStyle={styles.headerText} // Update this line
-                widthArr={columns.map(() => 160)} // Set a fixed width for each visible column
-              />
-              {filteredData.map((item, index) => (
-                <React.Fragment key={index}>
-                  {/* <TouchableOpacity onPress={() => toggleExpand(index)}> */}
-                  <Row
-                    data={columns.map((column) => item[column.key])}
-                    style={styles.row}
-                    textStyle={styles.text} // Update this line
-                    widthArr={columns.map(() => 160)} // Set a fixed width for each visible column
-                  />
-                  {/* </TouchableOpacity> */}
-                  {/* {expandedRowIndex === index && (
-            <View>
-              {columns.slice(2).map((column) => (
-                <Row
-                  key={column.key}
-                  data={[column.label, item[column.key]]}
-                  style={styles.expandedRow}
-                  textStyle={styles.text} // Update this line
-                  widthArr={[160, 160]} // Set a fixed width for the expanded columns
-                />
-              ))}
-            </View>
-          )} */}
-                </React.Fragment>
-              ))}
-            </Table>
+        {isDataVisible && (
+          <ScrollView>
+            {filteredData.map((item, index) => (
+              <TouchableOpacity
+                key={index}
+                onPress={() => handleTouchableOpacityPress(item)}
+                style={styles.touchableOpacity}
+              >
+                <Text
+                  style={[
+                    styles.touchableOpacityText,
+                    {
+                      alignSelf: "flex-start",
+                      fontWeight: "bold",
+                      color: "grey",
+                      marginLeft: 10,
+                    },
+                  ]}
+                >
+                  {item.Requestor}
+                </Text>
+                <Text
+                  style={[
+                    styles.touchableOpacityText,
+                    {
+                      alignSelf: "flex-end",
+                      marginRight: 10,
+                      color: "#990000",
+                    },
+                  ]}
+                >
+                  Total Price: {item.TotalPrice}
+                </Text>
+                <Text
+                  style={[
+                    styles.touchableOpacityText,
+                    {
+                      alignSelf: "flex-end",
+                      marginRight: 10,
+                      color: "#daa520",
+                    },
+                  ]}
+                >
+                  Discount Total: {item.DiscountTotal}
+                </Text>
+                <Text
+                  style={[
+                    styles.touchableOpacityText,
+                    {
+                      alignSelf: "flex-end",
+                      marginRight: 10,
+                      color: "#006633",
+                    },
+                  ]}
+                >
+                  Actual Total: {item.ActualTotal}
+                </Text>
+              </TouchableOpacity>
+            ))}
           </ScrollView>
         )}
+
+        {/* Modal to show entire data */}
+        <Modal isVisible={isModalVisible} onBackdropPress={closeModal}>
+          <View style={styles.modalContainer}>
+            {/* Render the selectedData in the modal */}
+            {selectedData &&
+              Object.entries(selectedData).map(([key, value]) => (
+                <View key={key} style={styles.modalRow}>
+                  <Text style={styles.modalKey}>{key}</Text>
+                  <Text style={styles.modalValue}>{value}</Text>
+                </View>
+              ))}
+          </View>
+        </Modal>
       </View>
     </ScrollView>
   );
@@ -376,6 +425,35 @@ const styles = StyleSheet.create({
   expandedRow: {
     height: 60, // Adjust the height as needed
     backgroundColor: "#F1F8FF",
+  },
+  touchableOpacity: {
+    height: 110,
+    backgroundColor: "#F1F8FF",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 5,
+  },
+  touchableOpacityText: {
+    textAlign: "center",
+    color: "black",
+  },
+
+  modalContainer: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+  },
+  modalRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 10,
+  },
+  modalKey: {
+    fontWeight: "bold",
+  },
+  modalValue: {
+    flex: 1,
+    textAlign: "right",
   },
 });
 

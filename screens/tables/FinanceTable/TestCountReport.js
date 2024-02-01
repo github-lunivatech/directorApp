@@ -9,7 +9,6 @@ import {
   UIManager,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import { Table, Row } from "react-native-table-component";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Modal from "react-native-modal";
 import theme from "../../../theme";
@@ -46,56 +45,30 @@ const TestCountReport = (route) => {
   // Requestor list options
   const [requestorList, setRequestorList] = useState([]);
 
-  const [isTableVisible, setTableVisibility] = useState(false);
+  const [isDataVisible, setDataVisibility] = useState(false);
 
   // Explabalde tablerows
   const [expandedRowIndex, setExpandedRowIndex] = useState(null);
   const toggleExpand = (index) => {
     setExpandedRowIndex((prevIndex) => (prevIndex === index ? null : index));
   };
-  // Apply filters and update filteredData
-  // const applyFilters = async () => {
-  //   try {
-  //     const response = await makeApiRequest(
-  //       apiEndpoints.getDatewiseRequestorTransactionDetails,
-  //       {
-  //         from: fromDate,
-  //         to: toDate,
-  //         reqId: requestorFilter,
-  //       }
-  //     );
-  //     console.log(fromDate, "This is the date");
-  //     console.log("API Response:", response);
 
-  //     // Extract the array of data from the response
-  //     const data = response["ReportDetails"] || [];
-
-  //     // Use the keys of the first item as columns
-  //     const keys = Object.keys(data[0] || {});
-  //     const newColumns = keys.map((key) => ({ key, label: key }));
-
-  //     // Set columns and filteredData
-  //     setColumns(newColumns);
-  //     setFilteredData(data);
-  //     setTableVisibility(true);
-  //   } catch (error) {
-  //     console.error("Error fetching data:", error);
-  //   }
-  // };
   const applyFilters = async () => {
     try {
       const response = await makeApiRequest(
-        apiEndpoints.getRequestorwiseTotalSalesSummaryByDate,
+        apiEndpoints.GetCredityPartyDatewiseTotalSalesWithTestCount,
         {
-          from: fromDate,
-          to: toDate,
+          fromdate: fromDate,
+          todate: toDate,
+          requestorId: requestorFilter.Id,
+          fiscalYearId: fiscalYearFilter.Id,
         }
       );
       console.log(fromDate, "This is the date");
       console.log("API Response:", response);
 
       // Extract the array of data from the response
-      const data = response["ReportDetails"] || [];
+      const data = response["PartywiseTestWiseSales"] || [];
 
       // Use the keys of the first item as columns
       const keys = Object.keys(data[0] || {});
@@ -104,7 +77,7 @@ const TestCountReport = (route) => {
       // Set columns and filteredData
       setColumns(newColumns);
       setFilteredData(data);
-      setTableVisibility(true);
+      setDataVisibility(true);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -172,6 +145,50 @@ const TestCountReport = (route) => {
         : [...prevExpandedRows, index]
     );
   };
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [selectedData, setSelectedData] = useState(null);
+
+  const handleTouchableOpacityPress = (data) => {
+    setSelectedData(data);
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+    setSelectedData(null);
+  };
+  // State for Fiscal Year filter
+  const [fiscalYearFilter, setFiscalYearFilter] = useState("");
+
+  // State for Fiscal Year options
+  const [fiscalYearList, setFiscalYearList] = useState([]);
+
+  // State for Fiscal Year Picker Modal
+  const [isFiscalYearPickerVisible, setFiscalYearPickerVisibility] =
+    useState(false);
+
+  // Fetch Fiscal Year list
+  useEffect(() => {
+    const fetchFiscalYearList = async () => {
+      try {
+        const fiscalYearListResponse = await makeApiRequest(
+          apiEndpoints.GetFiscalYearCodeList
+        );
+        const fiscalYears = fiscalYearListResponse["FIscalYearCode"] || [];
+
+        setFiscalYearList(fiscalYears);
+      } catch (error) {
+        console.error("Error fetching fiscal year list:", error);
+      }
+    };
+
+    fetchFiscalYearList();
+  }, []); // Empty dependency array ensures the effect runs only once on mount
+
+  // Toggle Fiscal Year Picker visibility
+  const toggleFiscalYearPicker = () => {
+    setFiscalYearPickerVisibility(!isFiscalYearPickerVisible);
+  };
 
   return (
     <ScrollView>
@@ -200,26 +217,30 @@ const TestCountReport = (route) => {
                 </Text>
               </TouchableOpacity>
             </View>
-
-            {/* Second Row of Filters */}
-            {/* <View style={styles.filterItem}>
-                <TouchableOpacity
-                  onPress={toggleGenderPicker}
-                  style={[styles.button]}
-                >
-                  <Text style={styles.buttonText}>
-                    {`Gender: ${genderFilter || "Select Gender"}`}
-                  </Text>
-                </TouchableOpacity>
-              </View> */}
             <View style={styles.filterItem}>
               <TouchableOpacity
                 onPress={() => toggleRequestorPicker()}
                 style={[styles.button]}
               >
                 <Text style={styles.buttonText}>
-                  {`Requestor: ${requestorFilter || "Select Requestor"}`}
+                  {`Requestor: ${
+                    requestorFilter.Requestor || "Select Requestor"
+                  }`}
                 </Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.filterItem}>
+              <TouchableOpacity
+                onPress={() => toggleFiscalYearPicker()}
+                style={styles.filterItem}
+              >
+                <View style={styles.button}>
+                  <Text style={styles.buttonText}>
+                    {`Fiscal Year: ${
+                      fiscalYearFilter.Year || "Select Fiscal Year"
+                    }`}
+                  </Text>
+                </View>
               </TouchableOpacity>
             </View>
 
@@ -277,52 +298,112 @@ const TestCountReport = (route) => {
                 <Picker.Item
                   key={requestor.Id}
                   label={requestor.Requestor}
-                  value={requestor.Id}
+                  value={requestor}
                 />
               ))}
             </Picker>
           </View>
         </Modal>
-
-        {/* Table */}
-
-        {isTableVisible && (
-          <ScrollView horizontal>
-            <Table borderStyle={{ borderColor: "black" }}>
-              <Row
-                data={columns.map((column) => column.label)}
-                style={styles.header}
-                textStyle={styles.headerText} // Update this line
-                widthArr={columns.map(() => 160)} // Set a fixed width for each visible column
-              />
-              {filteredData.map((item, index) => (
-                <React.Fragment key={index}>
-                  {/* <TouchableOpacity onPress={() => toggleExpand(index)}> */}
-                  <Row
-                    data={columns.map((column) => item[column.key])}
-                    style={styles.row}
-                    textStyle={styles.text} // Update this line
-                    widthArr={columns.map(() => 160)} // Set a fixed width for each visible column
-                  />
-                  {/* </TouchableOpacity> */}
-                  {/* {expandedRowIndex === index && (
-            <View>
-              {columns.slice(2).map((column) => (
-                <Row
-                  key={column.key}
-                  data={[column.label, item[column.key]]}
-                  style={styles.expandedRow}
-                  textStyle={styles.text} // Update this line
-                  widthArr={[160, 160]} // Set a fixed width for the expanded columns
+        {/* Fiscal Year Picker Modal */}
+        <Modal
+          isVisible={isFiscalYearPickerVisible}
+          onBackdropPress={toggleFiscalYearPicker}
+        >
+          <View style={styles.pickerModal}>
+            <Picker
+              selectedValue={fiscalYearFilter}
+              onValueChange={(itemValue) => {
+                setFiscalYearFilter(itemValue);
+                toggleFiscalYearPicker();
+              }}
+            >
+              <Picker.Item label="Select Fiscal Year" value="" />
+              {fiscalYearList.map((fiscalYear) => (
+                <Picker.Item
+                  key={fiscalYear.Id}
+                  label={fiscalYear.Year}
+                  value={fiscalYear}
                 />
               ))}
-            </View>
-          )} */}
-                </React.Fragment>
-              ))}
-            </Table>
+            </Picker>
+          </View>
+        </Modal>
+        {/*TouchableOpacity Components */}
+        {isDataVisible && (
+          <ScrollView>
+            {filteredData.map((item, index) => (
+              <TouchableOpacity
+                key={index}
+                onPress={() => handleTouchableOpacityPress(item)}
+                style={styles.touchableOpacity}
+              >
+                <Text
+                  style={[
+                    styles.touchableOpacityText,
+                    {
+                      alignSelf: "flex-start",
+                      fontWeight: "bold",
+                      color: "grey",
+                      marginLeft: 10,
+                    },
+                  ]}
+                >
+                  {item.Requestor}
+                </Text>
+                <Text
+                  style={[
+                    styles.touchableOpacityText,
+                    {
+                      alignSelf: "flex-end",
+                      marginRight: 10,
+                      color: "#990000",
+                    },
+                  ]}
+                >
+                  Total Price: {item.TotalPrice}
+                </Text>
+                <Text
+                  style={[
+                    styles.touchableOpacityText,
+                    {
+                      alignSelf: "flex-end",
+                      marginRight: 10,
+                      color: "#daa520",
+                    },
+                  ]}
+                >
+                  Discount Total: {item.DiscountTotal}
+                </Text>
+                <Text
+                  style={[
+                    styles.touchableOpacityText,
+                    {
+                      alignSelf: "flex-end",
+                      marginRight: 10,
+                      color: "#006633",
+                    },
+                  ]}
+                >
+                  Actual Total: {item.ActualTotal}
+                </Text>
+              </TouchableOpacity>
+            ))}
           </ScrollView>
         )}
+
+        {/* Modal to show entire data */}
+        <Modal isVisible={isModalVisible} onBackdropPress={closeModal}>
+          <View style={styles.modalContainer}>
+            {/* Render the selectedData in the modal */}
+            {selectedData &&
+              Object.entries(selectedData).map(([key, value]) => (
+                <View key={key} style={styles.modalRow}>
+                  <Text style={styles.modalKey}>{key}</Text>
+                  <Text style={styles.modalValue}>{value}</Text>
+                </View>
+              ))}
+          </View>
+        </Modal>
       </View>
     </ScrollView>
   );
@@ -373,9 +454,34 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 5,
   },
-  expandedRow: {
-    height: 60, // Adjust the height as needed
+  touchableOpacity: {
+    height: 110,
     backgroundColor: "#F1F8FF",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 5,
+  },
+  touchableOpacityText: {
+    textAlign: "center",
+    color: "black",
+  },
+
+  modalContainer: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+  },
+  modalRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 10,
+  },
+  modalKey: {
+    fontWeight: "bold",
+  },
+  modalValue: {
+    flex: 1,
+    textAlign: "right",
   },
 });
 

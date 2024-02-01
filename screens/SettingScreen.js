@@ -1,49 +1,33 @@
-import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+// LogoutScreen.js
+import React, { useEffect } from "react";
+import { View, Text, Button, StyleSheet } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import theme from "../theme";
-import Icon from "react-native-vector-icons/FontAwesome";
-import { BottomNavigation } from "react-native-paper";
-import BottomTabNagivator from "../components/BottomTabNagivator";
 
-const Setting = ({ navigation }) => {
+const LogoutScreen = ({ navigation, setIsLoggedIn }) => {
   const handleLogout = async () => {
     try {
-      // Clear AsyncStorage
-      await AsyncStorage.clear();
-      console.log("AsyncStorage cleared successfully");
+      // Clear user details from AsyncStorage
+      await AsyncStorage.removeItem("userDetails");
 
-      // Navigate to the login screen
-      navigation.navigate("Auth");
-      console.log("Navigated to Login screen");
+      // Update the isLoggedIn state to false
+      setIsLoggedIn(false);
+
+      // Navigate back to the login screen
+      navigation.replace("Login");
     } catch (error) {
-      console.error("Error clearing AsyncStorage:", error);
+      console.error("Error during logout:", error);
     }
   };
 
+  useEffect(() => {
+    // Automatically initiate logout when the component mounts
+    handleLogout();
+  }, [setIsLoggedIn]);
+
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-        <Text style={styles.buttonText}>Logout</Text>
-      </TouchableOpacity>
-      {/* <View style={styles.bottomTabNagivator}>
-        <TouchableOpacity
-          style={styles.bottomTab}
-          onPress={() => navigateToOtherScreen("g")}
-        >
-          <Icon name="home" size={30} color="#fff" />
-          <Text style={styles.navButtonText}>Home</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.bottomTab}
-          onPress={() => navigateToOtherScreen("f")}
-        >
-          <Icon name="gear" size={30} color="#fff" />
-          <Text style={styles.navButtonText}>Settings</Text>
-        </TouchableOpacity>
-      </View> */}
-      <BottomTabNagivator navigation={navigation} />
+      <Text>Logging out...</Text>
+      {/* You can add a loading spinner or any other UI elements if needed */}
     </View>
   );
 };
@@ -51,36 +35,9 @@ const Setting = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-  },
-  text: {
-    fontSize: 20,
-    marginBottom: 20,
-  },
-  logoutButton: {
-    backgroundColor: theme.primaryColor,
-    padding: 15,
-    borderRadius: 8,
-  },
-  buttonText: {
-    color: "white",
-    textAlign: "center",
-    fontWeight: "bold",
-  },
-  bottomTabNagivator: {
-    flexDirection: "row",
-    backgroundColor: theme.primaryColor,
-    height: "10%",
-    width: "100%",
-    alignItems: "center",
     justifyContent: "center",
-    position: "absolute",
-    bottom: 0,
-  },
-  bottomTab: {
     alignItems: "center",
-    width: 165,
   },
 });
 
-export default Setting;
+export default LogoutScreen;

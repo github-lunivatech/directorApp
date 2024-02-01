@@ -1,29 +1,12 @@
 // LoginScreen.js
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { View, Text, TextInput, Button, StyleSheet, Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { makeApiRequest, apiEndpoints } from "../../services/constants/url";
 
-const LoginScreen = ({ navigation }) => {
+const LoginScreen = ({ onLoginSuccess }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
-  useEffect(() => {
-    // Check if the user is already logged in
-    checkLoggedIn();
-  }, []);
-
-  const checkLoggedIn = async () => {
-    try {
-      const userDetailsString = await AsyncStorage.getItem("userDetails");
-      if (userDetailsString) {
-        // User is already logged in, navigate to the home screen
-        navigation.navigate("Home");
-      }
-    } catch (error) {
-      console.error("Error checking login status:", error);
-    }
-  };
 
   const handleLogin = async () => {
     try {
@@ -46,8 +29,8 @@ const LoginScreen = ({ navigation }) => {
         const userDetails = response.validuserDetails[0];
         await AsyncStorage.setItem("userDetails", JSON.stringify(userDetails));
 
-        // Navigate to the home screen
-        navigation.navigate("Home");
+        // Invoke the callback to notify successful login
+        onLoginSuccess();
       } else {
         // Display error alert for invalid credentials
         Alert.alert("Error", "Invalid username or password");
@@ -61,33 +44,27 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.inner}>
-        <Text>Login Screen</Text>
-        <TextInput
-          placeholder="Username"
-          value={username}
-          onChangeText={(text) => setUsername(text)}
-          style={styles.input}
-        />
-        <TextInput
-          placeholder="Password"
-          value={password}
-          onChangeText={(text) => setPassword(text)}
-          secureTextEntry
-          style={styles.input}
-        />
-        <Button title="Login" onPress={handleLogin} />
-      </View>
+      <Text>Login Screen</Text>
+      <TextInput
+        placeholder="Username"
+        value={username}
+        onChangeText={(text) => setUsername(text)}
+        style={styles.input}
+      />
+      <TextInput
+        placeholder="Password"
+        value={password}
+        onChangeText={(text) => setPassword(text)}
+        secureTextEntry
+        style={styles.input}
+      />
+      <Button title="Login" onPress={handleLogin} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: "center",
-  },
-  inner: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",

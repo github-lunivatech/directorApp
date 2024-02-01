@@ -11,14 +11,29 @@ const api = axios.create({
 
 // Define your API endpoints
 export const apiEndpoints = {
+  // Finance
+  GetDailySummaryTransactionUserWiseByDate:
+    "GetDailySummaryTransactionUserWiseByDate",
+  GetListOfUserForMetric: "GetListOfUserForMetric",
+
   getRequestorList: "GetRequestorList",
   getDatewiseRequestorTransactionDetails:
     "GetDatewiseRequestorTransactionDetails",
   getRequestorwiseTotalSalesSummaryByDate:
     "GetRequestorwiseTotalSalesSummaryByDate",
+
   GetReferedDoctorList: "GetReferedDoctorList",
   GetDatewiseReferredDoctorTransactionDetails:
     "GetDatewiseReferredDoctorTransactionDetails",
+
+  GetDailyTransactionByUserIdAndDate: "GetDailyTransactionByUserIdAndDate",
+
+  GetDatewiseTotalSalesWithTestCount: "GetDatewiseTotalSalesWithTestCount",
+  GetFiscalYearCodeList: "GetFiscalYearCodeList",
+
+  GetCredityPartyDatewiseTotalSalesWithTestCount:
+    "GetCredityPartyDatewiseTotalSalesWithTestCount",
+
   GetStates: "GetStates",
   GetDistrictsByStateId: "GetDistrictsByStateId",
   GetMunicipalitiesByDistrictId: "GetMunicipalitiesByDistrictId",
