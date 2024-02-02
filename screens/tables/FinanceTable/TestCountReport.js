@@ -12,6 +12,7 @@ import { Picker } from "@react-native-picker/picker";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Modal from "react-native-modal";
 import theme from "../../../theme";
+import Icon from "react-native-vector-icons/Feather";
 
 import { makeApiRequest, apiEndpoints } from "../../../services/constants/url";
 
@@ -20,8 +21,8 @@ UIManager.setLayoutAnimationEnabledExperimental &&
 
 const TestCountReport = (route) => {
   // State to manage filters
-  const [fromDate, setFromDate] = useState(null);
-  const [toDate, setToDate] = useState(null);
+  const [fromDate, setFromDate] = useState(new Date().toISOString());
+  const [toDate, setToDate] = useState(new Date().toISOString());
   const [genderFilter, setGenderFilter] = useState("");
   const [requestorFilter, setRequestorFilter] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -60,8 +61,8 @@ const TestCountReport = (route) => {
         {
           fromdate: fromDate,
           todate: toDate,
-          requestorId: requestorFilter.Id,
-          fiscalYearId: fiscalYearFilter.Id,
+          requestorId: requestorFilter.Id || 0,
+          fiscalYearId: fiscalYearFilter.Id || 6,
         }
       );
       console.log(fromDate, "This is the date");
@@ -189,70 +190,95 @@ const TestCountReport = (route) => {
   const toggleFiscalYearPicker = () => {
     setFiscalYearPickerVisibility(!isFiscalYearPickerVisible);
   };
+  const [areFiltersVisible, setFiltersVisibility] = useState(false);
 
+  const toggleFilters = () => {
+    setFiltersVisibility(!areFiltersVisible);
+  };
   return (
     <ScrollView>
       <View style={styles.container}>
-        {/* Filters */}
-        <ScrollView horizontal={true}>
-          <View style={styles.filterContainer}>
-            {/* First Row of Filters */}
-            <View style={styles.filterItem}>
-              <TouchableOpacity
-                onPress={() => toggleDatePicker("fromDate")}
-                style={styles.button}
-              >
-                <Text style={styles.buttonText}>
-                  From Date: {fromDate ? fromDate.split("T")[0] : "Select Date"}
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.filterItem}>
-              <TouchableOpacity
-                onPress={() => toggleDatePicker("toDate")}
-                style={styles.button}
-              >
-                <Text style={styles.buttonText}>
-                  To Date:{toDate ? toDate.split("T")[0] : "Select Date"}
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.filterItem}>
-              <TouchableOpacity
-                onPress={() => toggleRequestorPicker()}
-                style={[styles.button]}
-              >
-                <Text style={styles.buttonText}>
-                  {`Requestor: ${
-                    requestorFilter.Requestor || "Select Requestor"
-                  }`}
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.filterItem}>
-              <TouchableOpacity
-                onPress={() => toggleFiscalYearPicker()}
-                style={styles.filterItem}
-              >
-                <View style={styles.button}>
-                  <Text style={styles.buttonText}>
-                    {`Fiscal Year: ${
-                      fiscalYearFilter.Year || "Select Fiscal Year"
-                    }`}
-                  </Text>
+        {/* Toggle Overview and Filters */}
+        <View style={styles.overviewContainer}>
+          <Text style={styles.overviewText}>Overview</Text>
+          <TouchableOpacity onPress={toggleFilters} style={styles.toggleButton}>
+            <Text style={styles.overviewTextButton}>
+              Show: Today
+              <Icon
+                name={areFiltersVisible ? "chevron-down" : "chevron-up"}
+                size={15}
+                color="grey"
+              />
+            </Text>
+          </TouchableOpacity>
+          {/* Filters */}
+          {areFiltersVisible && (
+            <ScrollView horizontal={true}>
+              <View style={styles.filterContainer}>
+                {/* First Row of Filters */}
+                <View style={styles.filterItem}>
+                  <TouchableOpacity
+                    onPress={() => toggleDatePicker("fromDate")}
+                    style={styles.button}
+                  >
+                    <Text style={styles.buttonText}>
+                      From Date:{" "}
+                      {fromDate ? fromDate.split("T")[0] : "Select Date"}
+                    </Text>
+                  </TouchableOpacity>
                 </View>
-              </TouchableOpacity>
-            </View>
-
-            <TouchableOpacity
-              onPress={applyFilters}
-              style={[styles.button, styles.applyButton]}
-            >
-              <Text style={styles.buttonText}>Apply Filters</Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-
+                <View style={styles.filterItem}>
+                  <TouchableOpacity
+                    onPress={() => toggleDatePicker("toDate")}
+                    style={styles.button}
+                  >
+                    <Text style={styles.buttonText}>
+                      To Date:{toDate ? toDate.split("T")[0] : "Select Date"}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.filterItem}>
+                  <TouchableOpacity
+                    onPress={() => toggleRequestorPicker()}
+                    style={[styles.button]}
+                  >
+                    <Text style={styles.buttonText}>
+                      {`Requestor: ${
+                        requestorFilter.Requestor || "Select Requestor"
+                      }`}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.filterItem}>
+                  <TouchableOpacity
+                    onPress={() => toggleFiscalYearPicker()}
+                    style={styles.filterItem}
+                  >
+                    <View style={styles.button}>
+                      <Text style={styles.buttonText}>
+                        {`Fiscal Year: ${
+                          fiscalYearFilter.Year || "Select Fiscal Year"
+                        }`}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </ScrollView>
+          )}
+          <TouchableOpacity
+            onPress={applyFilters}
+            style={[
+              styles.button,
+              styles.applyButton,
+              { alignSelf: "flex-end" },
+            ]}
+          >
+            <Text style={[styles.buttonText, { color: "#fff" }]}>
+              Apply Filters
+            </Text>
+          </TouchableOpacity>
+        </View>
         {/* Date Time Picker */}
         <DateTimePickerModal
           isVisible={isDatePickerVisible}
@@ -413,6 +439,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    backgroundColor: "#fff",
   },
   filterContainer: {
     flexDirection: "column",
@@ -482,6 +509,24 @@ const styles = StyleSheet.create({
   modalValue: {
     flex: 1,
     textAlign: "right",
+  },
+  overviewContainer: {
+    alignItems: "flex-start",
+    marginBottom: 10,
+  },
+  toggleButton: {
+    marginTop: 10,
+    marginRight: 10,
+    borderColor: "#ddd",
+    borderRadius: 5,
+  },
+  overviewText: {
+    fontSize: 25,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  overviewTextButton: {
+    color: "grey",
   },
 });
 

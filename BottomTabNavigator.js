@@ -38,7 +38,7 @@ import ConsumptionReport from "./screens/tables/InventoryTable/ConsumptionReport
 
 import { Image } from "react-native";
 import homebutton from "./assets/home.png";
-import chat from "./assets/Profile.png";
+import chat from "./assets/Chat.png";
 import calendar from "./assets/calendar.png";
 import profile from "./assets/Profile.png";
 
@@ -194,8 +194,8 @@ const BottomTabNavigator = () => {
               <Image
                 source={iconSource}
                 style={{
-                  width: 20,
-                  height: 20,
+                  width: 25,
+                  height: 25,
                   tintColor: color,
                 }}
               />
@@ -209,11 +209,23 @@ const BottomTabNavigator = () => {
         <Tab.Screen
           name="Home"
           component={HomeStack}
-          options={{ headerShown: false }}
+          options={{ headerShown: false, tabBarLabel: "" }}
         />
-        <Tab.Screen name="Messages" component={MessagesScreen} />
-        <Tab.Screen name="Calendar" component={CalendarScreen} />
-        <Tab.Screen name="Profile" component={ProfileScreen} />
+        <Tab.Screen
+          name="Messages"
+          component={MessagesScreen}
+          options={{ tabBarLabel: "" }}
+        />
+        <Tab.Screen
+          name="Calendar"
+          component={CalendarScreen}
+          options={{ tabBarLabel: "" }}
+        />
+        <Tab.Screen
+          name="Profile"
+          component={ProfileScreen}
+          options={{ tabBarLabel: "" }}
+        />
       </Tab.Navigator>
     </NavigationContainer>
   );

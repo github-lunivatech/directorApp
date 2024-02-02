@@ -19,24 +19,6 @@ import staff from "../assets/staff.png";
 const HomeScreen = ({ navigation }) => {
   const [companyDetails, setCompanyDetails] = useState(null);
   const [reportData, setReportData] = useState(null);
-  useEffect(() => {
-    const fetchCompanyDetails = async () => {
-      try {
-        // Make API call to get company details
-        const response = await makeApiRequest(apiEndpoints.GetCompanyDetails);
-
-        // Assuming the response contains the data field with company details
-        setCompanyDetails(response.ReportType[0]);
-        // console.log(response);
-      } catch (error) {
-        console.error("Error fetching company details:", error);
-      }
-    };
-
-    // Call the fetchCompanyDetails function
-    fetchCompanyDetails();
-  }, []);
-
   const navigateToOtherScreen = (props) => {
     if (props === "a") {
       navigation.navigate("Financial");
@@ -54,6 +36,20 @@ const HomeScreen = ({ navigation }) => {
       navigation.navigate("Home");
     }
   };
+  useEffect(() => {
+    const fetchCompanyDetails = async () => {
+      try {
+        const response = await makeApiRequest(apiEndpoints.GetCompanyDetails);
+        if (response && response.ReportType && response.ReportType[0]) {
+          setCompanyDetails(response.ReportType[0]);
+        }
+      } catch (error) {
+        console.error("Error fetching company details:", error);
+      }
+    };
+
+    fetchCompanyDetails();
+  }, []);
 
   useEffect(() => {
     const currentDate = new Date();
@@ -63,7 +59,6 @@ const HomeScreen = ({ navigation }) => {
     const formattedFromDate = formatDate(fromDate);
     const formattedToDate = formatDate(currentDate);
 
-    // Make API request with the calculated date range and report type
     const fetchData = async () => {
       try {
         const response = await makeApiRequest(
@@ -75,16 +70,17 @@ const HomeScreen = ({ navigation }) => {
           }
         );
 
-        setReportData(response.ReportDetails);
-        console.log(response);
+        if (response && response.ReportDetails) {
+          setReportData(response.ReportDetails);
+          console.log(reportData, "Report data");
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
-    // Fetch data when the component mounts
     fetchData();
-  }, []); // Empty dependency array ensures the effect runs only once on mount
+  }, []);
 
   // Helper function to format dates as 'YYYY/MM/DD'
   const formatDate = (date) => {
@@ -106,19 +102,34 @@ const HomeScreen = ({ navigation }) => {
       {/* Display Company Details on Top of Dashboard */}
       {companyDetails && (
         <View style={styles.companyDetails}>
-          {companyDetails.COmpanyLOgo && (
+          {companyDetails.companyBanner && (
             <Image
               source={{
-                uri: `data:image/jpeg;base64,${companyDetails.COmpanyLOgo}`,
+                uri: `data:image/jpeg;base64,${companyDetails.companyBanner}`,
               }}
-              style={styles.logo}
+              style={styles.banner}
             />
           )}
-          {/* <Text>{`Company Name: ${companyDetails.CompanyName}`}</Text>
-          <Text>{`Address: ${companyDetails.COmpanyAddress}`}</Text>
-          <Text>{`Contact No: ${companyDetails.COmpanyContactNo}`}</Text> */}
-
-          {/* Add more details as needed */}
+          {companyDetails.COmpanyLOgo && (
+            <View style={styles.nameLogo}>
+              <Image
+                source={{
+                  uri: `data:image/jpeg;base64,${companyDetails.COmpanyLOgo}`,
+                }}
+                style={styles.logo}
+              />
+              <Text
+                style={{
+                  marginTop: 40,
+                  marginLeft: 10,
+                  fontWeight: "bold",
+                  fontSize: 17,
+                }}
+              >
+                {companyDetails.CompanyName}
+              </Text>
+            </View>
+          )}
         </View>
       )}
 
@@ -151,7 +162,7 @@ const HomeScreen = ({ navigation }) => {
               fontSize: 20,
             }}
           >
-            {formatSales(reportData[0].Sales)}
+            {/* {formatSales(reportData[0].Sales)} */}
           </Text>
           <Image source={sales} style={styles.salesImage} />
         </TouchableOpacity>
@@ -177,7 +188,7 @@ const HomeScreen = ({ navigation }) => {
               fontSize: 20,
             }}
           >
-            {reportData[0].Patient}
+            {/* {reportData[0].Patient} */}
           </Text>
           <Image source={patient} style={styles.salesImage} />
         </TouchableOpacity>
@@ -203,7 +214,7 @@ const HomeScreen = ({ navigation }) => {
               fontSize: 20,
             }}
           >
-            {reportData[0].Test}
+            {/* {reportData[0].Test} */}
           </Text>
           <Image source={staff} style={styles.salesImage} />
         </TouchableOpacity>
@@ -406,9 +417,6 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
   },
-  companyDetails: {
-    backgroundColor: "#fff",
-  },
   bottomTabNagivator: {
     flexDirection: "row",
     backgroundColor: theme.primaryColor,
@@ -435,6 +443,30 @@ const styles = StyleSheet.create({
   salesImage: {
     objectFit: "fill",
     maxWidth: "120%",
+  },
+  companyDetails: {
+    position: "relative",
+    width: "100%",
+    height: "30%", // Adjust the height as needed
+    overflow: "hidden",
+  },
+  banner: {
+    width: "100%",
+    height: "70%",
+    position: "absolute",
+  },
+  logo: {
+    top: "4%",
+    height: "70%", // Adjust the height as needed
+    aspectRatio: 1, // Maintain aspect ratio
+    zIndex: 1, // Ensure the logo appears on top
+  },
+  nameLogo: {
+    position: "absolute",
+    left: "10%",
+    top: "50%",
+    height: "50%",
+    flexDirection: "row",
   },
 });
 

@@ -19,6 +19,12 @@ const FinancialScreen = ({ navigation }) => {
 
   const touchableData = [
     {
+      key: "CashSales",
+      heading: "Cash, Due, Credit Sales Report",
+      description: "Get insights into cash, due, and credit sales data.",
+      icon: "credit-card", // Change to the desired icon name
+    },
+    {
       key: "TotalSales",
       heading: "Total Sales Report Datewise",
       description: "View the total sales report based on date range.",
@@ -37,12 +43,6 @@ const FinancialScreen = ({ navigation }) => {
       description:
         "Analyze sales data based on referers within a specific date range.",
       icon: "business", // Change to the desired icon name
-    },
-    {
-      key: "CashSales",
-      heading: "Cash, Due, Credit Sales Report",
-      description: "Get insights into cash, due, and credit sales data.",
-      icon: "credit-card", // Change to the desired icon name
     },
     {
       key: "TestWiseSales",

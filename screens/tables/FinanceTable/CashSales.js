@@ -13,6 +13,7 @@ import { Table, Row } from "react-native-table-component";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Modal from "react-native-modal";
 import theme from "../../../theme";
+import Icon from "react-native-vector-icons/Feather";
 
 import { makeApiRequest, apiEndpoints } from "../../../services/constants/url";
 
@@ -21,10 +22,8 @@ UIManager.setLayoutAnimationEnabledExperimental &&
 
 const CashSales = (route) => {
   // State to manage filters
-  const [fromDate, setFromDate] = useState(null);
-  const [toDate, setToDate] = useState(null);
-  const [genderFilter, setGenderFilter] = useState("");
-  const [requestorFilter, setRequestorFilter] = useState("");
+  const [fromDate, setFromDate] = useState(new Date().toISOString());
+  const [toDate, setToDate] = useState(new Date().toISOString());
 
   // State to store filtered data for the table
   const [filteredData, setFilteredData] = useState([]);
@@ -36,21 +35,7 @@ const CashSales = (route) => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [selectedDateField, setSelectedDateField] = useState("");
 
-  // State to manage modal visibility for Pickers
-  const [isGenderPickerVisible, setGenderPickerVisibility] = useState(false);
-  const [isRequestorPickerVisible, setRequestorPickerVisibility] =
-    useState(false);
-
-  // Requestor list options
-  const [requestorList, setRequestorList] = useState([]);
-
   const [isDataVisible, setDataVisibility] = useState(false);
-
-  // Explabalde tablerows
-  const [expandedRowIndex, setExpandedRowIndex] = useState(null);
-  const toggleExpand = (index) => {
-    setExpandedRowIndex((prevIndex) => (prevIndex === index ? null : index));
-  };
 
   const applyFilters = async () => {
     try {
@@ -99,50 +84,6 @@ const CashSales = (route) => {
     setDatePickerVisibility(false);
   };
 
-  // Toggle gender picker visibility
-  const toggleGenderPicker = () => {
-    setGenderPickerVisibility(!isGenderPickerVisible);
-  };
-
-  // Toggle requestor picker visibility
-  const toggleRequestorPicker = () => {
-    setRequestorPickerVisibility(!isRequestorPickerVisible);
-  };
-
-  // useEffect(() => {
-  //   // Fetch requestor list
-  //   const fetchRequestorList = async () => {
-  //     try {
-  //       const requestorListResponse = await makeApiRequest(
-  //         apiEndpoints.getRequestorList
-  //       );
-  //       // console.log("Requestor List:", requestorListResponse);
-
-  //       // Extract the array of requestors from the response
-  //       const requestors = requestorListResponse["ReportType"] || [];
-
-  //       // Update requestor list options
-  //       setRequestorList(requestors);
-  //     } catch (error) {
-  //       console.error("Error fetching requestor list:", error);
-  //     }
-  //   };
-
-  //   fetchRequestorList();
-  // }, []); // Empty dependency array ensures the effect runs only once on mount
-  const [expandedRows, setExpandedRows] = useState([]);
-
-  // Handle row press to expand or collapse
-  const handleRowPress = (index) => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
-
-    // Toggle the state of the pressed row
-    setExpandedRows((prevExpandedRows) =>
-      prevExpandedRows.includes(index)
-        ? prevExpandedRows.filter((rowIndex) => rowIndex !== index)
-        : [...prevExpandedRows, index]
-    );
-  };
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedData, setSelectedData] = useState(null);
 
@@ -155,66 +96,71 @@ const CashSales = (route) => {
     setModalVisible(false);
     setSelectedData(null);
   };
+  const [areFiltersVisible, setFiltersVisibility] = useState(false);
 
+  const toggleFilters = () => {
+    setFiltersVisibility(!areFiltersVisible);
+  };
+  const currentDate = new Date();
   return (
     <ScrollView>
       <View style={styles.container}>
-        {/* Filters */}
-        <ScrollView horizontal={true}>
-          <View style={styles.filterContainer}>
-            {/* First Row of Filters */}
-            <View style={styles.filterItem}>
-              <TouchableOpacity
-                onPress={() => toggleDatePicker("fromDate")}
-                style={styles.button}
-              >
-                <Text style={styles.buttonText}>
-                  From Date: {fromDate ? fromDate.split("T")[0] : "Select Date"}
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.filterItem}>
-              <TouchableOpacity
-                onPress={() => toggleDatePicker("toDate")}
-                style={styles.button}
-              >
-                <Text style={styles.buttonText}>
-                  To Date:{toDate ? toDate.split("T")[0] : "Select Date"}
-                </Text>
-              </TouchableOpacity>
-            </View>
+        {/* Toggle Overview and Filters */}
+        <View style={styles.overviewContainer}>
+          <Text style={styles.overviewText}>Overview</Text>
+          <TouchableOpacity onPress={toggleFilters} style={styles.toggleButton}>
+            <Text style={styles.overviewTextButton}>
+              Show: Today
+              <Icon
+                name={areFiltersVisible ? "chevron-down" : "chevron-up"}
+                size={15}
+                color="grey"
+              />
+            </Text>
+          </TouchableOpacity>
 
-            {/* Second Row of Filters */}
-            {/* <View style={styles.filterItem}>
-                <TouchableOpacity
-                  onPress={toggleGenderPicker}
-                  style={[styles.button]}
-                >
-                  <Text style={styles.buttonText}>
-                    {`Gender: ${genderFilter || "Select Gender"}`}
-                  </Text>
-                </TouchableOpacity>
-              </View> */}
-            {/* <View style={styles.filterItem}>
-              <TouchableOpacity
-                onPress={() => toggleRequestorPicker()}
-                style={[styles.button]}
-              >
-                <Text style={styles.buttonText}>
-                  {`Requestor: ${requestorFilter || "Select Requestor"}`}
-                </Text>
-              </TouchableOpacity>
-            </View> */}
-
-            <TouchableOpacity
-              onPress={applyFilters}
-              style={[styles.button, styles.applyButton]}
-            >
-              <Text style={styles.buttonText}>Apply Filters</Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-
+          {/* Filters */}
+          {areFiltersVisible && (
+            <ScrollView horizontal={true}>
+              <View style={styles.filterContainer}>
+                {/* First Row of Filters */}
+                <View style={styles.filterItem}>
+                  <TouchableOpacity
+                    onPress={() => toggleDatePicker("fromDate")}
+                    style={styles.button}
+                  >
+                    <Text style={styles.buttonText}>
+                      From Date:{" "}
+                      {fromDate ? fromDate.split("T")[0] : "Select Date"}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.filterItem}>
+                  <TouchableOpacity
+                    onPress={() => toggleDatePicker("toDate")}
+                    style={styles.button}
+                  >
+                    <Text style={styles.buttonText}>
+                      To Date:{toDate ? toDate.split("T")[0] : "Select Date"}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </ScrollView>
+          )}
+          <TouchableOpacity
+            onPress={applyFilters}
+            style={[
+              styles.button,
+              styles.applyButton,
+              { alignSelf: "flex-end" },
+            ]}
+          >
+            <Text style={[styles.buttonText, { color: "#fff" }]}>
+              Apply Filters
+            </Text>
+          </TouchableOpacity>
+        </View>
         {/* Date Time Picker */}
         <DateTimePickerModal
           isVisible={isDatePickerVisible}
@@ -223,34 +169,7 @@ const CashSales = (route) => {
           onCancel={() => setDatePickerVisibility(false)}
         />
 
-        {/* Requestor Picker Modal */}
-        {/* <Modal
-          isVisible={isRequestorPickerVisible}
-          onBackdropPress={toggleRequestorPicker}
-        >
-          <View style={styles.pickerModal}>
-            <Picker
-              selectedValue={requestorFilter}
-              onValueChange={(itemValue) => {
-                setRequestorFilter(itemValue);
-                toggleRequestorPicker();
-              }}
-            >
-              <Picker.Item label="Select Requestor" value="" />
-              {requestorList.map((requestor) => (
-                <Picker.Item
-                  key={requestor.Id}
-                  label={requestor.Requestor}
-                  value={requestor.Id}
-                />
-              ))}
-            </Picker>
-          </View>
-        </Modal> */}
-
-        {/* Table */}
-
-        {/* Replace Table with TouchableOpacity Components */}
+        {/*TouchableOpacity Components */}
         {isDataVisible && (
           <ScrollView>
             {filteredData.map((item, index) => (
@@ -259,14 +178,47 @@ const CashSales = (route) => {
                 onPress={() => handleTouchableOpacityPress(item)}
                 style={styles.touchableOpacity}
               >
+                <View style={{ flexDirection: "row" }}>
+                  <Text
+                    style={[
+                      styles.touchableOpacityText,
+                      {
+                        fontWeight: "bold",
+                        color: "#000",
+                        marginTop: 10,
+                        flex: 1,
+                        marginRight: 0,
+                      },
+                    ]}
+                  >
+                    {item.FirstName} {item.LastName} #{item.BillId}
+                  </Text>
+                  <TouchableOpacity
+                    style={{
+                      flex: 1,
+                      padding: 10, // Optional padding for better visibility
+                    }}
+                  >
+                    <Text
+                      style={{
+                        marginLeft: 10,
+                        backgroundColor:
+                          item.PaymentTYpe === "Cash" ? "#F5F9F9" : "#FFF4F4",
+                        color:
+                          item.PaymentTYpe === "Cash" ? "#3DD598" : "#FF5648",
+                      }}
+                    >
+                      {item.PaymentTYpe} Sales
+                    </Text>
+                  </TouchableOpacity>
+                </View>
                 <Text
                   style={[
                     styles.touchableOpacityText,
                     {
                       alignSelf: "flex-start",
-                      fontWeight: "bold",
-                      color: "grey",
                       marginLeft: 10,
+                      color: "grey",
                     },
                   ]}
                 >
@@ -278,35 +230,37 @@ const CashSales = (route) => {
                     {
                       alignSelf: "flex-end",
                       marginRight: 10,
-                      color: "#990000",
-                    },
-                  ]}
-                >
-                  Total Price: {item.TotalPrice}
-                </Text>
-                <Text
-                  style={[
-                    styles.touchableOpacityText,
-                    {
-                      alignSelf: "flex-end",
-                      marginRight: 10,
-                      color: "#daa520",
-                    },
-                  ]}
-                >
-                  Discount Total: {item.DiscountTotal}
-                </Text>
-                <Text
-                  style={[
-                    styles.touchableOpacityText,
-                    {
-                      alignSelf: "flex-end",
-                      marginRight: 10,
                       color: "#006633",
                     },
                   ]}
                 >
-                  Actual Total: {item.ActualTotal}
+                  Total Price: Rs.{item.TotalPrice}
+                </Text>
+                <Text
+                  style={[
+                    styles.touchableOpacityText,
+                    {
+                      alignSelf: "flex-end",
+                      marginRight: 10,
+
+                      color: "#daa520",
+                    },
+                  ]}
+                >
+                  Remaining Amount: Rs.{item.RemainingAmount}
+                </Text>
+                <Text
+                  style={[
+                    styles.touchableOpacityText,
+                    {
+                      alignSelf: "flex-end",
+                      marginRight: 10,
+                      color: "grey",
+                      marginBottom: 10,
+                    },
+                  ]}
+                >
+                  {item.CreatedOnNepaliDate}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -335,6 +289,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    backgroundColor: "#fff",
   },
   filterContainer: {
     flexDirection: "column",
@@ -377,8 +332,8 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   touchableOpacity: {
-    height: 110,
-    backgroundColor: "#F1F8FF",
+    height: 150,
+    backgroundColor: "#FAFAFB",
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 5,
@@ -404,6 +359,24 @@ const styles = StyleSheet.create({
   modalValue: {
     flex: 1,
     textAlign: "right",
+  },
+  overviewContainer: {
+    alignItems: "flex-start",
+    marginBottom: 10,
+  },
+  toggleButton: {
+    marginTop: 10,
+    marginRight: 10,
+    borderColor: "#ddd",
+    borderRadius: 5,
+  },
+  overviewText: {
+    fontSize: 25,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  overviewTextButton: {
+    color: "grey",
   },
 });
 

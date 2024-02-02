@@ -13,6 +13,7 @@ import { Table, Row } from "react-native-table-component";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Modal from "react-native-modal";
 import theme from "../../../theme";
+import Icon from "react-native-vector-icons/Feather";
 
 import { makeApiRequest, apiEndpoints } from "../../../services/constants/url";
 
@@ -21,8 +22,8 @@ UIManager.setLayoutAnimationEnabledExperimental &&
 
 const RefererWiseSales = () => {
   // State to manage filters
-  const [fromDate, setFromDate] = useState(null);
-  const [toDate, setToDate] = useState(null);
+  const [fromDate, setFromDate] = useState(new Date().toISOString());
+  const [toDate, setToDate] = useState(new Date().toISOString());
   const [requestorFilter, setRequestorFilter] = useState("");
   // State to store filtered data for the table
   const [filteredData, setFilteredData] = useState([]);
@@ -52,7 +53,7 @@ const RefererWiseSales = () => {
         {
           from: fromDate,
           to: toDate,
-          refId: requestorFilter.Id,
+          refId: requestorFilter.Id || 0,
         }
       );
       console.log(fromDate, "This is the date");
@@ -143,54 +144,81 @@ const RefererWiseSales = () => {
     setModalVisible(false);
     setSelectedData(null);
   };
+  const [areFiltersVisible, setFiltersVisibility] = useState(false);
+
+  const toggleFilters = () => {
+    setFiltersVisibility(!areFiltersVisible);
+  };
+
   return (
     <ScrollView>
       <View style={styles.container}>
-        {/* Filters */}
-        <ScrollView horizontal={true}>
-          <View style={styles.filterContainer}>
-            {/* First Row of Filters */}
-            <View style={styles.filterItem}>
-              <TouchableOpacity
-                onPress={() => toggleDatePicker("fromDate")}
-                style={styles.button}
-              >
-                <Text style={styles.buttonText}>
-                  From Date: {fromDate ? fromDate.split("T")[0] : "Select Date"}
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.filterItem}>
-              <TouchableOpacity
-                onPress={() => toggleDatePicker("toDate")}
-                style={styles.button}
-              >
-                <Text style={styles.buttonText}>
-                  To Date:{toDate ? toDate.split("T")[0] : "Select Date"}
-                </Text>
-              </TouchableOpacity>
-            </View>
+        {/* Toggle Overview and Filters */}
+        <View style={styles.overviewContainer}>
+          <Text style={styles.overviewText}>Overview</Text>
+          <TouchableOpacity onPress={toggleFilters} style={styles.toggleButton}>
+            <Text style={styles.overviewTextButton}>
+              Show: Today
+              <Icon
+                name={areFiltersVisible ? "chevron-down" : "chevron-up"}
+                size={15}
+                color="grey"
+              />
+            </Text>
+          </TouchableOpacity>
+          {/* Filters */}
+          {areFiltersVisible && (
+            <ScrollView horizontal={true}>
+              <View style={styles.filterContainer}>
+                {/* First Row of Filters */}
+                <View style={styles.filterItem}>
+                  <TouchableOpacity
+                    onPress={() => toggleDatePicker("fromDate")}
+                    style={styles.button}
+                  >
+                    <Text style={styles.buttonText}>
+                      From Date:{" "}
+                      {fromDate ? fromDate.split("T")[0] : "Select Date"}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.filterItem}>
+                  <TouchableOpacity
+                    onPress={() => toggleDatePicker("toDate")}
+                    style={styles.button}
+                  >
+                    <Text style={styles.buttonText}>
+                      To Date:{toDate ? toDate.split("T")[0] : "Select Date"}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
 
-            <View style={styles.filterItem}>
-              <TouchableOpacity
-                onPress={() => toggleRequestorPicker()}
-                style={[styles.button]}
-              >
-                <Text style={styles.buttonText}>
-                  {`Referer: ${requestorFilter.Name || "Select Doctor"}`}
-                </Text>
-              </TouchableOpacity>
-            </View>
-
-            <TouchableOpacity
-              onPress={applyFilters}
-              style={[styles.button, styles.applyButton]}
-            >
-              <Text style={styles.buttonText}>Apply Filters</Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-
+                <View style={styles.filterItem}>
+                  <TouchableOpacity
+                    onPress={() => toggleRequestorPicker()}
+                    style={[styles.button]}
+                  >
+                    <Text style={styles.buttonText}>
+                      {`Referer: ${requestorFilter.Name || "Select Doctor"}`}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </ScrollView>
+          )}
+          <TouchableOpacity
+            onPress={applyFilters}
+            style={[
+              styles.button,
+              styles.applyButton,
+              { alignSelf: "flex-end" },
+            ]}
+          >
+            <Text style={[styles.buttonText, { color: "#fff" }]}>
+              Apply Filters
+            </Text>
+          </TouchableOpacity>
+        </View>
         {/* Date Time Picker */}
         <DateTimePickerModal
           isVisible={isDatePickerVisible}
@@ -420,6 +448,24 @@ const styles = StyleSheet.create({
   modalValue: {
     flex: 1,
     textAlign: "right",
+  },
+  overviewContainer: {
+    alignItems: "flex-start",
+    marginBottom: 10,
+  },
+  toggleButton: {
+    marginTop: 10,
+    marginRight: 10,
+    borderColor: "#ddd",
+    borderRadius: 5,
+  },
+  overviewText: {
+    fontSize: 25,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  overviewTextButton: {
+    color: "grey",
   },
 });
 
