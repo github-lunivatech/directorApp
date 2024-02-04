@@ -101,6 +101,7 @@ const CashSales = (route) => {
   const toggleFilters = () => {
     setFiltersVisibility(!areFiltersVisible);
   };
+
   const currentDate = new Date();
   return (
     <ScrollView>
@@ -186,13 +187,16 @@ const CashSales = (route) => {
                         fontWeight: "bold",
                         color: "#000",
                         marginTop: 10,
-                        flex: 1,
+                        flex: 2,
                         marginRight: 0,
+                        alignSelf: "flex-start",
+                        marginLeft: 10,
                       },
                     ]}
                   >
-                    {item.FirstName} {item.LastName} #{item.BillId}
+                    {item.FirstName} {item.LastName}
                   </Text>
+
                   <TouchableOpacity
                     style={{
                       flex: 1,
@@ -216,13 +220,28 @@ const CashSales = (route) => {
                   style={[
                     styles.touchableOpacityText,
                     {
+                      fontWeight: "bold",
+                      color: "#000",
+                      marginTop: -10,
+                      marginRight: 0,
+                      alignSelf: "flex-start",
+                      marginLeft: 10,
+                    },
+                  ]}
+                >
+                  #{item.BillId}
+                </Text>
+                <Text
+                  style={[
+                    styles.touchableOpacityText,
+                    {
                       alignSelf: "flex-start",
                       marginLeft: 10,
                       color: "grey",
                     },
                   ]}
                 >
-                  {item.Requestor}
+                  Req: {item.Requestor}
                 </Text>
                 <Text
                   style={[
@@ -332,14 +351,13 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   touchableOpacity: {
-    height: 150,
+    height: 140,
     backgroundColor: "#FAFAFB",
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 5,
   },
   touchableOpacityText: {
-    textAlign: "center",
     color: "black",
   },
 

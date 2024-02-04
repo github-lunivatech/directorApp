@@ -363,18 +363,59 @@ const TestCountReport = (route) => {
                 onPress={() => handleTouchableOpacityPress(item)}
                 style={styles.touchableOpacity}
               >
+                <View style={{ flexDirection: "row" }}>
+                  <Text
+                    style={[
+                      styles.touchableOpacityText,
+                      {
+                        fontWeight: "bold",
+                        fontSize: 13,
+                        color: "#000",
+                        marginTop: 10,
+                        flex: 1,
+                        alignSelf: "flex-start",
+                        marginLeft: 10,
+                      },
+                    ]}
+                  >
+                    Test: {item.Party}
+                  </Text>
+                </View>
                 <Text
                   style={[
                     styles.touchableOpacityText,
                     {
                       alignSelf: "flex-start",
-                      fontWeight: "bold",
-                      color: "grey",
                       marginLeft: 10,
+                      color: "grey",
                     },
                   ]}
                 >
-                  {item.Requestor}
+                  {item.TestName}
+                </Text>
+                <Text
+                  style={[
+                    styles.touchableOpacityText,
+                    {
+                      alignSelf: "flex-start",
+                      marginLeft: 10,
+                      color: "grey",
+                    },
+                  ]}
+                >
+                  Test Count: {item.TestCount}
+                </Text>
+
+                <Text
+                  style={[
+                    styles.touchableOpacityText,
+                    {
+                      alignSelf: "flex-end",
+                      marginRight: 10,
+                    },
+                  ]}
+                >
+                  Price: Rs.{item.Price}
                 </Text>
                 <Text
                   style={[
@@ -382,11 +423,10 @@ const TestCountReport = (route) => {
                     {
                       alignSelf: "flex-end",
                       marginRight: 10,
-                      color: "#990000",
                     },
                   ]}
                 >
-                  Total Price: {item.TotalPrice}
+                  Discount: Rs.{item.Discount}
                 </Text>
                 <Text
                   style={[
@@ -394,23 +434,10 @@ const TestCountReport = (route) => {
                     {
                       alignSelf: "flex-end",
                       marginRight: 10,
-                      color: "#daa520",
                     },
                   ]}
                 >
-                  Discount Total: {item.DiscountTotal}
-                </Text>
-                <Text
-                  style={[
-                    styles.touchableOpacityText,
-                    {
-                      alignSelf: "flex-end",
-                      marginRight: 10,
-                      color: "#006633",
-                    },
-                  ]}
-                >
-                  Actual Total: {item.ActualTotal}
+                  Total Sales: Rs.{item.TotalSales}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -482,17 +509,15 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   touchableOpacity: {
-    height: 110,
+    height: 140,
     backgroundColor: "#F1F8FF",
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 5,
   },
   touchableOpacityText: {
-    textAlign: "center",
     color: "black",
   },
-
   modalContainer: {
     backgroundColor: "white",
     padding: 20,

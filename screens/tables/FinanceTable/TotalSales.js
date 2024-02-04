@@ -143,6 +143,44 @@ const TotalSales = (route) => {
     setFiltersVisibility(!areFiltersVisible);
   };
 
+  const getBackgroundColor = (paymentType) => {
+    switch (paymentType) {
+      case "Cash":
+        return "#F5F9F9";
+      case "Credit":
+        return "#EFE6F5";
+      case "CreditCollection":
+        return "#FFFAE6";
+      case "DueCollection":
+        return "#FFE6E6";
+      case "Due":
+        return "#F0F8FF";
+      case "Card":
+        return "#F0FFF0";
+      default:
+        return "#FFFFFF";
+    }
+  };
+
+  const getTextColor = (paymentType) => {
+    switch (paymentType) {
+      case "Cash":
+        return "#3DD598";
+      case "Credit":
+        return "#8A2BE2";
+      case "CreditCollection":
+        return "#FFD700";
+      case "DueCollection":
+        return "#FF6347";
+      case "Due":
+        return "#1E90FF";
+      case "Card":
+        return "#008000";
+      default:
+        return "#000000";
+    }
+  };
+
   return (
     <ScrollView>
       <View style={styles.container}>
@@ -241,63 +279,106 @@ const TotalSales = (route) => {
         {/* Replace Table with TouchableOpacity Components */}
         {isDataVisible && (
           <ScrollView>
-            <Text style={{ fontWeight: "bold", marginBottom: 20 }}>
-              STATEMENT
-            </Text>
             {filteredData.map((item, index) => (
               <TouchableOpacity
                 key={index}
                 onPress={() => handleTouchableOpacityPress(item)}
                 style={styles.touchableOpacity}
               >
+                <View style={{ flexDirection: "row" }}>
+                  <Text
+                    style={[
+                      styles.touchableOpacityText,
+                      {
+                        fontWeight: "bold",
+                        fontSize: 13,
+                        color: "#000",
+                        marginTop: 10,
+                        flex: 1,
+                        marginRight: 0,
+                        alignSelf: "flex-start",
+                        marginLeft: 10,
+                      },
+                    ]}
+                  >
+                    {item.UserName}
+                  </Text>
+
+                  <TouchableOpacity
+                    style={{
+                      flex: 1,
+                      padding: 10,
+                      marginRight: 20,
+                      marginLeft: 15,
+                      width: 140,
+                      height: 40,
+                      backgroundColor: getBackgroundColor(item.PaymentType),
+                      borderRadius: 15,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 17,
+                        alignSelf: "center",
+                        backgroundColor: getBackgroundColor(item.PaymentType),
+                        color: getTextColor(item.PaymentType),
+                      }}
+                    >
+                      {item.PaymentType}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+
                 <Text
                   style={[
                     styles.touchableOpacityText,
                     {
-                      alignSelf: "flex-start",
-                      fontWeight: "bold",
+                      alignSelf: "flex-end",
+                      marginRight: 10,
+
+                      top: 20,
+                    },
+                  ]}
+                >
+                  Total Sales: Rs.{item.TotalSales}
+                </Text>
+                <Text
+                  style={[
+                    styles.touchableOpacityText,
+                    {
+                      alignSelf: "flex-end",
+                      marginRight: 10,
+
+                      top: 20,
+                    },
+                  ]}
+                >
+                  Collection: Rs.{item.Collection}
+                </Text>
+                <Text
+                  style={[
+                    styles.touchableOpacityText,
+                    {
+                      alignSelf: "flex-end",
+                      marginRight: 10,
+                      top: 20,
+                    },
+                  ]}
+                >
+                  Remaining Amount: Rs.{item.Remaining}
+                </Text>
+                <Text
+                  style={[
+                    styles.touchableOpacityText,
+                    {
+                      alignSelf: "flex-end",
+                      marginRight: 10,
                       color: "grey",
-                      marginLeft: 10,
+                      marginBottom: 10,
                     },
                   ]}
                 >
-                  {item.Requestor}
-                </Text>
-                <Text
-                  style={[
-                    styles.touchableOpacityText,
-                    {
-                      alignSelf: "flex-end",
-                      marginRight: 10,
-                      color: "#990000",
-                    },
-                  ]}
-                >
-                  Total Price: {item.TotalPrice}
-                </Text>
-                <Text
-                  style={[
-                    styles.touchableOpacityText,
-                    {
-                      alignSelf: "flex-end",
-                      marginRight: 10,
-                      color: "#daa520",
-                    },
-                  ]}
-                >
-                  Discount Total: {item.DiscountTotal}
-                </Text>
-                <Text
-                  style={[
-                    styles.touchableOpacityText,
-                    {
-                      alignSelf: "flex-end",
-                      marginRight: 10,
-                      color: "#006633",
-                    },
-                  ]}
-                >
-                  Actual Total: {item.ActualTotal}
+                  {item.CreatedOnNepaliDate}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -373,14 +454,13 @@ const styles = StyleSheet.create({
   },
 
   touchableOpacity: {
-    height: 110,
-    backgroundColor: "#F1F8FF",
+    height: 140,
+    backgroundColor: "#FAFAFB",
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 5,
   },
   touchableOpacityText: {
-    textAlign: "center",
     color: "black",
   },
 

@@ -296,18 +296,49 @@ const TestWiseSales = (route) => {
                 onPress={() => handleTouchableOpacityPress(item)}
                 style={styles.touchableOpacity}
               >
+                <View style={{ flexDirection: "row" }}>
+                  <Text
+                    style={[
+                      styles.touchableOpacityText,
+                      {
+                        fontWeight: "bold",
+                        fontSize: 13,
+                        color: "#000",
+                        marginTop: 10,
+                        flex: 1,
+                        marginRight: 0,
+                        alignSelf: "flex-start",
+                        marginLeft: 10,
+                      },
+                    ]}
+                  >
+                    {item.TestName}
+                  </Text>
+                </View>
                 <Text
                   style={[
                     styles.touchableOpacityText,
                     {
                       alignSelf: "flex-start",
-                      fontWeight: "bold",
-                      color: "grey",
                       marginLeft: 10,
+                      color: "grey",
                     },
                   ]}
                 >
-                  {item.Requestor}
+                  Test Count: {item.TestCount}
+                </Text>
+
+                <Text
+                  style={[
+                    styles.touchableOpacityText,
+                    {
+                      alignSelf: "flex-end",
+                      marginRight: 10,
+                      top: 20,
+                    },
+                  ]}
+                >
+                  Price: Rs.{item.Price}
                 </Text>
                 <Text
                   style={[
@@ -315,11 +346,11 @@ const TestWiseSales = (route) => {
                     {
                       alignSelf: "flex-end",
                       marginRight: 10,
-                      color: "#990000",
+                      top: 20,
                     },
                   ]}
                 >
-                  Total Price: {item.TotalPrice}
+                  Discount: Rs.{item.Discount}
                 </Text>
                 <Text
                   style={[
@@ -327,23 +358,11 @@ const TestWiseSales = (route) => {
                     {
                       alignSelf: "flex-end",
                       marginRight: 10,
-                      color: "#daa520",
+                      top: 20,
                     },
                   ]}
                 >
-                  Discount Total: {item.DiscountTotal}
-                </Text>
-                <Text
-                  style={[
-                    styles.touchableOpacityText,
-                    {
-                      alignSelf: "flex-end",
-                      marginRight: 10,
-                      color: "#006633",
-                    },
-                  ]}
-                >
-                  Actual Total: {item.ActualTotal}
+                  Total Sales: Rs.{item.TotalSales}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -419,14 +438,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#F1F8FF",
   },
   touchableOpacity: {
-    height: 110,
+    height: 145,
     backgroundColor: "#F1F8FF",
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 5,
   },
   touchableOpacityText: {
-    textAlign: "center",
     color: "black",
   },
 

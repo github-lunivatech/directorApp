@@ -20,7 +20,7 @@ import { makeApiRequest, apiEndpoints } from "../../../services/constants/url";
 UIManager.setLayoutAnimationEnabledExperimental &&
   UIManager.setLayoutAnimationEnabledExperimental(true);
 
-const PartyWiseSales = (route) => {
+const PartyWiseSummary = (route) => {
   // State to manage filters
   const [fromDate, setFromDate] = useState(new Date().toISOString());
   const [toDate, setToDate] = useState(new Date().toISOString());
@@ -237,17 +237,16 @@ const PartyWiseSales = (route) => {
               </View>
             </ScrollView>
           )}
+
           <TouchableOpacity
-            onPress={applyFilters}
+            onPress={applySummary}
             style={[
               styles.button,
               styles.applyButton,
               { alignSelf: "flex-end" },
             ]}
           >
-            <Text style={[styles.buttonText, { color: "#fff" }]}>
-              Apply Filters
-            </Text>
+            <Text style={[styles.buttonText, { color: "#fff" }]}> Summary</Text>
           </TouchableOpacity>
         </View>
         {/* Date Time Picker */}
@@ -309,32 +308,22 @@ const PartyWiseSales = (route) => {
                       },
                     ]}
                   >
-                    {item["Patient Name"]}
+                    {item.Requestor}
                   </Text>
                 </View>
+
                 <Text
                   style={[
                     styles.touchableOpacityText,
                     {
-                      alignSelf: "flex-start",
-                      marginLeft: 10,
-                      color: "grey",
+                      alignSelf: "flex-end",
+                      marginRight: 10,
+
+                      top: 20,
                     },
                   ]}
                 >
-                  #{item.BillNo}
-                </Text>
-                <Text
-                  style={[
-                    styles.touchableOpacityText,
-                    {
-                      alignSelf: "flex-start",
-                      marginLeft: 10,
-                      color: "grey",
-                    },
-                  ]}
-                >
-                  Test: {item.Test}
+                  Total Price: Rs.{item.TotalPrice}
                 </Text>
                 <Text
                   style={[
@@ -347,20 +336,7 @@ const PartyWiseSales = (route) => {
                     },
                   ]}
                 >
-                  Basic Price: Rs.{item.BasicPrice}
-                </Text>
-                <Text
-                  style={[
-                    styles.touchableOpacityText,
-                    {
-                      alignSelf: "flex-end",
-                      marginRight: 10,
-
-                      top: 20,
-                    },
-                  ]}
-                >
-                  Discount: Rs.{item.Discount}
+                  Discount Total: Rs.{item.DiscountTotal}
                 </Text>
                 <Text
                   style={[
@@ -372,7 +348,7 @@ const PartyWiseSales = (route) => {
                     },
                   ]}
                 >
-                  Net Amount: Rs.{item.NetAmt}
+                  Actual Total: Rs.{item.ActualTotal}
                 </Text>
                 <Text
                   style={[
@@ -506,4 +482,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PartyWiseSales;
+export default PartyWiseSummary;

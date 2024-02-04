@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -9,8 +9,10 @@ import {
 import theme from "../theme";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { LineChart } from "react-native-chart-kit";
+import { makeApiRequest, apiEndpoints } from "../services/constants/url";
 
 const FinancialScreen = ({ navigation }) => {
+  const [isLineChartLoaded, setLineChartVisibility] = useState(false);
   const handlePress = (routeName) => {
     if (routeName) {
       navigation.navigate(routeName);
@@ -38,6 +40,13 @@ const FinancialScreen = ({ navigation }) => {
       icon: "watch", // Change to the desired icon name
     },
     {
+      key: "PartyWiseSummary",
+      heading: "PartyWise Summary By Date range",
+      description:
+        "Check sales data categorized by parties within a date range.",
+      icon: "watch", // Change to the desired icon name
+    },
+    {
       key: "RefererWiseSales",
       heading: "Referer Wise Sales By Date Range",
       description:
@@ -60,21 +69,103 @@ const FinancialScreen = ({ navigation }) => {
 
   // Sample data for the line chart
 
-  const chartData = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+  const data = {
+    labels: ["January", "February", "March", "April", "May", "June"],
     datasets: [
       {
         data: [20, 45, 28, 80, 99, 43],
-        color: (opacity = 1) => `rgba(255, 255,0, ${0.8})`,
-        strokeWidth: 4, // Width of the line
-      },
-      {
-        data: [10, 90, 65, 40, 75, 90],
-        color: (opacity = 1) => `rgba(0, 255, 0, ${0.8})`,
-        strokeWidth: 4,
+        color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`, // optional
+        strokeWidth: 2, // optional
       },
     ],
+    legend: ["Rainy Days"], // optional
+  };
+
+  const [chartData, setChartData] = useState({
+    labels: [],
+    color: [],
+    datasets: [],
+
     legend: ["Credit Sales", "Cash Sales"],
+  });
+
+  useEffect(() => {
+    // Fetch and process the data for the line chart
+    fetchDataForLineChart();
+  }, []); // Fetch data when the component mounts
+
+  const fetchDataForLineChart = async () => {
+    try {
+      // Calculate date range from today to 7 days before
+      const toDate = new Date().toISOString().split("T")[0];
+      const fromDate = new Date();
+      fromDate.setDate(fromDate.getDate() - 7);
+      const fromDateStr = fromDate.toISOString().split("T")[0];
+
+      // Make API call with the calculated date range
+      const apiEndpoint =
+        apiEndpoints.GetDataMetricReportByReportTypeAndDateRange;
+      const params = {
+        from: fromDateStr,
+        to: toDate,
+        reportType: "SalesofWeekByBillType",
+      };
+
+      const response = await makeApiRequest(apiEndpoint, params);
+      console.log(response);
+      // Inside your fetchDataForLineChart after fetching data
+
+      const processedData = processDataForLineChart(response.ReportDetails);
+      console.log(processedData, "THis is process data");
+      setChartData(processedData || 0);
+      console.log(chartData, "This is chartdata");
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const processDataForLineChart = (data) => {
+    const chartData = {
+      labels: [],
+      datasets: [],
+      legend: ["Credit Sales", "Cash Sales"],
+    };
+
+    const creditSales = {
+      data: [],
+      color: (opacity = 1) => `rgba(0, 255, 0, ${1})`,
+      strokeWidth: 4,
+    };
+
+    const cashSales = {
+      data: [],
+      color: (opacity = 1) => `rgba(255, 255, 0, ${1})`,
+      strokeWidth: 4,
+    };
+
+    data.forEach((entry) => {
+      const formattedDate = new Date(entry.Date).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
+
+      chartData.labels.push(formattedDate);
+
+      if (entry.BIllPaymentType === "Credit") {
+        creditSales.data.push(entry.Total);
+        cashSales.data.push(null); // Placeholder for Cash Sales if Credit data not present
+      } else if (entry.BIllPaymentType === "Cash") {
+        cashSales.data.push(entry.Total);
+        creditSales.data.push(null); // Placeholder for Credit Sales if Cash data not present
+      }
+    });
+    chartData.datasets.push(creditSales, cashSales);
+    console.log(chartData, "This is chartdata part 2");
+
+    setTimeout(() => {
+      setLineChartVisibility(true);
+    });
+    return chartData;
   };
 
   return (
@@ -82,25 +173,26 @@ const FinancialScreen = ({ navigation }) => {
       <Text style={styles.headingText}>Sales Figures</Text>
 
       {/* Line Chart */}
-      <LineChart
-        data={chartData}
-        width={350}
-        height={200}
-        withShadow={false}
-        withDots={false}
-        yAxisLabel=""
-        yAxisSuffix="k"
-        chartConfig={{
-          backgroundGradientFrom: "#FFF",
-          backgroundGradientTo: "#fff",
-          decimalPlaces: 0,
-          color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-          labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-        }}
-        style={{ alignSelf: "center", marginTop: 10, marginRight: 20 }}
-        bezier
-      />
-
+      {isLineChartLoaded && (
+        <LineChart
+          data={chartData}
+          width={360}
+          height={210}
+          withShadow={false}
+          withDots={false}
+          yAxisLabel=""
+          yAxisSuffix="k"
+          chartConfig={{
+            backgroundGradientFrom: "#FFF",
+            backgroundGradientTo: "#fff",
+            decimalPlaces: 0,
+            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+            labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+          }}
+          style={{ alignSelf: "center", marginTop: 10, marginRight: 20 }}
+          bezier
+        />
+      )}
       {touchableData.map(({ key, heading, description, icon }, index) => (
         <TouchableOpacity
           key={key}

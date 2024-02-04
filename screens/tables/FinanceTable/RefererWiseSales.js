@@ -261,70 +261,23 @@ const RefererWiseSales = () => {
                 onPress={() => handleTouchableOpacityPress(item)}
                 style={styles.touchableOpacity}
               >
-                <View
-                  style={{
-                    flexDirection: "row",
-                  }}
-                >
+                <View style={{ flexDirection: "row" }}>
                   <Text
                     style={[
                       styles.touchableOpacityText,
                       {
-                        flex: 1,
-                        alignSelf: "flex-start",
-                        marginRight: 40,
                         fontWeight: "bold",
-                        color: "grey",
+                        fontSize: 13,
+                        color: "#000",
+                        marginTop: 10,
+                        flex: 1,
+                        marginRight: 0,
+                        alignSelf: "flex-start",
+                        marginLeft: 10,
                       },
                     ]}
                   >
                     {item["Patient Name"]}
-                  </Text>
-                  <Text
-                    style={[
-                      styles.touchableOpacityText,
-                      {
-                        flex: 1,
-                        alignSelf: "flex-start",
-                        justifyContent: "space-between",
-                        fontWeight: "bold",
-                        color: "grey",
-                      },
-                    ]}
-                  >
-                    Test
-                  </Text>
-                </View>
-                <View
-                  style={{
-                    flexDirection: "row",
-                  }}
-                >
-                  <Text
-                    style={[
-                      styles.touchableOpacityText,
-                      {
-                        alignSelf: "flex-start",
-                        flex: 1,
-                        color: "grey",
-                        marginLeft: 10,
-                      },
-                    ]}
-                  >
-                    Requestor Name :
-                  </Text>
-                  <Text
-                    style={[
-                      styles.touchableOpacityText,
-                      {
-                        alignSelf: "flex-start",
-                        flex: 1,
-                        color: "grey",
-                        marginLeft: 10,
-                      },
-                    ]}
-                  >
-                    {item["Test"]}
                   </Text>
                 </View>
                 <Text
@@ -332,26 +285,62 @@ const RefererWiseSales = () => {
                     styles.touchableOpacityText,
                     {
                       alignSelf: "flex-start",
-
-                      color: "grey",
                       marginLeft: 10,
+                      color: "grey",
                     },
                   ]}
                 >
-                  Ref By: {item["Refer Name"]}
+                  #{item.BillNo}
+                </Text>
+                <Text
+                  style={[
+                    styles.touchableOpacityText,
+                    {
+                      alignSelf: "flex-start",
+                      marginLeft: 10,
+                      color: "grey",
+                    },
+                  ]}
+                >
+                  Test: {item.Test}
+                </Text>
+                <Text
+                  style={[
+                    styles.touchableOpacityText,
+                    {
+                      alignSelf: "flex-start",
+                      marginLeft: 10,
+                      color: "grey",
+                    },
+                  ]}
+                >
+                  Ref: {item["Refer Name"]}
+                </Text>
+
+                <Text
+                  style={[
+                    styles.touchableOpacityText,
+                    {
+                      alignSelf: "flex-end",
+                      marginRight: 10,
+                      top: 20,
+                    },
+                  ]}
+                >
+                  Price: Rs.{item.Price}
                 </Text>
                 <Text
                   style={[
                     styles.touchableOpacityText,
                     {
                       alignSelf: "flex-end",
-                      marginRight: 20,
-                      color: "green",
-                      fontWeight: "700",
+                      marginRight: 10,
+                      color: "grey",
+                      marginBottom: 10,
                     },
                   ]}
                 >
-                  Price: {item.Price}
+                  {item.CreatedOnNepaliDate}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -380,6 +369,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    backgroundColor: "#fff",
   },
   filterContainer: {
     flexDirection: "column",
@@ -422,14 +412,13 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   touchableOpacity: {
-    height: 110,
-    backgroundColor: "#F1F8FF",
+    height: 150,
+    backgroundColor: "#FAFAFB",
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 5,
   },
   touchableOpacityText: {
-    textAlign: "center",
     color: "black",
   },
   modalContainer: {

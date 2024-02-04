@@ -41,6 +41,7 @@ import homebutton from "./assets/home.png";
 import chat from "./assets/Chat.png";
 import calendar from "./assets/calendar.png";
 import profile from "./assets/Profile.png";
+import PartyWiseSummary from "./screens/tables/FinanceTable/PartyWiseSummary";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -56,6 +57,10 @@ const FinanceStackNavigator = () => {
       <FinanceStack.Screen name="Finance" component={FinancialScreen} />
       <FinanceStack.Screen name="TotalSales" component={TotalSales} />
       <FinanceStack.Screen name="PartyWiseSales" component={PartyWiseSales} />
+      <FinanceStack.Screen
+        name="PartyWiseSummary"
+        component={PartyWiseSummary}
+      />
       <FinanceStack.Screen
         name="RefererWiseSales"
         component={RefererWiseSales}
