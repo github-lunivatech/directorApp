@@ -7,6 +7,7 @@ import {
   ScrollView,
   LayoutAnimation,
   UIManager,
+  BackHandler,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { Table, Row } from "react-native-table-component";
@@ -14,6 +15,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Modal from "react-native-modal";
 import theme from "../../../theme";
 import Icon from "react-native-vector-icons/Feather";
+import { ActivityIndicator } from "react-native-paper";
 
 import { makeApiRequest, apiEndpoints } from "../../../services/constants/url";
 
@@ -21,6 +23,8 @@ UIManager.setLayoutAnimationEnabledExperimental &&
   UIManager.setLayoutAnimationEnabledExperimental(true);
 
 const CashSales = (route) => {
+  const [isLoading, setLoading] = useState(false);
+
   // State to manage filters
   const [fromDate, setFromDate] = useState(new Date().toISOString());
   const [toDate, setToDate] = useState(new Date().toISOString());
@@ -39,6 +43,7 @@ const CashSales = (route) => {
 
   const applyFilters = async () => {
     try {
+      setLoading(true); // Set loading to true when starting data fetch
       const response = await makeApiRequest(
         apiEndpoints.GetDailyTransactionByUserIdAndDate,
         {
@@ -63,6 +68,8 @@ const CashSales = (route) => {
       setDataVisibility(true);
     } catch (error) {
       console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -102,6 +109,34 @@ const CashSales = (route) => {
     setFiltersVisibility(!areFiltersVisible);
   };
 
+  const formatDate = (timestamp) => {
+    const dateObject = new Date(timestamp);
+    return dateObject
+      .toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true,
+      })
+      .replace("at", ",");
+  };
+  const handleBackButton = () => {
+    if (isModalVisible) {
+      closeModal(); // Close the modal when the back button is pressed
+      return true; // Prevent default behavior
+    }
+    return false;
+  };
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      handleBackButton
+    );
+    return () => backHandler.remove();
+  }, [isModalVisible]);
   const currentDate = new Date();
   return (
     <ScrollView>
@@ -156,10 +191,15 @@ const CashSales = (route) => {
               styles.applyButton,
               { alignSelf: "flex-end" },
             ]}
+            disabled={isLoading}
           >
-            <Text style={[styles.buttonText, { color: "#fff" }]}>
-              Apply Filters
-            </Text>
+            {isLoading ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Text style={[styles.buttonText, { color: "#fff" }]}>
+                Apply Filters
+              </Text>
+            )}
           </TouchableOpacity>
         </View>
         {/* Date Time Picker */}
@@ -179,7 +219,7 @@ const CashSales = (route) => {
                 onPress={() => handleTouchableOpacityPress(item)}
                 style={styles.touchableOpacity}
               >
-                <View style={{ flexDirection: "row" }}>
+                <View style={{ flexDirection: "row", marginBottom: -10 }}>
                   <Text
                     style={[
                       styles.touchableOpacityText,
@@ -194,7 +234,15 @@ const CashSales = (route) => {
                       },
                     ]}
                   >
-                    {item.FirstName} {item.LastName}
+                    {item.FirstName} {item.LastName}{" "}
+                    <Text
+                      style={{
+                        fontWeight: "normal",
+                        color: "grey",
+                      }}
+                    >
+                      #{item.SampleId}
+                    </Text>
                   </Text>
 
                   <TouchableOpacity
@@ -220,24 +268,10 @@ const CashSales = (route) => {
                   style={[
                     styles.touchableOpacityText,
                     {
-                      fontWeight: "bold",
-                      color: "#000",
-                      marginTop: -10,
-                      marginRight: 0,
-                      alignSelf: "flex-start",
-                      marginLeft: 10,
-                    },
-                  ]}
-                >
-                  #{item.BillId}
-                </Text>
-                <Text
-                  style={[
-                    styles.touchableOpacityText,
-                    {
                       alignSelf: "flex-start",
                       marginLeft: 10,
                       color: "grey",
+                      fontSize: 12,
                     },
                   ]}
                 >
@@ -249,25 +283,26 @@ const CashSales = (route) => {
                     {
                       alignSelf: "flex-end",
                       marginRight: 10,
+                      fontWeight: "bold",
                       color: "#006633",
                     },
                   ]}
                 >
-                  Total Price: Rs.{item.TotalPrice}
+                  Price: Rs.{item.TotalPrice}
                 </Text>
-                <Text
+
+                {/* <Text
                   style={[
                     styles.touchableOpacityText,
                     {
                       alignSelf: "flex-end",
                       marginRight: 10,
-
-                      color: "#daa520",
+                      color: "grey",
                     },
                   ]}
                 >
-                  Remaining Amount: Rs.{item.RemainingAmount}
-                </Text>
+                  {item.CreatedOnNepaliDate}
+                </Text> */}
                 <Text
                   style={[
                     styles.touchableOpacityText,
@@ -275,11 +310,10 @@ const CashSales = (route) => {
                       alignSelf: "flex-end",
                       marginRight: 10,
                       color: "grey",
-                      marginBottom: 10,
                     },
                   ]}
                 >
-                  {item.CreatedOnNepaliDate}
+                  {formatDate(item.CreatedOn)} {item.CreatedOnNepaliDate}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -351,7 +385,7 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   touchableOpacity: {
-    height: 140,
+    height: 100,
     backgroundColor: "#FAFAFB",
     justifyContent: "center",
     alignItems: "center",

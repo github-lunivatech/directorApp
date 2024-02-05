@@ -22,7 +22,7 @@ import { makeApiRequest, apiEndpoints } from "../../../services/constants/url";
 UIManager.setLayoutAnimationEnabledExperimental &&
   UIManager.setLayoutAnimationEnabledExperimental(true);
 
-const ConsumptionReport = (route) => {
+const CurrentRemaining = (route) => {
   const [isLoading, setLoading] = useState(false);
 
   // State to manage filters
@@ -45,16 +45,12 @@ const ConsumptionReport = (route) => {
     try {
       setLoading(true); // Set loading to true when starting data fetch
       const response = await makeApiRequest(
-        apiEndpoints.GetActualConsumptionReportByDateRange,
-        {
-          from: fromDate,
-          to: toDate,
-        }
+        apiEndpoints.GetListOfItemsNearToMinQuantity
       );
       console.log("API Response:", response);
 
       // Extract the array of data from the response
-      const data = response["GetActualConsumptionReportByDateRange"] || [];
+      const data = response["GetListOfItemsNearToMinQuantity"] || [];
 
       // Use the keys of the first item as columns
       const keys = Object.keys(data[0] || {});
@@ -143,45 +139,9 @@ const ConsumptionReport = (route) => {
         <View style={styles.overviewContainer}>
           <Text style={styles.overviewText}>Overview</Text>
           <TouchableOpacity onPress={toggleFilters} style={styles.toggleButton}>
-            <Text style={styles.overviewTextButton}>
-              Show: Today
-              <Icon
-                name={areFiltersVisible ? "chevron-down" : "chevron-up"}
-                size={15}
-                color="grey"
-              />
-            </Text>
+            <Text style={styles.overviewTextButton}>Show: Today</Text>
           </TouchableOpacity>
 
-          {/* Filters */}
-          {areFiltersVisible && (
-            <ScrollView horizontal={true}>
-              <View style={styles.filterContainer}>
-                {/* First Row of Filters */}
-                <View style={styles.filterItem}>
-                  <TouchableOpacity
-                    onPress={() => toggleDatePicker("fromDate")}
-                    style={styles.button}
-                  >
-                    <Text style={styles.buttonText}>
-                      From Date:{" "}
-                      {fromDate ? fromDate.split("T")[0] : "Select Date"}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-                <View style={styles.filterItem}>
-                  <TouchableOpacity
-                    onPress={() => toggleDatePicker("toDate")}
-                    style={styles.button}
-                  >
-                    <Text style={styles.buttonText}>
-                      To Date:{toDate ? toDate.split("T")[0] : "Select Date"}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </ScrollView>
-          )}
           <TouchableOpacity
             onPress={applyFilters}
             style={[
@@ -232,7 +192,7 @@ const ConsumptionReport = (route) => {
                       },
                     ]}
                   >
-                    {item.Test}
+                    {item.ItemName}
                   </Text>
                 </View>
                 <Text
@@ -247,7 +207,18 @@ const ConsumptionReport = (route) => {
                     },
                   ]}
                 >
-                  Item Per Unit Test: {item.ItemPerUnitTest}
+                  Item Id: {item.ItemId}
+                </Text>
+                <Text
+                  style={[
+                    styles.touchableOpacityText,
+                    {
+                      alignSelf: "flex-end",
+                      marginRight: 10,
+                    },
+                  ]}
+                >
+                  Minimum Qunatity: {item.MinQty}
                 </Text>
                 <Text
                   style={[
@@ -259,7 +230,7 @@ const ConsumptionReport = (route) => {
                     },
                   ]}
                 >
-                  Test Count: {item.TestCount}
+                  Remaining: {item.RemainingCount}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -378,4 +349,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ConsumptionReport;
+export default CurrentRemaining;

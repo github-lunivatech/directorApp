@@ -19,6 +19,7 @@ import staff from "../assets/staff.png";
 const HomeScreen = ({ navigation }) => {
   const [companyDetails, setCompanyDetails] = useState(null);
   const [reportData, setReportData] = useState(null);
+
   const navigateToOtherScreen = (props) => {
     if (props === "a") {
       navigation.navigate("Financial");
@@ -47,7 +48,6 @@ const HomeScreen = ({ navigation }) => {
         console.error("Error fetching company details:", error);
       }
     };
-
     fetchCompanyDetails();
   }, []);
 
@@ -78,11 +78,9 @@ const HomeScreen = ({ navigation }) => {
         console.error("Error fetching data:", error);
       }
     };
-
     fetchData();
   }, []);
 
-  // Helper function to format dates as 'YYYY/MM/DD'
   const formatDate = (date) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -96,6 +94,10 @@ const HomeScreen = ({ navigation }) => {
     }
     return sales.toString();
   };
+
+  const [totalRevenue, setTotalRevenue] = useState(0);
+  const [creditSales, setCreditSales] = useState(0);
+  const [totalPatient, setTotalPatient] = useState(0);
 
   return (
     <View style={styles.container}>
@@ -162,7 +164,7 @@ const HomeScreen = ({ navigation }) => {
               fontSize: 20,
             }}
           >
-            {/* {formatSales(reportData[0].Sales)} */}
+            {totalRevenue}
           </Text>
           <Image source={sales} style={styles.salesImage} />
         </TouchableOpacity>
@@ -188,7 +190,7 @@ const HomeScreen = ({ navigation }) => {
               fontSize: 20,
             }}
           >
-            {/* {reportData[0].Patient} */}
+            {creditSales}
           </Text>
           <Image source={patient} style={styles.salesImage} />
         </TouchableOpacity>
@@ -214,7 +216,7 @@ const HomeScreen = ({ navigation }) => {
               fontSize: 20,
             }}
           >
-            {/* {reportData[0].Test} */}
+            {totalPatient}
           </Text>
           <Image source={staff} style={styles.salesImage} />
         </TouchableOpacity>

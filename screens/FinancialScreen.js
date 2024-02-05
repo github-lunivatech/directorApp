@@ -24,50 +24,48 @@ const FinancialScreen = ({ navigation }) => {
       key: "CashSales",
       heading: "Cash, Due, Credit Sales Report",
       description: "Get insights into cash, due, and credit sales data.",
-      icon: "credit-card", // Change to the desired icon name
+      icon: "credit-card",
     },
     {
       key: "TotalSales",
       heading: "Total Sales Report Datewise",
       description: "View the total sales report based on date range.",
-      icon: "info", // Change to the desired icon name
+      icon: "info",
     },
     {
       key: "PartyWiseSales",
       heading: "PartyWise Sales By Date range",
       description:
         "Check sales data categorized by parties within a date range.",
-      icon: "watch", // Change to the desired icon name
+      icon: "watch",
     },
     {
       key: "PartyWiseSummary",
       heading: "PartyWise Summary By Date range",
       description:
         "Check sales data categorized by parties within a date range.",
-      icon: "watch", // Change to the desired icon name
+      icon: "watch",
     },
     {
       key: "RefererWiseSales",
       heading: "Referer Wise Sales By Date Range",
       description:
         "Analyze sales data based on referers within a specific date range.",
-      icon: "business", // Change to the desired icon name
+      icon: "business",
     },
     {
       key: "TestWiseSales",
       heading: "Test Wise Sales Report",
       description: "View sales data categorized by different tests.",
-      icon: "info", // Change to the desired icon name
+      icon: "info",
     },
     {
       key: "TestCountReport",
       heading: "Test Count Report",
       description: "Explore the count of different tests conducted.",
-      icon: "info", // Change to the desired icon name
+      icon: "info",
     },
   ];
-
-  // Sample data for the line chart
 
   const data = {
     labels: ["January", "February", "March", "April", "May", "June"],

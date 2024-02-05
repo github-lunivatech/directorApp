@@ -26,6 +26,7 @@
     "react-native-data-table": "^0.2.2",
     "react-native-datepicker": "^1.7.2",
     "react-native-gesture-handler": "^2.14.1",
+    "react-native-html-to-pdf": "^0.12.0",
     "react-native-modal": "^13.0.1",
     "react-native-modal-datetime-picker": "^17.1.0",
     "react-native-paper": "^5.12.1",

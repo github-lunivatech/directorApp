@@ -23,6 +23,18 @@ const InventoryScreen = ({ navigation }) => {
       description: "View the consumption report for inventory items.",
       icon: "local-bar",
     },
+    {
+      key: "CurrentRemaining",
+      heading: "Current Remaining",
+      description: "View the consumption report for inventory items.",
+      icon: "local-bar",
+    },
+    {
+      key: "MinimumQuantity",
+      heading: "Minimum Quantity",
+      description: "View the consumption report for inventory items.",
+      icon: "local-bar",
+    },
   ];
 
   return (

@@ -7,6 +7,7 @@ import {
   ScrollView,
   LayoutAnimation,
   UIManager,
+  BackHandler,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { Table, Row } from "react-native-table-component";
@@ -15,11 +16,14 @@ import Modal from "react-native-modal";
 import theme from "../../../theme";
 import Icon from "react-native-vector-icons/Feather";
 import { makeApiRequest, apiEndpoints } from "../../../services/constants/url";
+import { ActivityIndicator } from "react-native-paper";
 
 UIManager.setLayoutAnimationEnabledExperimental &&
   UIManager.setLayoutAnimationEnabledExperimental(true);
 
 const TotalSales = (route) => {
+  const [isLoading, setLoading] = useState(false);
+
   // State to manage filters
   const [fromDate, setFromDate] = useState(new Date().toISOString());
   const [toDate, setToDate] = useState(new Date().toISOString());
@@ -53,6 +57,7 @@ const TotalSales = (route) => {
 
   const applyFilters = async () => {
     try {
+      setLoading(true); // Set loading to true when starting data fetch
       const response = await makeApiRequest(
         apiEndpoints.GetDailySummaryTransactionUserWiseByDate,
         {
@@ -77,6 +82,8 @@ const TotalSales = (route) => {
       setDataVisibility(true);
     } catch (error) {
       console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -180,6 +187,21 @@ const TotalSales = (route) => {
         return "#000000";
     }
   };
+  const handleBackButton = () => {
+    if (isModalVisible) {
+      closeModal(); // Close the modal when the back button is pressed
+      return true; // Prevent default behavior
+    }
+    return false;
+  };
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      handleBackButton
+    );
+    return () => backHandler.remove();
+  }, [isModalVisible]);
 
   return (
     <ScrollView>
@@ -239,9 +261,16 @@ const TotalSales = (route) => {
         </View>
         <TouchableOpacity
           onPress={applyFilters}
-          style={[styles.button, styles.applyButton]}
+          style={[styles.button, styles.applyButton, { alignSelf: "flex-end" }]}
+          disabled={isLoading}
         >
-          <Text style={styles.buttonTexts}>Apply Filters</Text>
+          {isLoading ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
+            <Text style={[styles.buttonText, { color: "#fff" }]}>
+              Apply Filters
+            </Text>
+          )}
         </TouchableOpacity>
         {/* Date Time Picker */}
         <DateTimePickerModal
@@ -308,19 +337,13 @@ const TotalSales = (route) => {
                     style={{
                       flex: 1,
                       padding: 10,
-                      marginRight: 20,
-                      marginLeft: 15,
-                      width: 140,
-                      height: 40,
-                      backgroundColor: getBackgroundColor(item.PaymentType),
-                      borderRadius: 15,
+                      // backgroundColor: getBackgroundColor(item.PaymentType),
                     }}
                   >
                     <Text
                       style={{
-                        fontSize: 17,
                         alignSelf: "center",
-                        backgroundColor: getBackgroundColor(item.PaymentType),
+
                         color: getTextColor(item.PaymentType),
                       }}
                     >

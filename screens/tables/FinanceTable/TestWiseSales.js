@@ -7,12 +7,14 @@ import {
   ScrollView,
   LayoutAnimation,
   UIManager,
+  BackHandler,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Modal from "react-native-modal";
 import theme from "../../../theme";
 import Icon from "react-native-vector-icons/Feather";
+import { ActivityIndicator } from "react-native-paper";
 
 import { makeApiRequest, apiEndpoints } from "../../../services/constants/url";
 
@@ -20,6 +22,7 @@ UIManager.setLayoutAnimationEnabledExperimental &&
   UIManager.setLayoutAnimationEnabledExperimental(true);
 
 const TestWiseSales = (route) => {
+  const [isLoading, setLoading] = useState(false);
   // State to manage filters
   const [fromDate, setFromDate] = useState(new Date().toISOString());
   const [toDate, setToDate] = useState(new Date().toISOString());
@@ -56,6 +59,8 @@ const TestWiseSales = (route) => {
 
   const applyFilters = async () => {
     try {
+      setLoading(true); // Set loading to true when starting data fetch
+
       const response = await makeApiRequest(
         apiEndpoints.GetDatewiseTotalSalesWithTestCount,
         {
@@ -79,6 +84,8 @@ const TestWiseSales = (route) => {
       setDataVisibility(true);
     } catch (error) {
       console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -161,6 +168,21 @@ const TestWiseSales = (route) => {
   const toggleFilters = () => {
     setFiltersVisibility(!areFiltersVisible);
   };
+  const handleBackButton = () => {
+    if (isModalVisible) {
+      closeModal(); // Close the modal when the back button is pressed
+      return true; // Prevent default behavior
+    }
+    return false;
+  };
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      handleBackButton
+    );
+    return () => backHandler.remove();
+  }, [isModalVisible]);
 
   return (
     <ScrollView>
@@ -227,10 +249,15 @@ const TestWiseSales = (route) => {
               styles.applyButton,
               { alignSelf: "flex-end" },
             ]}
+            disabled={isLoading}
           >
-            <Text style={[styles.buttonText, { color: "#fff" }]}>
-              Apply Filters
-            </Text>
+            {isLoading ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Text style={[styles.buttonText, { color: "#fff" }]}>
+                Apply Filters
+              </Text>
+            )}
           </TouchableOpacity>
         </View>
 

@@ -35,6 +35,8 @@ import DynamicReport from "./screens/tables/MisTable/DymanicReport";
 import DummyAnalysisScreen from "./screens/tables/InventoryTable/ConsumptionReport";
 
 import ConsumptionReport from "./screens/tables/InventoryTable/ConsumptionReport";
+import CurrentRemaining from "./screens/tables/InventoryTable/CurrentRemaining";
+import MinimumQuantity from "./screens/tables/InventoryTable/MinimumQuantity";
 
 import { Image } from "react-native";
 import homebutton from "./assets/home.png";
@@ -107,6 +109,14 @@ const InventoryStackNavigator = () => {
       <InventoryStack.Screen
         name="ConsumptionReport"
         component={ConsumptionReport}
+      />
+      <InventoryStack.Screen
+        name="CurrentRemaining"
+        component={CurrentRemaining}
+      />
+      <InventoryStack.Screen
+        name="MinimumQuantity"
+        component={MinimumQuantity}
       />
     </InventoryStack.Navigator>
   );

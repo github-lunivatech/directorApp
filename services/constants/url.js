@@ -50,11 +50,16 @@ export const apiEndpoints = {
   GetListOfReportType: "GetListOfReportType",
   GetDataMetricReportByReportTypeAndDateRange:
     "GetDataMetricReportByReportTypeAndDateRange",
-  GetActualConsumptionReportByDateRange:
-    "GetActualConsumptionReportByDateRange",
+
   GetDatametricReportType: "GetDatametricReportType",
   GetGeographyWiseMISReports: "GetGeographyWiseMISReports",
   GetValidCollectorLoginForApp: "GetValidCollectorLoginForApp",
+
+  // Inventory
+  GetActualConsumptionReportByDateRange:
+    "GetActualConsumptionReportByDateRange",
+  GetCurrentRemainingStockCountById: "GetCurrentRemainingStockCountById",
+  GetListOfItemsNearToMinQuantity: "GetListOfItemsNearToMinQuantity",
 };
 
 // Utility function to make API requests

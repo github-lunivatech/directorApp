@@ -7,6 +7,7 @@ import {
   ScrollView,
   LayoutAnimation,
   UIManager,
+  BackHandler,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { Table, Row } from "react-native-table-component";
@@ -14,6 +15,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Icon from "react-native-vector-icons/Feather";
 import Modal from "react-native-modal";
 import theme from "../../../theme";
+import { ActivityIndicator } from "react-native-paper";
 
 import { makeApiRequest, apiEndpoints } from "../../../services/constants/url";
 
@@ -21,6 +23,7 @@ UIManager.setLayoutAnimationEnabledExperimental &&
   UIManager.setLayoutAnimationEnabledExperimental(true);
 
 const PartyWiseSummary = (route) => {
+  const [isLoading, setLoading] = useState(false);
   // State to manage filters
   const [fromDate, setFromDate] = useState(new Date().toISOString());
   const [toDate, setToDate] = useState(new Date().toISOString());
@@ -44,40 +47,11 @@ const PartyWiseSummary = (route) => {
 
   // Requestor list options
   const [requestorList, setRequestorList] = useState([]);
-
   const [isDataVisible, setDataVisibility] = useState(false);
 
-  // Apply filters and update filteredData
-  const applyFilters = async () => {
-    try {
-      const response = await makeApiRequest(
-        apiEndpoints.getDatewiseRequestorTransactionDetails,
-        {
-          from: fromDate,
-          to: toDate,
-          reqId: requestorFilter.Id || 0,
-        }
-      );
-      console.log(fromDate, "This is the date");
-      console.log("API Response:", response);
-
-      // Extract the array of data from the response
-      const data = response["ReportDetails"] || [];
-
-      // Use the keys of the first item as columns
-      const keys = Object.keys(data[0] || {});
-      const newColumns = keys.map((key) => ({ key, label: key }));
-
-      // Set columns and filteredData
-      setColumns(newColumns);
-      setFilteredData(data);
-      setDataVisibility(true);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
   const applySummary = async () => {
     try {
+      setLoading(true); // Set loading to true when starting data fetch
       const response = await makeApiRequest(
         apiEndpoints.getRequestorwiseTotalSalesSummaryByDate,
         {
@@ -101,6 +75,8 @@ const PartyWiseSummary = (route) => {
       setDataVisibility(true);
     } catch (error) {
       console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -178,6 +154,21 @@ const PartyWiseSummary = (route) => {
   const toggleFilters = () => {
     setFiltersVisibility(!areFiltersVisible);
   };
+  const handleBackButton = () => {
+    if (isModalVisible) {
+      closeModal(); // Close the modal when the back button is pressed
+      return true; // Prevent default behavior
+    }
+    return false;
+  };
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      handleBackButton
+    );
+    return () => backHandler.remove();
+  }, [isModalVisible]);
 
   return (
     <ScrollView>
@@ -245,8 +236,15 @@ const PartyWiseSummary = (route) => {
               styles.applyButton,
               { alignSelf: "flex-end" },
             ]}
+            disabled={isLoading}
           >
-            <Text style={[styles.buttonText, { color: "#fff" }]}> Summary</Text>
+            {isLoading ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Text style={[styles.buttonText, { color: "#fff" }]}>
+                Apply Filters
+              </Text>
+            )}
           </TouchableOpacity>
         </View>
         {/* Date Time Picker */}

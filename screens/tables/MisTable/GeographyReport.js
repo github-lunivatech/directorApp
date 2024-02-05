@@ -13,6 +13,8 @@ import { Table, Row } from "react-native-table-component";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Modal from "react-native-modal";
 import theme from "../../../theme";
+import Icon from "react-native-vector-icons/Feather";
+import { ActivityIndicator } from "react-native-paper";
 
 import { makeApiRequest, apiEndpoints } from "../../../services/constants/url";
 
@@ -20,11 +22,12 @@ UIManager.setLayoutAnimationEnabledExperimental &&
   UIManager.setLayoutAnimationEnabledExperimental(true);
 
 const GerographyReport = (route) => {
+  const [isLoading, setLoading] = useState(false);
   // State to manage filters
-  const [fromDate, setFromDate] = useState(null);
-  const [toDate, setToDate] = useState(null);
-
+  const [fromDate, setFromDate] = useState(new Date().toISOString());
+  const [toDate, setToDate] = useState(new Date().toISOString());
   const [requestorFilter, setRequestorFilter] = useState("");
+  // State to store filtered data for the table
 
   // State to store filtered data for the table
   const [filteredData, setFilteredData] = useState([]);
@@ -34,7 +37,11 @@ const GerographyReport = (route) => {
   const [stateList, setStateList] = useState([]);
   const [districtList, setDistrictList] = useState([]);
   const [municipalityList, setMunicipalityList] = useState([]);
-
+  const [isStatePickerVisible, setStatePickerVisibility] = useState(false);
+  const [isDistrictPickerVisible, setDistrictPickerVisibility] =
+    useState(false);
+  const [isMunicipalityPickerVisible, setMunicipalityPickerVisibility] =
+    useState(false);
   // State for dynamic columns from the backend
   const [columns, setColumns] = useState([]);
 
@@ -43,36 +50,24 @@ const GerographyReport = (route) => {
   const [selectedDateField, setSelectedDateField] = useState("");
 
   // State to manage modal visibility for Pickers
-  const [isGenderPickerVisible, setGenderPickerVisibility] = useState(false);
   const [isRequestorPickerVisible, setRequestorPickerVisibility] =
     useState(false);
 
-  const [isStatePickerVisible, setStatePickerVisibility] = useState(false);
-  const [isDistrictPickerVisible, setDistrictPickerVisibility] =
-    useState(false);
-  const [isMunicipalityPickerVisible, setMunicipalityPickerVisibility] =
-    useState(false);
   // Requestor list options
   const [requestorList, setRequestorList] = useState([]);
 
-  const [isTableVisible, setTableVisibility] = useState(false);
-
-  // Explabalde tablerows
-  const [expandedRowIndex, setExpandedRowIndex] = useState(null);
-  const toggleExpand = (index) => {
-    setExpandedRowIndex((prevIndex) => (prevIndex === index ? null : index));
-  };
   const applyFilters = async () => {
     try {
+      setLoading(true); // Set loading to true when starting data fetch
       const response = await makeApiRequest(
         apiEndpoints.GetGeographyWiseMISReports,
         {
-          provinceid: stateFilter.Id,
-          districtid: districtFilter.Id,
-          municipalityId: municipalityFilter.Id,
+          provinceid: stateFilter.Id || 1,
+          districtid: districtFilter.Id || 1,
+          municipalityId: municipalityFilter.Id || 1,
           from: fromDate,
           to: toDate,
-          reportTypeId: requestorFilter.RId,
+          reportTypeId: requestorFilter.RId || 1,
         }
       );
       console.log(fromDate, "This is the date");
@@ -88,9 +83,11 @@ const GerographyReport = (route) => {
       // Set columns and filteredData
       setColumns(newColumns);
       setFilteredData(data);
-      setTableVisibility(true);
+      setDataVisibility(true);
     } catch (error) {
       console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -112,11 +109,6 @@ const GerographyReport = (route) => {
     setDatePickerVisibility(false);
   };
 
-  // Toggle gender picker visibility
-  const toggleGenderPicker = () => {
-    setGenderPickerVisibility(!isGenderPickerVisible);
-  };
-
   // Toggle requestor picker visibility
   const toggleRequestorPicker = () => {
     setRequestorPickerVisibility(!isRequestorPickerVisible);
@@ -129,9 +121,6 @@ const GerographyReport = (route) => {
         const requestorListResponse = await makeApiRequest(
           apiEndpoints.GetDatametricReportType
         );
-        // console.log("Requestor List:", requestorListResponse);
-
-        // Extract the array of requestors from the response
 
         const requestors = requestorListResponse.ReportDetails;
 
@@ -144,7 +133,6 @@ const GerographyReport = (route) => {
 
     fetchRequestorList();
   }, []);
-  const [expandedRows, setExpandedRows] = useState([]);
 
   // Handle row press to expand or collapse
   const handleRowPress = (index) => {
@@ -157,6 +145,26 @@ const GerographyReport = (route) => {
         : [...prevExpandedRows, index]
     );
   };
+
+  const [isDataVisible, setDataVisibility] = useState(false);
+  const [selectedData, setSelectedData] = useState(null);
+
+  const handleTouchableOpacityPress = (data) => {
+    setSelectedData(data);
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+    setSelectedData(null);
+  };
+
+  const [areFiltersVisible, setFiltersVisibility] = useState(false);
+
+  const toggleFilters = () => {
+    setFiltersVisibility(!areFiltersVisible);
+  };
+  const [isModalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     const fetchStateList = async () => {
@@ -217,84 +225,105 @@ const GerographyReport = (route) => {
   return (
     <ScrollView>
       <View style={styles.container}>
+        {/* Toggle Filters */}
+        <Text style={styles.overviewText}>Overview</Text>
+        <TouchableOpacity onPress={toggleFilters} style={styles.toggleButton}>
+          <Text style={styles.overviewTextButton}>
+            Show: Today
+            <Icon
+              name={areFiltersVisible ? "chevron-down" : "chevron-up"}
+              size={15}
+              color="grey"
+            />
+          </Text>
+        </TouchableOpacity>
+
         {/* Filters */}
-        <ScrollView horizontal={true}>
-          <View style={styles.filterContainer}>
-            {/* First Row of Filters */}
-            <View style={styles.filterItem}>
-              <TouchableOpacity
-                onPress={() => toggleDatePicker("fromDate")}
-                style={styles.button}
-              >
-                <Text style={styles.buttonText}>
-                  From Date: {fromDate ? fromDate.split("T")[0] : "Select Date"}
-                </Text>
-              </TouchableOpacity>
+        {areFiltersVisible && (
+          <ScrollView horizontal={true}>
+            <View style={styles.filterContainer}>
+              {/* First Row of Filters */}
+              <View style={styles.filterItem}>
+                <TouchableOpacity
+                  onPress={() => toggleDatePicker("fromDate")}
+                  style={styles.button}
+                >
+                  <Text style={styles.buttonText}>
+                    From Date:{" "}
+                    {fromDate ? fromDate.split("T")[0] : "Select Date"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.filterItem}>
+                <TouchableOpacity
+                  onPress={() => toggleDatePicker("toDate")}
+                  style={styles.button}
+                >
+                  <Text style={styles.buttonText}>
+                    To Date:{toDate ? toDate.split("T")[0] : "Select Date"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.filterItem}>
+                <TouchableOpacity
+                  onPress={() => setStatePickerVisibility(true)}
+                  style={styles.button}
+                >
+                  <Text style={styles.buttonText}>
+                    {`State: ${stateFilter.Name || "Select State"}`}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.filterItem}>
+                <TouchableOpacity
+                  onPress={() => setDistrictPickerVisibility(true)}
+                  style={styles.button}
+                >
+                  <Text style={styles.buttonText}>
+                    {`District: ${districtFilter.Name || "Select District"}`}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.filterItem}>
+                <TouchableOpacity
+                  onPress={() => setMunicipalityPickerVisibility(true)}
+                  style={styles.button}
+                >
+                  <Text style={styles.buttonText}>
+                    {`Municipality: ${
+                      municipalityFilter.Name || "Select Municipality"
+                    }`}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.filterItem}>
+                <TouchableOpacity
+                  onPress={() => toggleRequestorPicker()}
+                  style={[styles.button]}
+                >
+                  <Text style={styles.buttonText}>
+                    {`Requestor: ${
+                      requestorFilter.ReportName || "Select Datamertic"
+                    }`}
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
-            <View style={styles.filterItem}>
-              <TouchableOpacity
-                onPress={() => toggleDatePicker("toDate")}
-                style={styles.button}
-              >
-                <Text style={styles.buttonText}>
-                  To Date:{toDate ? toDate.split("T")[0] : "Select Date"}
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.filterItem}>
-              <TouchableOpacity
-                onPress={() => setStatePickerVisibility(true)}
-                style={styles.button}
-              >
-                <Text style={styles.buttonText}>
-                  {`State: ${stateFilter.Name || "Select State"}`}
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.filterItem}>
-              <TouchableOpacity
-                onPress={() => setDistrictPickerVisibility(true)}
-                style={styles.button}
-              >
-                <Text style={styles.buttonText}>
-                  {`District: ${districtFilter.Name || "Select District"}`}
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.filterItem}>
-              <TouchableOpacity
-                onPress={() => setMunicipalityPickerVisibility(true)}
-                style={styles.button}
-              >
-                <Text style={styles.buttonText}>
-                  {`Municipality: ${
-                    municipalityFilter.Name || "Select Municipality"
-                  }`}
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.filterItem}>
-              <TouchableOpacity
-                onPress={() => toggleRequestorPicker()}
-                style={[styles.button]}
-              >
-                <Text style={styles.buttonText}>
-                  {`Requestor: ${
-                    requestorFilter.ReportName || "Select Datamertic"
-                  }`}
-                </Text>
-              </TouchableOpacity>
-            </View>
-
-            <TouchableOpacity
-              onPress={applyFilters}
-              style={[styles.button, styles.applyButton]}
-            >
-              <Text style={styles.buttonText}>Apply Filters</Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-
+          </ScrollView>
+        )}
+        <TouchableOpacity
+          onPress={applyFilters}
+          style={[styles.button, styles.applyButton, { alignSelf: "flex-end" }]}
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
+            <Text style={[styles.buttonText, { color: "#fff" }]}>
+              Apply Filters
+            </Text>
+          )}
+        </TouchableOpacity>
         {/* Date Time Picker */}
         <DateTimePickerModal
           isVisible={isDatePickerVisible}
@@ -303,6 +332,7 @@ const GerographyReport = (route) => {
           onCancel={() => setDatePickerVisibility(false)}
         />
 
+        {/* Requestor Picker Modal */}
         {/* Requestor Picker Modal */}
         <Modal
           isVisible={isRequestorPickerVisible}
@@ -327,6 +357,7 @@ const GerographyReport = (route) => {
             </Picker>
           </View>
         </Modal>
+        {/* State Picker */}
         <Modal
           isVisible={isStatePickerVisible}
           onBackdropPress={() => setStatePickerVisibility(false)}
@@ -398,44 +429,119 @@ const GerographyReport = (route) => {
         </Modal>
 
         {/* Table */}
+        {isDataVisible && (
+          <ScrollView>
+            {filteredData.map((item, index) => (
+              <TouchableOpacity
+                key={index}
+                onPress={() => handleTouchableOpacityPress(item)}
+                style={styles.touchableOpacity}
+              >
+                <View style={{ flexDirection: "row" }}>
+                  <Text
+                    style={[
+                      styles.touchableOpacityText,
+                      {
+                        fontWeight: "bold",
+                        fontSize: 13,
+                        color: "#000",
+                        marginTop: 10,
+                        flex: 1,
+                        marginRight: 0,
+                        alignSelf: "flex-start",
+                        marginLeft: 10,
+                      },
+                    ]}
+                  >
+                    {item.UserName}
+                  </Text>
 
-        {isTableVisible && (
-          <ScrollView horizontal>
-            <Table borderStyle={{ borderColor: "black" }}>
-              <Row
-                data={columns.map((column) => column.label)}
-                style={styles.header}
-                textStyle={styles.headerText} // Update this line
-                widthArr={columns.map(() => 160)} // Set a fixed width for each visible column
-              />
-              {filteredData.map((item, index) => (
-                <React.Fragment key={index}>
-                  <TouchableOpacity onPress={() => toggleExpand(index)}>
-                    <Row
-                      data={columns.map((column) => item[column.key])}
-                      style={styles.row}
-                      textStyle={styles.text} // Update this line
-                      widthArr={columns.map(() => 160)} // Set a fixed width for each visible column
-                    />
+                  <TouchableOpacity
+                    style={{
+                      flex: 1,
+                      padding: 10,
+                      // backgroundColor: getBackgroundColor(item.PaymentType),
+                    }}
+                  >
+                    <Text
+                      style={{
+                        alignSelf: "center",
+                      }}
+                    >
+                      {item.PaymentType}
+                    </Text>
                   </TouchableOpacity>
-                  {expandedRowIndex === index && (
-                    <View>
-                      {columns.slice(2).map((column) => (
-                        <Row
-                          key={column.key}
-                          data={[column.label, item[column.key]]}
-                          style={styles.expandedRow}
-                          textStyle={styles.text} // Update this line
-                          widthArr={[160, 160]} // Set a fixed width for the expanded columns
-                        />
-                      ))}
-                    </View>
-                  )}
-                </React.Fragment>
-              ))}
-            </Table>
+                </View>
+
+                <Text
+                  style={[
+                    styles.touchableOpacityText,
+                    {
+                      alignSelf: "flex-end",
+                      marginRight: 10,
+
+                      top: 20,
+                    },
+                  ]}
+                >
+                  Total Sales: Rs.{item.TotalSales}
+                </Text>
+                <Text
+                  style={[
+                    styles.touchableOpacityText,
+                    {
+                      alignSelf: "flex-end",
+                      marginRight: 10,
+
+                      top: 20,
+                    },
+                  ]}
+                >
+                  Collection: Rs.{item.Collection}
+                </Text>
+                <Text
+                  style={[
+                    styles.touchableOpacityText,
+                    {
+                      alignSelf: "flex-end",
+                      marginRight: 10,
+                      top: 20,
+                    },
+                  ]}
+                >
+                  Remaining Amount: Rs.{item.Remaining}
+                </Text>
+                <Text
+                  style={[
+                    styles.touchableOpacityText,
+                    {
+                      alignSelf: "flex-end",
+                      marginRight: 10,
+                      color: "grey",
+                      marginBottom: 10,
+                    },
+                  ]}
+                >
+                  {item.CreatedOnNepaliDate}
+                </Text>
+              </TouchableOpacity>
+            ))}
           </ScrollView>
         )}
+
+        {/* Modal to show entire data */}
+        <Modal isVisible={isModalVisible} onBackdropPress={closeModal}>
+          <View style={styles.modalContainer}>
+            {/* Render the selectedData in the modal */}
+            {selectedData &&
+              Object.entries(selectedData).map(([key, value]) => (
+                <View key={key} style={styles.modalRow}>
+                  <Text style={styles.modalKey}>{key}</Text>
+                  <Text style={styles.modalValue}>{value}</Text>
+                </View>
+              ))}
+          </View>
+        </Modal>
       </View>
     </ScrollView>
   );
@@ -445,6 +551,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    backgroundColor: "#fff",
   },
   filterContainer: {
     flexDirection: "column",
@@ -486,9 +593,40 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 5,
   },
-  expandedRow: {
-    height: 60, // Adjust the height as needed
-    backgroundColor: "#F1F8FF",
+  touchableOpacity: {
+    height: 140,
+    backgroundColor: "#FAFAFB",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 5,
+  },
+  touchableOpacityText: {
+    color: "black",
+  },
+  modalContainer: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+  },
+  modalRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 10,
+  },
+  modalKey: {
+    fontWeight: "bold",
+  },
+  modalValue: {
+    flex: 1,
+    textAlign: "right",
+  },
+  overviewText: {
+    fontSize: 25,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  overviewTextButton: {
+    color: "grey",
   },
 });
 
