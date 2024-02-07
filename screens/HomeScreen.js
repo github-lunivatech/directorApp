@@ -73,6 +73,9 @@ const HomeScreen = ({ navigation }) => {
         if (response && response.ReportDetails) {
           setReportData(response.ReportDetails);
           console.log(reportData, "Report data");
+          // setTotalPatient(reportData[0].Test);
+          // setTotalRevenue(reportData[0].Sales);
+          // setCreditSales(reportData[0].Patient);
         }
       } catch (error) {
         console.error("Error fetching data:", error);

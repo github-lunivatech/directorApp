@@ -6,39 +6,45 @@ import {
   StyleSheet,
   ScrollView,
 } from "react-native";
-import theme from "../theme";
+
 import Icon from "react-native-vector-icons/MaterialIcons";
 
-const MedicalScreen = ({ navigation }) => {
-  const handlePress = (routeName) => {
-    if (routeName) {
-      navigation.navigate(routeName);
-    }
+const SampleDetails = ({ navigation }) => {
+  const handlePress = (key) => {
+    navigation.navigate("SampleStatus", key);
   };
 
   const touchableData = [
     {
-      key: "SampleDetails",
-      heading: "List of Sample details",
-      description: "Explore the list of detailed information about samples.",
+      key: "1",
+      heading: "Pending Sample Reports",
+      description: "View the total sample details with their pending status.",
+      icon: "info",
+    },
+    {
+      key: "2",
+      heading: "Done Sample Reports",
+      description:
+        "Explore the list of detailed information about completed samples.",
       icon: "list",
     },
     {
-      key: "touchable3",
-      heading: "Option to Authorize Reports",
+      key: "3",
+      heading: "Verified Sample Reports",
       description: "Authorize reports with additional options.",
       icon: "how-to-vote",
     },
     {
-      key: "touchable4",
-      heading: "View Report Read only form",
+      key: "4",
+      heading: "Authorized Sample Reports",
       description: "View reports in a read-only form.",
       icon: "remove-red-eye",
     },
     {
-      key: "touchable5",
-      heading: "Email, SMS, Report",
-      description: "Send reports via email or SMS.",
+      key: "5",
+      heading: "Rejected Sample Reports",
+      description:
+        "View the list of rejected sample reports and take necessary actions.",
       icon: "email",
     },
   ];
@@ -134,4 +140,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MedicalScreen;
+export default SampleDetails;

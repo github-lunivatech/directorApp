@@ -1,4 +1,5 @@
 import axios from "axios";
+import { encode as base64Encode } from "base-64";
 
 export const DEV_URL =
   "https://lunivacare.ddns.net/CarelabDataMetricService_dev";
@@ -55,6 +56,13 @@ export const apiEndpoints = {
   GetGeographyWiseMISReports: "GetGeographyWiseMISReports",
   GetValidCollectorLoginForApp: "GetValidCollectorLoginForApp",
 
+  // Medical Screen
+  GetDiagnosiGroupList: "GetDiagnosiGroupList",
+  GetReportStatusDetailsWithDateAndFilter:
+    "GetReportStatusDetailsWithDateAndFilter",
+  GetSampleRequestStatus: "GetSampleRequestStatus",
+  GetNormalReportByPatientId: "GetNormalReportByPatientId",
+
   // Inventory
   GetActualConsumptionReportByDateRange:
     "GetActualConsumptionReportByDateRange",
@@ -65,9 +73,20 @@ export const apiEndpoints = {
 // Utility function to make API requests
 export const makeApiRequest = async (endpoint, params = {}) => {
   try {
-    const response = await api.get(endpoint, { params });
+    const username = "user1";
+    const password = "user1@123";
+    const base64Credentials = base64Encode(username + ":" + password);
+
+    const response = await api.get(endpoint, {
+      params,
+      headers: {
+        Authorization: `Basic ${base64Credentials}`,
+      },
+    });
+
     // Log the response to the console
     // console.log(`Response from ${endpoint}:`, response.data);
+
     return response.data;
   } catch (error) {
     // Log the error to the console

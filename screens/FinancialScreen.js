@@ -8,11 +8,11 @@ import {
 } from "react-native";
 import theme from "../theme";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import { LineChart } from "react-native-chart-kit";
+import { PieChart } from "react-native-chart-kit";
 import { makeApiRequest, apiEndpoints } from "../services/constants/url";
 
 const FinancialScreen = ({ navigation }) => {
-  const [isLineChartLoaded, setLineChartVisibility] = useState(false);
+  const [isPieChartLoaded, setPieChartVisibility] = useState(false);
   const handlePress = (routeName) => {
     if (routeName) {
       navigation.navigate(routeName);
@@ -67,119 +67,52 @@ const FinancialScreen = ({ navigation }) => {
     },
   ];
 
-  const data = {
-    labels: ["January", "February", "March", "April", "May", "June"],
-    datasets: [
-      {
-        data: [20, 45, 28, 80, 99, 43],
-        color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`, // optional
-        strokeWidth: 2, // optional
-      },
-    ],
-    legend: ["Rainy Days"], // optional
-  };
-
-  const [chartData, setChartData] = useState({
-    labels: [],
-    color: [],
-    datasets: [],
-
-    legend: ["Credit Sales", "Cash Sales"],
-  });
-
+  const [chartData, setChartData] = useState([]);
   useEffect(() => {
-    // Fetch and process the data for the line chart
-    fetchDataForLineChart();
-  }, []); // Fetch data when the component mounts
+    fetchDataForPieChart();
+  }, []);
 
-  const fetchDataForLineChart = async () => {
+  const fetchDataForPieChart = async () => {
     try {
-      // Calculate date range from today to 7 days before
       const toDate = new Date().toISOString().split("T")[0];
-      const fromDate = new Date();
-      fromDate.setDate(fromDate.getDate() - 7);
-      const fromDateStr = fromDate.toISOString().split("T")[0];
-
-      // Make API call with the calculated date range
       const apiEndpoint =
         apiEndpoints.GetDataMetricReportByReportTypeAndDateRange;
       const params = {
-        from: fromDateStr,
+        from: toDate,
         to: toDate,
         reportType: "SalesofWeekByBillType",
       };
-
       const response = await makeApiRequest(apiEndpoint, params);
-      console.log(response);
-      // Inside your fetchDataForLineChart after fetching data
-
-      const processedData = processDataForLineChart(response.ReportDetails);
-      console.log(processedData, "THis is process data");
-      setChartData(processedData || 0);
-      console.log(chartData, "This is chartdata");
+      const processedData = processDataForPieChart(response.ReportDetails);
+      setChartData(processedData);
+      console.log(chartData, "Chartdata");
+      setPieChartVisibility(true);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
 
-  const processDataForLineChart = (data) => {
-    const chartData = {
-      labels: [],
-      datasets: [],
-      legend: ["Credit Sales", "Cash Sales"],
-    };
-
-    const creditSales = {
-      data: [],
-      color: (opacity = 1) => `rgba(0, 255, 0, ${1})`,
-      strokeWidth: 4,
-    };
-
-    const cashSales = {
-      data: [],
-      color: (opacity = 1) => `rgba(255, 255, 0, ${1})`,
-      strokeWidth: 4,
-    };
-
-    data.forEach((entry) => {
-      const formattedDate = new Date(entry.Date).toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-      });
-
-      chartData.labels.push(formattedDate);
-
-      if (entry.BIllPaymentType === "Credit") {
-        creditSales.data.push(entry.Total);
-        cashSales.data.push(null); // Placeholder for Cash Sales if Credit data not present
-      } else if (entry.BIllPaymentType === "Cash") {
-        cashSales.data.push(entry.Total);
-        creditSales.data.push(null); // Placeholder for Credit Sales if Cash data not present
-      }
-    });
-    chartData.datasets.push(creditSales, cashSales);
-    console.log(chartData, "This is chartdata part 2");
-
-    setTimeout(() => {
-      setLineChartVisibility(true);
-    });
-    return chartData;
+  const processDataForPieChart = (data) => {
+    console.log(data, "This is data");
+    return data.map((entry) => ({
+      name: entry.BIllPaymentType === "Credit" ? "Credit Sales" : "Cash Sales",
+      value: entry.Total,
+    }));
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.headingText}>Sales Figures</Text>
 
-      {/* Line Chart */}
-      {isLineChartLoaded && (
-        <LineChart
-          data={chartData}
+      {/* Pie Chart */}
+      {/* {isPieChartLoaded && chartData.length > 0 && (
+        <PieChart
+          data={{
+            labels: chartData.map((entry) => entry.name),
+            datasets: [{ data: chartData.map((entry) => entry.value) }],
+          }}
           width={360}
           height={210}
-          withShadow={false}
-          withDots={false}
-          yAxisLabel=""
-          yAxisSuffix="k"
           chartConfig={{
             backgroundGradientFrom: "#FFF",
             backgroundGradientTo: "#fff",
@@ -187,10 +120,14 @@ const FinancialScreen = ({ navigation }) => {
             color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
             labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
           }}
+          accessor="value"
+          backgroundColor="transparent"
+          paddingLeft="15"
+          absolute
           style={{ alignSelf: "center", marginTop: 10, marginRight: 20 }}
-          bezier
         />
-      )}
+      )} */}
+
       {touchableData.map(({ key, heading, description, icon }, index) => (
         <TouchableOpacity
           key={key}

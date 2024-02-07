@@ -27,7 +27,8 @@ import CashSales from "./screens/tables/FinanceTable/CashSales";
 import TestWiseSales from "./screens/tables/FinanceTable/TestWiseSales";
 import TestCountReport from "./screens/tables/FinanceTable/TestCountReport";
 
-import MedicalTable from "./screens/tables/MedicalTable";
+import SampleStatus from "./screens/tables/MedicalTable/SampleStatus";
+import SampleDetails from "./screens/tables/MedicalTable/SampleDetails";
 
 import GeographyReport from "./screens/tables/MisTable/GeographyReport";
 import DynamicReport from "./screens/tables/MisTable/DymanicReport";
@@ -44,6 +45,7 @@ import chat from "./assets/Chat.png";
 import calendar from "./assets/calendar.png";
 import profile from "./assets/Profile.png";
 import PartyWiseSummary from "./screens/tables/FinanceTable/PartyWiseSummary";
+import NormalReport from "./screens/tables/MedicalTable/NormalReport";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -78,7 +80,9 @@ const MedicalStackNavigator = () => {
   return (
     <MedicalStack.Navigator>
       <MedicalStack.Screen name="Medical" component={MedicalScreenScreen} />
-      <MedicalStack.Screen name="MedicalTable" component={MedicalTable} />
+      <MedicalStack.Screen name="SampleStatus" component={SampleStatus} />
+      <MedicalStack.Screen name="SampleDetails" component={SampleDetails} />
+      <MedicalStack.Screen name="NormalReport" component={NormalReport} />
     </MedicalStack.Navigator>
   );
 };
