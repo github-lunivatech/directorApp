@@ -221,6 +221,8 @@ const CashSales = (route) => {
               >
                 <View style={{ flexDirection: "row", marginBottom: -10 }}>
                   <Text
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
                     style={[
                       styles.touchableOpacityText,
                       {
@@ -265,6 +267,8 @@ const CashSales = (route) => {
                   </TouchableOpacity>
                 </View>
                 <Text
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
                   style={[
                     styles.touchableOpacityText,
                     {
@@ -385,7 +389,7 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   touchableOpacity: {
-    height: 100,
+    height: 110,
     backgroundColor: "#FAFAFB",
     justifyContent: "center",
     alignItems: "center",

@@ -291,6 +291,8 @@ const RefererWiseSales = () => {
               >
                 <View style={{ flexDirection: "row" }}>
                   <Text
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
                     style={[
                       styles.touchableOpacityText,
                       {
@@ -321,6 +323,8 @@ const RefererWiseSales = () => {
                   #{item.BillNo}
                 </Text>
                 <Text
+                  numberOfLines={2}
+                  ellipsizeMode="tail"
                   style={[
                     styles.touchableOpacityText,
                     {

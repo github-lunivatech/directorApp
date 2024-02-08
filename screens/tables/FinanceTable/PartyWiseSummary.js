@@ -292,6 +292,8 @@ const PartyWiseSummary = (route) => {
               >
                 <View style={{ flexDirection: "row" }}>
                   <Text
+                    numberOfLines={2}
+                    ellipsizeMode="tail"
                     style={[
                       styles.touchableOpacityText,
                       {

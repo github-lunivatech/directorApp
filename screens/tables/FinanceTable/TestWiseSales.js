@@ -331,7 +331,7 @@ const TestWiseSales = (route) => {
                         fontWeight: "bold",
                         fontSize: 13,
                         color: "#000",
-                        marginTop: 10,
+
                         flex: 1,
                         marginRight: 0,
                         alignSelf: "flex-start",

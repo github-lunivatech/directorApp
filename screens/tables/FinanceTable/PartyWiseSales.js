@@ -297,6 +297,8 @@ const PartyWiseSales = (route) => {
               >
                 <View style={{ flexDirection: "row" }}>
                   <Text
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
                     style={[
                       styles.touchableOpacityText,
                       {
@@ -311,7 +313,7 @@ const PartyWiseSales = (route) => {
                       },
                     ]}
                   >
-                    {item["Patient Name"]}
+                    {item["Requestor Name"]}
                   </Text>
                 </View>
                 <Text
@@ -327,6 +329,8 @@ const PartyWiseSales = (route) => {
                   #{item.BillNo}
                 </Text>
                 <Text
+                  numberOfLines={2}
+                  ellipsizeMode="tail"
                   style={[
                     styles.touchableOpacityText,
                     {
@@ -336,9 +340,11 @@ const PartyWiseSales = (route) => {
                     },
                   ]}
                 >
-                  Requestor: {item["Requestor Name"]}
+                  Patient: {item["Patient Name"]}
                 </Text>
                 <Text
+                  numberOfLines={2}
+                  ellipsizeMode="tail"
                   style={[
                     styles.touchableOpacityText,
                     {

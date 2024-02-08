@@ -77,8 +77,8 @@ const FinancialScreen = ({ navigation }) => {
       const apiEndpoint =
         apiEndpoints.GetDataMetricReportByReportTypeAndDateRange;
       const params = {
-        from: "2024-02-07",
-        to: "2024-02-07",
+        from: toDate,
+        to: toDate,
         reportType: "SalesofWeekByBillType",
       };
       const response = await makeApiRequest(apiEndpoint, params);
@@ -86,6 +86,9 @@ const FinancialScreen = ({ navigation }) => {
     } catch (error) {
       console.error("Error fetching data:", error);
     }
+  };
+  const getRandomColor = () => {
+    return "#" + Math.floor(Math.random() * 16777215).toString(16);
   };
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -95,19 +98,16 @@ const FinancialScreen = ({ navigation }) => {
         <View style={styles.chartContainer}>
           <PieChart
             data={chartData.map((entry) => ({
-              name:
-                entry.BIllPaymentType === "Cash"
-                  ? "Cash Sales"
-                  : "Credit Sales",
+              name: entry.BIllPaymentType,
               value: entry.Total,
-              color: entry.BIllPaymentType === "Cash" ? "#3DD598" : "#FF974A",
+              color: getRandomColor(),
             }))}
             width={350}
             height={200}
             chartConfig={{
-              backgroundColor: "#",
-              backgroundGradientFrom: "#fff",
-              backgroundGradientTo: "#fff",
+              backgroundColor: "#ffffff",
+              backgroundGradientFrom: "#ffffff",
+              backgroundGradientTo: "#ffffff",
               color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
               labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
             }}
