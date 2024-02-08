@@ -1,64 +1,71 @@
-// LoginScreen.js
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet, Alert } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { makeApiRequest, apiEndpoints } from "../../services/constants/url";
 
-const LoginScreen = ({ onLoginSuccess }) => {
+const LoginScreen = ({ setIsLoggedIn }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleLogin = async () => {
+    console.log(username, "Password", password);
     try {
-      // Make API request to validate login credentials
+      // Make API call to check login validity
       const response = await makeApiRequest(
-        apiEndpoints.GetValidCollectorLoginForApp,
+        apiEndpoints.CheckValidLoginDirectorApp,
         {
           username: username,
           password: password,
         }
       );
+      console.log(response);
+      // Check if login is successful
+      if (response) {
+        // Set user token or any other necessary data to AsyncStorage or context
+        // For now, just set isLoggedIn to true
+        console.log("Login true");
+        const userToken = response; // Assuming token is returned in the response
+        await AsyncStorage.setItem("userToken", JSON.stringify(response));
 
-      // Check if the API response indicates successful login
-      if (
-        response &&
-        response.validuserDetails &&
-        response.validuserDetails.length > 0
-      ) {
-        // Store user details in AsyncStorage
-        const userDetails = response.validuserDetails[0];
-        await AsyncStorage.setItem("userDetails", JSON.stringify(userDetails));
-
-        // Invoke the callback to notify successful login
-        onLoginSuccess();
+        console.log(userToken);
+        setIsLoggedIn(true);
       } else {
-        // Display error alert for invalid credentials
-        Alert.alert("Error", "Invalid username or password");
+        console.log("Invaid login details");
+        setError("Invalid username or password");
       }
     } catch (error) {
-      console.error("Error during login:", error);
-      // Display error alert for API request failure
-      Alert.alert("Error", "Failed to login. Please try again.");
+      console.error("Error logging in:", error);
+      setError("An error occurred. Please try again later.");
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text>Login Screen</Text>
+      <Text style={styles.heading}>Login</Text>
+      {error ? <Text style={styles.error}>{error}</Text> : null}
       <TextInput
+        style={styles.input}
         placeholder="Username"
         value={username}
         onChangeText={(text) => setUsername(text)}
-        style={styles.input}
       />
       <TextInput
+        style={styles.input}
         placeholder="Password"
+        secureTextEntry
         value={password}
         onChangeText={(text) => setPassword(text)}
-        secureTextEntry
-        style={styles.input}
       />
-      <Button title="Login" onPress={handleLogin} />
+      <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <Text style={styles.buttonText}>Login</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -68,14 +75,37 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#fff",
+  },
+  heading: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
   },
   input: {
-    height: 40,
     width: "80%",
-    borderColor: "gray",
+    height: 40,
     borderWidth: 1,
-    marginVertical: 10,
+    borderColor: "#ccc",
+    borderRadius: 5,
     paddingHorizontal: 10,
+    marginBottom: 20,
+  },
+  button: {
+    width: "80%",
+    height: 40,
+    backgroundColor: "tomato",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+  error: {
+    color: "red",
+    marginBottom: 10,
   },
 });
 

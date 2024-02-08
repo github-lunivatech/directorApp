@@ -12,7 +12,6 @@ import { PieChart } from "react-native-chart-kit";
 import { makeApiRequest, apiEndpoints } from "../services/constants/url";
 
 const FinancialScreen = ({ navigation }) => {
-  const [isPieChartLoaded, setPieChartVisibility] = useState(false);
   const handlePress = (routeName) => {
     if (routeName) {
       navigation.navigate(routeName);
@@ -78,55 +77,48 @@ const FinancialScreen = ({ navigation }) => {
       const apiEndpoint =
         apiEndpoints.GetDataMetricReportByReportTypeAndDateRange;
       const params = {
-        from: toDate,
-        to: toDate,
+        from: "2024-02-07",
+        to: "2024-02-07",
         reportType: "SalesofWeekByBillType",
       };
       const response = await makeApiRequest(apiEndpoint, params);
-      const processedData = processDataForPieChart(response.ReportDetails);
-      setChartData(processedData);
-      console.log(chartData, "Chartdata");
-      setPieChartVisibility(true);
+      setChartData(response?.ReportDetails);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
-
-  const processDataForPieChart = (data) => {
-    console.log(data, "This is data");
-    return data.map((entry) => ({
-      name: entry.BIllPaymentType === "Credit" ? "Credit Sales" : "Cash Sales",
-      value: entry.Total,
-    }));
-  };
-
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.headingText}>Sales Figures</Text>
 
-      {/* Pie Chart */}
-      {/* {isPieChartLoaded && chartData.length > 0 && (
-        <PieChart
-          data={{
-            labels: chartData.map((entry) => entry.name),
-            datasets: [{ data: chartData.map((entry) => entry.value) }],
-          }}
-          width={360}
-          height={210}
-          chartConfig={{
-            backgroundGradientFrom: "#FFF",
-            backgroundGradientTo: "#fff",
-            decimalPlaces: 0,
-            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-            labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-          }}
-          accessor="value"
-          backgroundColor="transparent"
-          paddingLeft="15"
-          absolute
-          style={{ alignSelf: "center", marginTop: 10, marginRight: 20 }}
-        />
-      )} */}
+      {chartData.length > 0 && (
+        <View style={styles.chartContainer}>
+          <PieChart
+            data={chartData.map((entry) => ({
+              name:
+                entry.BIllPaymentType === "Cash"
+                  ? "Cash Sales"
+                  : "Credit Sales",
+              value: entry.Total,
+              color: entry.BIllPaymentType === "Cash" ? "#3DD598" : "#FF974A",
+            }))}
+            width={350}
+            height={200}
+            chartConfig={{
+              backgroundColor: "#",
+              backgroundGradientFrom: "#fff",
+              backgroundGradientTo: "#fff",
+              color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+              labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+            }}
+            accessor="value"
+            backgroundColor="transparent"
+            paddingLeft="15"
+            absolute
+            style={{ alignSelf: "center", marginTop: 10, marginRight: 20 }}
+          />
+        </View>
+      )}
 
       {touchableData.map(({ key, heading, description, icon }, index) => (
         <TouchableOpacity

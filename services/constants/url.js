@@ -12,6 +12,9 @@ const api = axios.create({
 
 // Define your API endpoints
 export const apiEndpoints = {
+  //Login
+  CheckValidLoginDirectorApp: "CheckValidLoginDirectorApp",
+
   // Finance
   GetDataMetricReportByReportTypeAndDateRange:
     "GetDataMetricReportByReportTypeAndDateRange",

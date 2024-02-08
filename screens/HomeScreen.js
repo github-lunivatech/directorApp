@@ -15,6 +15,7 @@ import BottomTabNagivator from "../components/BottomTabNagivator";
 import sales from "../assets/sales.png";
 import patient from "../assets/patient.png";
 import staff from "../assets/staff.png";
+import LastSevenDaysDateRange from "../components/LastSevenDate";
 
 const HomeScreen = ({ navigation }) => {
   const [companyDetails, setCompanyDetails] = useState(null);
@@ -72,17 +73,22 @@ const HomeScreen = ({ navigation }) => {
 
         if (response && response.ReportDetails) {
           setReportData(response.ReportDetails);
-          console.log(reportData, "Report data");
-          // setTotalPatient(reportData[0].Test);
-          // setTotalRevenue(reportData[0].Sales);
-          // setCreditSales(reportData[0].Patient);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
+
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (reportData) {
+      setTotalPatient(reportData[0].Test || 0);
+      setTotalRevenue(reportData[0].Sales || 0);
+      setCreditSales(reportData[0].Patient || 0);
+    }
+  }, [reportData]);
 
   const formatDate = (date) => {
     const year = date.getFullYear();
@@ -141,7 +147,9 @@ const HomeScreen = ({ navigation }) => {
       {/* Main Content */}
       <View style={styles.headingTextContainer}>
         <Text style={styles.headingText}>Weekly Analysis</Text>
-        <Text style={styles.headingTextDate}>Jan 1 - Jan 6</Text>
+        <Text style={styles.headingTextDate}>
+          <LastSevenDaysDateRange />
+        </Text>
       </View>
       {/* Dashboard */}
       <View style={styles.dashboardButtons}>
@@ -167,7 +175,7 @@ const HomeScreen = ({ navigation }) => {
               fontSize: 20,
             }}
           >
-            {totalRevenue}
+            {formatSales(totalRevenue)}
           </Text>
           <Image source={sales} style={styles.salesImage} />
         </TouchableOpacity>
@@ -219,7 +227,7 @@ const HomeScreen = ({ navigation }) => {
               fontSize: 20,
             }}
           >
-            {totalPatient}
+            {formatSales(totalPatient)}
           </Text>
           <Image source={staff} style={styles.salesImage} />
         </TouchableOpacity>

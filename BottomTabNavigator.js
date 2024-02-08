@@ -162,34 +162,25 @@ const HomeStack = () => {
 
 const BottomTabNavigator = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    checkLoggedIn();
+    // Check if the user is already logged in
+    checkLoginStatus();
   }, []);
 
-  const checkLoggedIn = async () => {
-    try {
-      const userDetailsString = await AsyncStorage.getItem("userDetails");
-      if (userDetailsString) {
-        // User is already logged in
-        setIsLoggedIn(true);
-      }
-    } catch (error) {
-      console.error("Error checking login status:", error);
-    } finally {
-      setLoading(false);
+  const checkLoginStatus = async () => {
+    // Check if the user is logged in from async storage or any other method
+    const userToken = await AsyncStorage.getItem("userToken");
+    if (userToken) {
+      // User is logged in
+      setIsLoggedIn(true);
     }
   };
 
-  const handleLoginSuccess = () => {
-    setIsLoggedIn(true);
-  };
-
-  if (loading) {
-    return null;
+  if (!isLoggedIn) {
+    // If not logged in, show the login screen
+    return <LoginScreen setIsLoggedIn={setIsLoggedIn} />;
   }
-
   return (
     <NavigationContainer>
       <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
@@ -240,13 +231,12 @@ const BottomTabNavigator = () => {
           component={CalendarScreen}
           options={{ tabBarLabel: "" }}
         />
-        <Tab.Screen
-          name="Profile"
-          component={ProfileScreen}
-          options={{ tabBarLabel: "" }}
-        />
+        <Tab.Screen name="Profile" options={{ tabBarLabel: "" }}>
+          {() => <ProfileScreen setIsLoggedIn={setIsLoggedIn} />}
+        </Tab.Screen>
       </Tab.Navigator>
     </NavigationContainer>
   );
 };
+
 export default BottomTabNavigator;
