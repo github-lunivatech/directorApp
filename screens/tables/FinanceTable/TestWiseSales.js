@@ -15,7 +15,7 @@ import Modal from "react-native-modal";
 import theme from "../../../theme";
 import Icon from "react-native-vector-icons/Feather";
 import { ActivityIndicator } from "react-native-paper";
-
+import ExportToPDFButton from "../../../components/ExportToPDFButton";
 import { makeApiRequest, apiEndpoints } from "../../../services/constants/url";
 
 UIManager.setLayoutAnimationEnabledExperimental &&
@@ -242,6 +242,11 @@ const TestWiseSales = (route) => {
               </View>
             </ScrollView>
           )}
+          <ExportToPDFButton
+            tableData={filteredData}
+            pageTitle="Total Sales Report"
+            reportType="Total Sales"
+          />
           <TouchableOpacity
             onPress={applyFilters}
             style={[
@@ -331,7 +336,6 @@ const TestWiseSales = (route) => {
                         fontWeight: "bold",
                         fontSize: 13,
                         color: "#000",
-
                         flex: 1,
                         marginRight: 0,
                         alignSelf: "flex-start",

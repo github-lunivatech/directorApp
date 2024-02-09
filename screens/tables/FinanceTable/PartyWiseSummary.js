@@ -16,7 +16,7 @@ import Icon from "react-native-vector-icons/Feather";
 import Modal from "react-native-modal";
 import theme from "../../../theme";
 import { ActivityIndicator } from "react-native-paper";
-
+import ExportToPDFButton from "../../../components/ExportToPDFButton";
 import { makeApiRequest, apiEndpoints } from "../../../services/constants/url";
 
 UIManager.setLayoutAnimationEnabledExperimental &&
@@ -228,6 +228,11 @@ const PartyWiseSummary = (route) => {
               </View>
             </ScrollView>
           )}
+          <ExportToPDFButton
+            tableData={filteredData}
+            pageTitle="Total Sales Report"
+            reportType="Total Sales"
+          />
 
           <TouchableOpacity
             onPress={applySummary}

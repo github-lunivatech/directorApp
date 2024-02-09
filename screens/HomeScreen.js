@@ -123,12 +123,20 @@ const HomeScreen = ({ navigation }) => {
           )}
           {companyDetails.COmpanyLOgo && (
             <View style={styles.nameLogo}>
-              <Image
-                source={{
-                  uri: `data:image/jpeg;base64,${companyDetails.COmpanyLOgo}`,
+              <View
+                style={{
+                  borderWidth: 6,
+                  borderColor: "white",
+                  borderRadius: 15,
                 }}
-                style={styles.logo}
-              />
+              >
+                <Image
+                  source={{
+                    uri: `data:image/jpeg;base64,${companyDetails.COmpanyLOgo}`,
+                  }}
+                  style={styles.logo}
+                />
+              </View>
               <Text
                 style={{
                   marginTop: 40,
@@ -372,12 +380,7 @@ const styles = StyleSheet.create({
     color: "grey",
     fontSize: 18,
   },
-  logo: {
-    width: 200,
-    height: 100,
-    alignSelf: "center",
-    marginBottom: 20,
-  },
+
   dashboardLabel: {
     fontSize: 16,
     fontWeight: "bold",
@@ -470,7 +473,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     top: "4%",
-    height: "70%", // Adjust the height as needed
+    height: "80%", // Adjust the height as needed
     aspectRatio: 1, // Maintain aspect ratio
     zIndex: 1, // Ensure the logo appears on top
   },

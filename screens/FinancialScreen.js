@@ -65,7 +65,23 @@ const FinancialScreen = ({ navigation }) => {
       icon: "info",
     },
   ];
-
+  const data = [
+    {
+      name: "Loading...",
+      value: 100,
+      color: "grey",
+    },
+    {
+      name: "Loading...",
+      value: 100,
+      color: "grey",
+    },
+    {
+      name: "Loading...",
+      value: 100,
+      color: "grey",
+    },
+  ];
   const [chartData, setChartData] = useState([]);
   useEffect(() => {
     fetchDataForPieChart();
@@ -87,14 +103,38 @@ const FinancialScreen = ({ navigation }) => {
       console.error("Error fetching data:", error);
     }
   };
+  let availableColors = [
+    "#FF6347",
+    "#3DD598",
+    "#8A2BE2",
+    "#1E90FF",
+    "#FFA500",
+    "#FF1493",
+  ];
+
   const getRandomColor = () => {
-    return "#" + Math.floor(Math.random() * 16777215).toString(16);
+    if (availableColors.length === 0) {
+      availableColors = [
+        "#FF6347",
+        "#3DD598",
+        "#8A2BE2",
+        "#1E90FF",
+        "#FFA500",
+        "#FF1493",
+      ];
+    }
+
+    const randomIndex = Math.floor(Math.random() * availableColors.length);
+    const selectedColor = availableColors[randomIndex];
+    availableColors.splice(randomIndex, 1);
+    return selectedColor;
   };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.headingText}>Sales Figures</Text>
 
-      {chartData.length > 0 && (
+      {chartData.length > 0 ? (
         <View style={styles.chartContainer}>
           <PieChart
             data={chartData.map((entry) => ({
@@ -102,6 +142,26 @@ const FinancialScreen = ({ navigation }) => {
               value: entry.Total,
               color: getRandomColor(),
             }))}
+            width={350}
+            height={200}
+            chartConfig={{
+              backgroundColor: "#ffffff",
+              backgroundGradientFrom: "#ffffff",
+              backgroundGradientTo: "#ffffff",
+              color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+              labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+            }}
+            accessor="value"
+            backgroundColor="transparent"
+            paddingLeft="15"
+            absolute
+            style={{ alignSelf: "center", marginTop: 10, marginRight: 20 }}
+          />
+        </View>
+      ) : (
+        <View style={styles.chartContainer}>
+          <PieChart
+            data={data}
             width={350}
             height={200}
             chartConfig={{

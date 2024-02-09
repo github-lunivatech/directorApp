@@ -16,6 +16,7 @@ import Modal from "react-native-modal";
 import theme from "../../../theme";
 import Icon from "react-native-vector-icons/Feather";
 import { ActivityIndicator } from "react-native-paper";
+import ExportToPDFButton from "../../../components/ExportToPDFButton";
 
 import { makeApiRequest, apiEndpoints } from "../../../services/constants/url";
 
@@ -184,6 +185,17 @@ const CashSales = (route) => {
               </View>
             </ScrollView>
           )}
+
+          {isDataVisible &&
+            (isLoading ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <ExportToPDFButton
+                tableData={filteredData}
+                pageTitle="Total Sales Report"
+                reportType="Total Sales"
+              />
+            ))}
           <TouchableOpacity
             onPress={applyFilters}
             style={[

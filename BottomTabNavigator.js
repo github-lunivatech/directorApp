@@ -1,17 +1,20 @@
 // BottomTabNavigator.js
 import React, { useState, useEffect } from "react";
-import { NavigationContainer } from "@react-navigation/native";
+import {
+  NavigationContainer,
+  TouchableOpacity,
+} from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
-import { StatusBar } from "react-native";
+import { StatusBar, Text, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import LoginScreen from "./screens/login/LoginScreen";
 
 import HomeScreen from "./screens/HomeScreen";
-import MessagesScreen from "./screens/login/LogoutScreen";
-import CalendarScreen from "./screens/login/LogoutScreen";
-import ProfileScreen from "./screens/login/LogoutScreen";
+import MessagesScreen from "./screens/MessageScreen";
+import CalendarScreen from "./screens/CalendarScreen";
+import ProfileScreen from "./screens/ProfileScreen";
 
 import FinancialScreen from "./screens/FinancialScreen";
 import MISScreen from "./screens/MISScreen";
@@ -183,8 +186,24 @@ const BottomTabNavigator = () => {
   }
   return (
     <NavigationContainer>
-      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
-
+      <StatusBar
+        backgroundColor="#ffffff" // Set the background color of the status bar
+        barStyle="dark-content" // Set the style of the status bar icons (light or dark)
+      >
+        {/* <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "flex-end",
+            alignItems: "center",
+            marginRight: 10,
+            zIndex: 1,
+          }}
+        >
+          <TouchableOpacity onPress={console.log("Pressed")}>
+            <Text style={{ color: "blue", marginRight: 10 }}>Settings</Text>
+          </TouchableOpacity>
+        </View> */}
+      </StatusBar>
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ color, size }) => {
@@ -235,6 +254,27 @@ const BottomTabNavigator = () => {
           {() => <ProfileScreen setIsLoggedIn={setIsLoggedIn} />}
         </Tab.Screen>
       </Tab.Navigator>
+
+      {/* <TouchableOpacity
+        style={{
+          position: "absolute",
+          top: 0,
+          right: 15,
+          height: StatusBar.currentHeight || 30,
+          width: 30,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+        onPress={() => navigation.navigate("Setting")}
+      >
+        <Image
+          source={homebutton}
+          style={{
+            width: 20,
+            height: 20,
+          }}
+        />
+      </TouchableOpacity> */}
     </NavigationContainer>
   );
 };

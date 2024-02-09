@@ -17,7 +17,7 @@ import theme from "../../../theme";
 import Icon from "react-native-vector-icons/Feather";
 import { makeApiRequest, apiEndpoints } from "../../../services/constants/url";
 import { ActivityIndicator } from "react-native-paper";
-import ExportButton from "../../../components/ExportButton";
+import ExportToPDFButton from "../../../components/ExportToPDFButton";
 
 UIManager.setLayoutAnimationEnabledExperimental &&
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -259,9 +259,15 @@ const TotalSales = (route) => {
               </View>
             </ScrollView>
           )}
-          {/* Export button */}
-          {/* <ExportButton filteredData={filteredData} /> */}
         </View>
+        {/* Export button */}
+
+        <ExportToPDFButton
+          tableData={filteredData}
+          pageTitle="Total Sales Report"
+          reportType="Total Sales"
+        />
+
         <TouchableOpacity
           onPress={applyFilters}
           style={[styles.button, styles.applyButton, { alignSelf: "flex-end" }]}

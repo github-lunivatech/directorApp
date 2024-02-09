@@ -18,6 +18,7 @@ import theme from "../../../theme";
 import Icon from "react-native-vector-icons/Feather";
 import { makeApiRequest, apiEndpoints } from "../../../services/constants/url";
 import { ActivityIndicator, TextInput } from "react-native-paper";
+import ExportToPDFButton from "../../../components/ExportToPDFButton";
 
 UIManager.setLayoutAnimationEnabledExperimental &&
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -412,7 +413,11 @@ const SampleStatus = ({ navigation, route }) => {
               </ScrollView>
             )}
           </View>
-
+          <ExportToPDFButton
+            tableData={filteredData}
+            pageTitle="Total Sales Report"
+            reportType="Total Sales"
+          />
           <TouchableOpacity
             onPress={applyFilters}
             style={[

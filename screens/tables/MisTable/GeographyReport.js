@@ -15,7 +15,7 @@ import Modal from "react-native-modal";
 import theme from "../../../theme";
 import Icon from "react-native-vector-icons/Feather";
 import { ActivityIndicator } from "react-native-paper";
-
+import ExportToPDFButton from "../../../components/ExportToPDFButton";
 import { makeApiRequest, apiEndpoints } from "../../../services/constants/url";
 
 UIManager.setLayoutAnimationEnabledExperimental &&
@@ -60,21 +60,22 @@ const GerographyReport = (route) => {
     try {
       setLoading(true); // Set loading to true when starting data fetch
       const response = await makeApiRequest(
-        apiEndpoints.GetGeographyWiseMISReports,
+        apiEndpoints.GeographicalTestwisePatientCountReport,
         {
           provinceid: stateFilter.Id || 1,
           districtid: districtFilter.Id || 1,
           municipalityId: municipalityFilter.Id || 1,
-          from: fromDate,
-          to: toDate,
-          reportTypeId: requestorFilter.RId || 1,
+          fromdate: fromDate,
+          todate: toDate,
+          diagnosisId: requestorFilter.Diagnosis || 0,
+          testId: 0,
         }
       );
       console.log(fromDate, "This is the date");
       console.log("API Response:", response);
 
       // Extract the array of data from the response
-      const data = response["ReportDetails"] || [];
+      const data = response["TestWiseCount"] || [];
 
       // Use the keys of the first item as columns
       const keys = Object.keys(data[0] || {});
@@ -119,10 +120,10 @@ const GerographyReport = (route) => {
     const fetchRequestorList = async () => {
       try {
         const requestorListResponse = await makeApiRequest(
-          apiEndpoints.GetDatametricReportType
+          apiEndpoints.GetDiagnosiGroupList
         );
 
-        const requestors = requestorListResponse.ReportDetails;
+        const requestors = requestorListResponse.DiagnosisGroup;
 
         // Update requestor list options
         setRequestorList(requestors);
@@ -302,8 +303,8 @@ const GerographyReport = (route) => {
                   style={[styles.button]}
                 >
                   <Text style={styles.buttonText}>
-                    {`Requestor: ${
-                      requestorFilter.ReportName || "Select Datamertic"
+                    {`Diagnosis: ${
+                      requestorFilter.Diagnosis || "Select Diagnosis"
                     }`}
                   </Text>
                 </TouchableOpacity>
@@ -311,6 +312,11 @@ const GerographyReport = (route) => {
             </View>
           </ScrollView>
         )}
+        <ExportToPDFButton
+          tableData={filteredData}
+          pageTitle="Total Sales Report"
+          reportType="Total Sales"
+        />
         <TouchableOpacity
           onPress={applyFilters}
           style={[styles.button, styles.applyButton, { alignSelf: "flex-end" }]}
@@ -346,11 +352,11 @@ const GerographyReport = (route) => {
                 toggleRequestorPicker();
               }}
             >
-              <Picker.Item label="Select Requestor" value="" />
+              <Picker.Item label="Select Diagnosis" value="" />
               {requestorList.map((requestor) => (
                 <Picker.Item
-                  key={requestor.RId}
-                  label={requestor.ReportName}
+                  key={requestor.Id}
+                  label={requestor.Diagnosis}
                   value={requestor}
                 />
               ))}
@@ -453,38 +459,58 @@ const GerographyReport = (route) => {
                       },
                     ]}
                   >
-                    {item.UserName}
+                    {item.TestName}
                   </Text>
-
-                  <TouchableOpacity
-                    style={{
-                      flex: 1,
-                      padding: 10,
-                      // backgroundColor: getBackgroundColor(item.PaymentType),
-                    }}
-                  >
-                    <Text
-                      style={{
-                        alignSelf: "center",
-                      }}
-                    >
-                      {item.PaymentType}
-                    </Text>
-                  </TouchableOpacity>
                 </View>
 
                 <Text
                   style={[
                     styles.touchableOpacityText,
                     {
-                      alignSelf: "flex-end",
+                      alignSelf: "flex-start",
                       marginRight: 10,
-
-                      top: 20,
+                      marginLeft: 10,
                     },
                   ]}
                 >
-                  Total Sales: Rs.{item.TotalSales}
+                  Diagnosis: {item.Diagnosis}
+                </Text>
+                <Text
+                  style={[
+                    styles.touchableOpacityText,
+                    {
+                      marginTop: 10,
+                      alignSelf: "flex-end",
+                      marginRight: 10,
+                      fontWeight: "500",
+                    },
+                  ]}
+                >
+                  Province: {item.ProvinceName}
+                </Text>
+                <Text
+                  style={[
+                    styles.touchableOpacityText,
+                    {
+                      fontWeight: "500",
+                      alignSelf: "flex-end",
+                      marginRight: 10,
+                    },
+                  ]}
+                >
+                  District : {item.DistrictName}
+                </Text>
+                <Text
+                  style={[
+                    styles.touchableOpacityText,
+                    {
+                      fontWeight: "500",
+                      alignSelf: "flex-end",
+                      marginRight: 10,
+                    },
+                  ]}
+                >
+                  Municipality : {item.MunicipalityName}
                 </Text>
                 <Text
                   style={[
@@ -492,24 +518,11 @@ const GerographyReport = (route) => {
                     {
                       alignSelf: "flex-end",
                       marginRight: 10,
-
-                      top: 20,
+                      color: "grey",
                     },
                   ]}
                 >
-                  Collection: Rs.{item.Collection}
-                </Text>
-                <Text
-                  style={[
-                    styles.touchableOpacityText,
-                    {
-                      alignSelf: "flex-end",
-                      marginRight: 10,
-                      top: 20,
-                    },
-                  ]}
-                >
-                  Remaining Amount: Rs.{item.Remaining}
+                  Male Count :{item.Male}
                 </Text>
                 <Text
                   style={[
@@ -522,7 +535,7 @@ const GerographyReport = (route) => {
                     },
                   ]}
                 >
-                  {item.CreatedOnNepaliDate}
+                  Female Count : {item.Female}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -575,9 +588,6 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "black",
   },
-  header: { height: 50, backgroundColor: theme.primaryColor },
-  row: { height: 40, backgroundColor: "#F1F8FF" },
-  text: { textAlign: "center" },
   headerText: { textAlign: "center", fontWeight: "600", color: "white" },
   pickerModal: {
     backgroundColor: "white",
@@ -594,7 +604,7 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   touchableOpacity: {
-    height: 140,
+    height: 150,
     backgroundColor: "#FAFAFB",
     justifyContent: "center",
     alignItems: "center",

@@ -25,22 +25,22 @@ const MedicalScreen = ({ navigation }) => {
     },
     {
       key: "touchable3",
-      heading: "Option to Authorize Reports",
+      heading: "Radiology Reports",
       description: "Authorize reports with additional options.",
       icon: "how-to-vote",
     },
-    {
-      key: "touchable4",
-      heading: "View Report Read only form",
-      description: "View reports in a read-only form.",
-      icon: "remove-red-eye",
-    },
-    {
-      key: "touchable5",
-      heading: "Email, SMS, Report",
-      description: "Send reports via email or SMS.",
-      icon: "email",
-    },
+    // {
+    //   key: "touchable4",
+    //   heading: "View Report Read only form",
+    //   description: "View reports in a read-only form.",
+    //   icon: "remove-red-eye",
+    // },
+    // {
+    //   key: "touchable5",
+    //   heading: "Email, SMS, Report",
+    //   description: "Send reports via email or SMS.",
+    //   icon: "email",
+    // },
   ];
 
   return (

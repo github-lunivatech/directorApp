@@ -16,7 +16,7 @@ import Modal from "react-native-modal";
 import theme from "../../../theme";
 import Icon from "react-native-vector-icons/Feather";
 import { ActivityIndicator } from "react-native-paper";
-
+import ExportToPDFButton from "../../../components/ExportToPDFButton";
 import { makeApiRequest, apiEndpoints } from "../../../services/constants/url";
 
 UIManager.setLayoutAnimationEnabledExperimental &&
@@ -141,7 +141,11 @@ const CurrentRemaining = (route) => {
           <TouchableOpacity onPress={toggleFilters} style={styles.toggleButton}>
             <Text style={styles.overviewTextButton}>Show: Today</Text>
           </TouchableOpacity>
-
+          <ExportToPDFButton
+            tableData={filteredData}
+            pageTitle="Total Sales Report"
+            reportType="Total Sales"
+          />
           <TouchableOpacity
             onPress={applyFilters}
             style={[
@@ -175,7 +179,7 @@ const CurrentRemaining = (route) => {
               <TouchableOpacity
                 key={index}
                 onPress={() => handleTouchableOpacityPress(item)}
-                style={styles.touchableOpacity}
+                style={[styles.touchableOpacity]}
               >
                 <View style={{ flexDirection: "row", marginBottom: -10 }}>
                   <Text
