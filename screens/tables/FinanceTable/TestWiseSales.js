@@ -242,11 +242,16 @@ const TestWiseSales = (route) => {
               </View>
             </ScrollView>
           )}
-          <ExportToPDFButton
-            tableData={filteredData}
-            pageTitle="Total Sales Report"
-            reportType="Total Sales"
-          />
+          {isDataVisible &&
+            (isLoading ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <ExportToPDFButton
+                tableData={filteredData}
+                pageTitle="Test Count Report"
+                reportType="Test Count"
+              />
+            ))}
           <TouchableOpacity
             onPress={applyFilters}
             style={[

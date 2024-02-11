@@ -103,13 +103,13 @@ const FinancialScreen = ({ navigation }) => {
       console.error("Error fetching data:", error);
     }
   };
-  let availableColors = [
-    "#FF6347",
-    "#3DD598",
-    "#8A2BE2",
-    "#1E90FF",
-    "#FFA500",
-    "#FF1493",
+  const availableColors = [
+    "#F6F5FB",
+    "#C7C7C7",
+    "#9E84D0",
+    "#2FD8FF",
+    "#FFAB91",
+    "#69F0AE",
   ];
 
   const getRandomColor = () => {
@@ -124,7 +124,7 @@ const FinancialScreen = ({ navigation }) => {
       ];
     }
 
-    const randomIndex = Math.floor(Math.random() * availableColors.length);
+    const randomIndex = availableColors.length - 1;
     const selectedColor = availableColors[randomIndex];
     availableColors.splice(randomIndex, 1);
     return selectedColor;
@@ -142,7 +142,7 @@ const FinancialScreen = ({ navigation }) => {
               value: entry.Total,
               color: getRandomColor(),
             }))}
-            width={350}
+            width={380}
             height={200}
             chartConfig={{
               backgroundColor: "#ffffff",

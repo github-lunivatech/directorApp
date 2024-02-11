@@ -413,11 +413,16 @@ const SampleStatus = ({ navigation, route }) => {
               </ScrollView>
             )}
           </View>
-          <ExportToPDFButton
-            tableData={filteredData}
-            pageTitle="Total Sales Report"
-            reportType="Total Sales"
-          />
+          {isDataVisible &&
+            (isLoading ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <ExportToPDFButton
+                tableData={filteredData}
+                pageTitle="Sample Details"
+                reportType="Sample Details Report"
+              />
+            ))}
           <TouchableOpacity
             onPress={applyFilters}
             style={[

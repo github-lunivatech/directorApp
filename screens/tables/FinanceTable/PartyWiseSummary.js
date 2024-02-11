@@ -228,11 +228,16 @@ const PartyWiseSummary = (route) => {
               </View>
             </ScrollView>
           )}
-          <ExportToPDFButton
-            tableData={filteredData}
-            pageTitle="Total Sales Report"
-            reportType="Total Sales"
-          />
+          {isDataVisible &&
+            (isLoading ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <ExportToPDFButton
+                tableData={filteredData}
+                pageTitle="Party Wise Summary Report"
+                reportType="Party Wise Summary"
+              />
+            ))}
 
           <TouchableOpacity
             onPress={applySummary}

@@ -182,11 +182,16 @@ const ConsumptionReport = (route) => {
               </View>
             </ScrollView>
           )}
-          <ExportToPDFButton
-            tableData={filteredData}
-            pageTitle="Total Sales Report"
-            reportType="Total Sales"
-          />
+          {isDataVisible &&
+            (isLoading ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <ExportToPDFButton
+                tableData={filteredData}
+                pageTitle="Consumption Report"
+                reportType="Comsumption Report"
+              />
+            ))}
           <TouchableOpacity
             onPress={applyFilters}
             style={[

@@ -141,11 +141,16 @@ const CurrentRemaining = (route) => {
           <TouchableOpacity onPress={toggleFilters} style={styles.toggleButton}>
             <Text style={styles.overviewTextButton}>Show: Today</Text>
           </TouchableOpacity>
-          <ExportToPDFButton
-            tableData={filteredData}
-            pageTitle="Total Sales Report"
-            reportType="Total Sales"
-          />
+          {isDataVisible &&
+            (isLoading ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <ExportToPDFButton
+                tableData={filteredData}
+                pageTitle="Current Remaining"
+                reportType="Current Remaining Report"
+              />
+            ))}
           <TouchableOpacity
             onPress={applyFilters}
             style={[

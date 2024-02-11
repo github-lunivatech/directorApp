@@ -11,11 +11,10 @@ import {
 import Icon from "react-native-vector-icons/FontAwesome";
 import theme from "../theme";
 import { makeApiRequest, apiEndpoints } from "../services/constants/url";
-import BottomTabNagivator from "../components/BottomTabNagivator";
-import sales from "../assets/sales.png";
 import patient from "../assets/patient.png";
 import staff from "../assets/staff.png";
 import LastSevenDaysDateRange from "../components/LastSevenDate";
+import LineChart from "../components/LineChart";
 
 const HomeScreen = ({ navigation }) => {
   const [companyDetails, setCompanyDetails] = useState(null);
@@ -108,6 +107,9 @@ const HomeScreen = ({ navigation }) => {
   const [creditSales, setCreditSales] = useState(0);
   const [totalPatient, setTotalPatient] = useState(0);
 
+  const weeklyRevenue = [100, 200, 150, 300, 250, 100, 200];
+  const weeklyPatients = [100, 300, 450, 200, 250, 300, 200];
+  const weeklyTest = [200, 300, 50, 250, 250, 300, 500];
   return (
     <View style={styles.container}>
       {/* Display Company Details on Top of Dashboard */}
@@ -127,7 +129,7 @@ const HomeScreen = ({ navigation }) => {
                 style={{
                   borderWidth: 6,
                   borderColor: "white",
-                  borderRadius: 15,
+                  borderRadius: 20,
                 }}
               >
                 <Image
@@ -181,12 +183,14 @@ const HomeScreen = ({ navigation }) => {
               color: "#61598B",
               alignSelf: "flex-end",
               fontSize: 20,
+              marginBottom: -20,
             }}
           >
             {formatSales(totalRevenue)}
           </Text>
-          <Image source={sales} style={styles.salesImage} />
+          <LineChart data={weeklyRevenue} color="#0062FF" />
         </TouchableOpacity>
+
         <TouchableOpacity
           style={{ ...styles.dasButton, backgroundColor: "#FFF4F4" }}
         >
@@ -207,11 +211,12 @@ const HomeScreen = ({ navigation }) => {
               color: "#FF3726",
               alignSelf: "flex-end",
               fontSize: 20,
+              marginBottom: -20,
             }}
           >
             {creditSales}
           </Text>
-          <Image source={patient} style={styles.salesImage} />
+          <LineChart data={weeklyPatients} color="#FF5648" />
         </TouchableOpacity>
         <TouchableOpacity
           style={{ ...styles.dasButton, backgroundColor: "#F5F9F9" }}
@@ -233,11 +238,12 @@ const HomeScreen = ({ navigation }) => {
               color: "#479696",
               alignSelf: "flex-end",
               fontSize: 20,
+              marginBottom: -20,
             }}
           >
             {formatSales(totalPatient)}
           </Text>
-          <Image source={staff} style={styles.salesImage} />
+          <LineChart data={weeklyTest} color="#479696" />
         </TouchableOpacity>
       </View>
 
@@ -408,10 +414,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
     width: 110,
-    height: 110,
+    height: 120,
   },
   bigNavButton: {
-    backgroundColor: theme.primaryColor,
     padding: 15,
     borderRadius: 15,
     alignItems: "center",
@@ -472,7 +477,6 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   logo: {
-    top: "4%",
     height: "80%", // Adjust the height as needed
     aspectRatio: 1, // Maintain aspect ratio
     zIndex: 1, // Ensure the logo appears on top

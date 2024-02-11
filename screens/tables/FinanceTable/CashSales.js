@@ -192,8 +192,8 @@ const CashSales = (route) => {
             ) : (
               <ExportToPDFButton
                 tableData={filteredData}
-                pageTitle="Total Sales Report"
-                reportType="Total Sales"
+                pageTitle="Cash, Due, Credit Sales Report"
+                reportType="Cash, Due, Credit Sales"
               />
             ))}
           <TouchableOpacity
@@ -262,12 +262,22 @@ const CashSales = (route) => {
                   <TouchableOpacity
                     style={{
                       flex: 1,
-                      padding: 10, // Optional padding for better visibility
+                      padding: 10,
+                      marginRight: 10,
+                      height: 35,
+                      backgroundColor:
+                        item.PaymentTYpe === "Cash" ? "#F5F9F9" : "#FFF4F4",
+                      color:
+                        item.PaymentTYpe === "Cash" ? "#3DD598" : "#FF5648",
+                      borderRadius: 10,
+                      marginBottom: 10,
                     }}
                   >
                     <Text
                       style={{
                         marginLeft: 10,
+                        width: 90,
+
                         backgroundColor:
                           item.PaymentTYpe === "Cash" ? "#F5F9F9" : "#FFF4F4",
                         color:
@@ -304,7 +314,7 @@ const CashSales = (route) => {
                     },
                   ]}
                 >
-                  Price: Rs.{item.TotalPrice}
+                  Rs.{item.TotalPrice}
                 </Text>
 
                 {/* <Text
@@ -323,6 +333,7 @@ const CashSales = (route) => {
                   style={[
                     styles.touchableOpacityText,
                     {
+                      fontSize: 12,
                       alignSelf: "flex-end",
                       marginRight: 10,
                       color: "grey",
@@ -382,19 +393,10 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "black",
   },
-  header: { height: 50, backgroundColor: theme.primaryColor },
-  row: { height: 40, backgroundColor: "#F1F8FF" },
-  text: { textAlign: "center" },
-  headerText: { textAlign: "center", fontWeight: "600", color: "white" },
   pickerModal: {
     backgroundColor: "white",
     padding: 20,
     borderRadius: 10,
-  },
-  filterRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 10,
   },
   filterItem: {
     flex: 1,

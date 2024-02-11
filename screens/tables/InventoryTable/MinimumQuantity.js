@@ -141,11 +141,16 @@ const CurrentRemaining = (route) => {
           <TouchableOpacity onPress={toggleFilters} style={styles.toggleButton}>
             <Text style={styles.overviewTextButton}>Show: Today</Text>
           </TouchableOpacity>
-          <ExportToPDFButton
-            tableData={filteredData}
-            pageTitle="Total Sales Report"
-            reportType="Total Sales"
-          />
+          {isDataVisible &&
+            (isLoading ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <ExportToPDFButton
+                tableData={filteredData}
+                pageTitle="Cash, Due, Credit Sales Report"
+                reportType="Cash, Due, Credit Sales"
+              />
+            ))}
           <TouchableOpacity
             onPress={applyFilters}
             style={[
@@ -165,12 +170,6 @@ const CurrentRemaining = (route) => {
           </TouchableOpacity>
         </View>
         {/* Date Time Picker */}
-        <DateTimePickerModal
-          isVisible={isDatePickerVisible}
-          mode="date"
-          onConfirm={handleDatePickerChange}
-          onCancel={() => setDatePickerVisibility(false)}
-        />
 
         {/*TouchableOpacity Components */}
         {isDataVisible && (

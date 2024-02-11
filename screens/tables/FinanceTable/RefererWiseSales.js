@@ -228,11 +228,16 @@ const RefererWiseSales = () => {
               </View>
             </ScrollView>
           )}
-          <ExportToPDFButton
-            tableData={filteredData}
-            pageTitle="Total Sales Report"
-            reportType="Total Sales"
-          />
+          {isDataVisible &&
+            (isLoading ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <ExportToPDFButton
+                tableData={filteredData}
+                pageTitle="Referer Wise Sales Report"
+                reportType="Referer Wise Sales"
+              />
+            ))}
           <TouchableOpacity
             onPress={applyFilters}
             style={[

@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Button, StyleSheet } from "react-native";
+import { View, Button, StyleSheet, TouchableOpacity, Text } from "react-native";
 import * as Print from "expo-print";
 
 const ExportToPDFButton = ({ tableData = [], pageTitle, reportType }) => {
@@ -52,6 +52,9 @@ const ExportToPDFButton = ({ tableData = [], pageTitle, reportType }) => {
               padding: 8px;
               text-align: left;
             }
+            thead {
+              display: table-header-group; /* Ensure header is repeated on every page */
+            }
           </style>
         </head>
         <body>
@@ -75,20 +78,34 @@ const ExportToPDFButton = ({ tableData = [], pageTitle, reportType }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Button title="Export" onPress={exportToPDF} color="#fff" />
-    </View>
+    <TouchableOpacity
+      onPress={exportToPDF}
+      style={[styles.button, styles.applyButton, { alignSelf: "flex-end" }]}
+    >
+      <Text style={[styles.buttonText]}>Export</Text>
+    </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    alignSelf: "flex-end",
-    marginTop: 20,
-    backgroundColor: "#047bc2",
+  button: {
+    padding: 10,
+    margin: 5,
+    borderWidth: 1,
     borderRadius: 5,
-    paddingHorizontal: 10,
-    marginRight: 10,
+    borderColor: "#C1C0B9",
+    backgroundColor: "white",
+    width: 320,
+    marginBottom: -2,
+  },
+  applyButton: {
+    backgroundColor: "#047bc2",
+    width: 115,
+    alignSelf: "flex-start",
+  },
+  buttonText: {
+    color: "#fff",
+    textAlign: "center",
   },
 });
 
