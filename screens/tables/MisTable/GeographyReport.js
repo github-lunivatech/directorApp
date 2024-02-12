@@ -62,9 +62,9 @@ const GerographyReport = (route) => {
       const response = await makeApiRequest(
         apiEndpoints.GeographicalTestwisePatientCountReport,
         {
-          provinceid: stateFilter.Id || 1,
-          districtid: districtFilter.Id || 1,
-          municipalityId: municipalityFilter.Id || 1,
+          provinceid: stateFilter.Id || 0,
+          districtid: districtFilter.Id || -1,
+          municipalityId: municipalityFilter.Id || -1,
           fromdate: fromDate,
           todate: toDate,
           diagnosisId: requestorFilter.Diagnosis || 0,
@@ -312,11 +312,16 @@ const GerographyReport = (route) => {
             </View>
           </ScrollView>
         )}
-        <ExportToPDFButton
-          tableData={filteredData}
-          pageTitle="Total Sales Report"
-          reportType="Total Sales"
-        />
+        {isDataVisible &&
+          (isLoading ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
+            <ExportToPDFButton
+              tableData={filteredData}
+              pageTitle="Geography Test Wise Report"
+              reportType="Geography Test Wise Resport"
+            />
+          ))}
         <TouchableOpacity
           onPress={applyFilters}
           style={[styles.button, styles.applyButton, { alignSelf: "flex-end" }]}
@@ -488,30 +493,34 @@ const GerographyReport = (route) => {
                 >
                   Province: {item.ProvinceName}
                 </Text>
-                <Text
-                  style={[
-                    styles.touchableOpacityText,
-                    {
-                      fontWeight: "500",
-                      alignSelf: "flex-end",
-                      marginRight: 10,
-                    },
-                  ]}
-                >
-                  District : {item.DistrictName}
-                </Text>
-                <Text
-                  style={[
-                    styles.touchableOpacityText,
-                    {
-                      fontWeight: "500",
-                      alignSelf: "flex-end",
-                      marginRight: 10,
-                    },
-                  ]}
-                >
-                  Municipality : {item.MunicipalityName}
-                </Text>
+                {item.DistrictName != null && (
+                  <Text
+                    style={[
+                      styles.touchableOpacityText,
+                      {
+                        fontWeight: "500",
+                        alignSelf: "flex-end",
+                        marginRight: 10,
+                      },
+                    ]}
+                  >
+                    District : {item.DistrictName}
+                  </Text>
+                )}
+                {item.MunicipalityName != null && (
+                  <Text
+                    style={[
+                      styles.touchableOpacityText,
+                      {
+                        fontWeight: "500",
+                        alignSelf: "flex-end",
+                        marginRight: 10,
+                      },
+                    ]}
+                  >
+                    Municipality : {item.MunicipalityName}
+                  </Text>
+                )}
                 <Text
                   style={[
                     styles.touchableOpacityText,

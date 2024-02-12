@@ -6,8 +6,8 @@ import { ScrollView } from "react-native-gesture-handler";
 const NormalReport = ({ route }) => {
   const [reportData, setReportData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [groupedTestList, setGroupedTestList] = useState({});
 
-  console.log(route.params);
   useEffect(() => {
     const fetchReportData = async () => {
       try {
@@ -18,13 +18,22 @@ const NormalReport = ({ route }) => {
             fiscalyearId: 6,
           }
         );
-        const data = response || [];
-        // console.log(data);
-        console.log(data["PatientDetails"], "Patient List");
-        console.log(data["TestList"], "TestList");
-        console.log(data["CheckerList"], "CheckList");
+        const data = response || {};
         setReportData(data);
         setLoading(false);
+
+        if (data && data.TestList) {
+          // Group tests by Panel name
+          const groupedTests = data.TestList.reduce((groups, test) => {
+            const { Panel } = test;
+            if (!groups[Panel]) {
+              groups[Panel] = [];
+            }
+            groups[Panel].push(test);
+            return groups;
+          }, {});
+          setGroupedTestList(groupedTests);
+        }
       } catch (error) {
         console.error("Error fetching report data:", error);
         setLoading(false);
@@ -52,44 +61,23 @@ const NormalReport = ({ route }) => {
 
   return (
     <ScrollView style={{ padding: 20 }}>
-      <Text style={{ fontSize: 20, fontWeight: "bold" }}>Patient Details:</Text>
-      {reportData["PatientDetails"].map((patient, index) => (
-        <View key={index}>
-          {Object.entries(patient).map(([key, value]) => (
-            <Text key={key}>
-              {key}: {value}
-            </Text>
-          ))}
-        </View>
-      ))}
+      <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+        {reportData["PatientDetails"][0]["FirstName"]}
+      </Text>
 
       <Text style={{ fontSize: 20, fontWeight: "bold", marginTop: 20 }}>
         Test List:
       </Text>
-      {reportData["TestList"].map((test, index) => (
-        <View key={index}>
-          {Object.entries(test).map(([key, value]) => (
-            <Text key={key}>
-              {key}: {value}
-            </Text>
-          ))}
-        </View>
-      ))}
-      <Text
-        style={{
-          fontSize: 20,
-          fontWeight: "bold",
-          marginTop: 20,
-        }}
-      >
-        Checker List:
-      </Text>
-      {reportData["CheckerList"].map((checker, index) => (
-        <View key={index} style={{ paddingBottom: 30 }}>
-          {Object.entries(checker).map(([key, value]) => (
-            <Text key={key}>
-              {key}: {value}
-            </Text>
+      {Object.entries(groupedTestList).map(([panelName, tests]) => (
+        <View key={panelName}>
+          <Text style={{ fontSize: 18, fontWeight: "bold", marginTop: 10 }}>
+            Panel: {panelName}
+          </Text>
+          {tests.map((test, index) => (
+            <View key={index} style={{ marginLeft: 20 }}>
+              <Text>{test.Testname}</Text>
+              {/* Render other test details here */}
+            </View>
           ))}
         </View>
       ))}

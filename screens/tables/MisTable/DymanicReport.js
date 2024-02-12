@@ -224,11 +224,16 @@ const DynamicReport = (route) => {
             </View>
           </ScrollView>
         )}
-        <ExportToPDFButton
-          tableData={filteredData}
-          pageTitle="Total Sales Report"
-          reportType="Total Sales"
-        />
+        {isDataVisible &&
+          (isLoading ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
+            <ExportToPDFButton
+              tableData={filteredData}
+              pageTitle="Dymanic Report"
+              reportType="Dynamic Report"
+            />
+          ))}
         <TouchableOpacity
           onPress={applyFilters}
           style={[styles.button, styles.applyButton, { alignSelf: "flex-end" }]}
@@ -300,38 +305,45 @@ const DynamicReport = (route) => {
                       },
                     ]}
                   >
-                    {item.UserName}
-                  </Text>
-
-                  <TouchableOpacity
-                    style={{
-                      flex: 1,
-                      padding: 10,
-                      // backgroundColor: getBackgroundColor(item.PaymentType),
-                    }}
-                  >
+                    {item["Patient Name"]}
                     <Text
-                      style={{
-                        alignSelf: "center",
-                      }}
+                      style={[
+                        styles.touchableOpacityText,
+                        {
+                          alignSelf: "flex-end",
+                          marginLeft: 10,
+                          fontWeight: "300",
+                        },
+                      ]}
                     >
-                      {item.PaymentType}
+                      #{item.BillNo}
                     </Text>
-                  </TouchableOpacity>
+                  </Text>
                 </View>
 
                 <Text
                   style={[
                     styles.touchableOpacityText,
                     {
-                      alignSelf: "flex-end",
-                      marginRight: 10,
-
-                      top: 20,
+                      alignSelf: "flex-start",
+                      marginLeft: 10,
                     },
                   ]}
                 >
-                  Total Sales: Rs.{item.TotalSales}
+                  Referer: {item["Refer Name"]}
+                </Text>
+                <Text
+                  numberOfLines={2}
+                  ellipsizeMode="tail"
+                  style={[
+                    styles.touchableOpacityText,
+                    {
+                      marginLeft: 10,
+                      alignSelf: "flex-start",
+                    },
+                  ]}
+                >
+                  Test: {item.Test}
                 </Text>
                 <Text
                   style={[
@@ -339,24 +351,11 @@ const DynamicReport = (route) => {
                     {
                       alignSelf: "flex-end",
                       marginRight: 10,
-
-                      top: 20,
+                      fontWeight: "500",
                     },
                   ]}
                 >
-                  Collection: Rs.{item.Collection}
-                </Text>
-                <Text
-                  style={[
-                    styles.touchableOpacityText,
-                    {
-                      alignSelf: "flex-end",
-                      marginRight: 10,
-                      top: 20,
-                    },
-                  ]}
-                >
-                  Remaining Amount: Rs.{item.Remaining}
+                  Rs.{item.Price}
                 </Text>
                 <Text
                   style={[
@@ -365,11 +364,10 @@ const DynamicReport = (route) => {
                       alignSelf: "flex-end",
                       marginRight: 10,
                       color: "grey",
-                      marginBottom: 10,
                     },
                   ]}
                 >
-                  {item.CreatedOnNepaliDate}
+                  {item.Date}
                 </Text>
               </TouchableOpacity>
             ))}

@@ -46,6 +46,7 @@ const ExportToPDFButton = ({ tableData = [], pageTitle, reportType }) => {
             table {
               width: 100%;
               border-collapse: collapse;
+              padding: 0 20px 20px;
             }
             th, td {
               border: 1px solid black;

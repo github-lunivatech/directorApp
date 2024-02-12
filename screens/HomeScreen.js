@@ -107,9 +107,139 @@ const HomeScreen = ({ navigation }) => {
   const [creditSales, setCreditSales] = useState(0);
   const [totalPatient, setTotalPatient] = useState(0);
 
-  const weeklyRevenue = [100, 200, 150, 300, 250, 100, 200];
-  const weeklyPatients = [100, 300, 450, 200, 250, 300, 200];
-  const weeklyTest = [200, 300, 50, 250, 250, 300, 500];
+  // const weeklyRevenue = [100, 200, 150, 300, 250, 100, 200];
+  // const weeklyPatients = [100, 300, 450, 200, 250, 300, 200];
+  // const weeklyTest = [200, 300, 50, 250, 250, 300, 500];
+
+  const [weeklyRevenue, setWeeklyRevenue] = useState(null);
+  const [weeklyPatients, setWeeklyPatients] = useState(null);
+  const [weeklyTest, setWeeklyTest] = useState(null);
+
+  useEffect(() => {
+    const currentDate = new Date();
+    const fromDate = new Date(currentDate);
+    fromDate.setDate(currentDate.getDate() - 7);
+
+    const formattedFromDate = formatDate(fromDate);
+    const formattedToDate = formatDate(currentDate);
+
+    const fetchData = async () => {
+      try {
+        const response = await makeApiRequest(
+          apiEndpoints.GetDataMetricReportByReportTypeAndDateRange,
+          {
+            from: formattedFromDate,
+            to: formattedToDate,
+            reportType: "WeeklySales",
+          }
+        );
+
+        if (response && response.ReportDetails) {
+          // Extract sales values and store them in an array
+          const salesArray = response.ReportDetails.map((item) => item.Sales);
+          setWeeklyRevenue(salesArray);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    console.log(weeklyRevenue);
+    fetchData();
+  }, []);
+  useEffect(() => {
+    const currentDate = new Date();
+    const fromDate = new Date(currentDate);
+    fromDate.setDate(currentDate.getDate() - 7);
+
+    const formattedFromDate = formatDate(fromDate);
+    const formattedToDate = formatDate(currentDate);
+
+    const fetchData = async () => {
+      try {
+        const response = await makeApiRequest(
+          apiEndpoints.GetDataMetricReportByReportTypeAndDateRange,
+          {
+            from: formattedFromDate,
+            to: formattedToDate,
+            reportType: "WeeklySales",
+          }
+        );
+
+        if (response && response.ReportDetails) {
+          // Extract sales values and store them in an array
+          const salesArray = response.ReportDetails.map((item) => item.Sales);
+          setWeeklyRevenue(salesArray);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+    // console.log(weeklyRevenue);
+  }, []);
+  useEffect(() => {
+    const currentDate = new Date();
+    const fromDate = new Date(currentDate);
+    fromDate.setDate(currentDate.getDate() - 7);
+
+    const formattedFromDate = formatDate(fromDate);
+    const formattedToDate = formatDate(currentDate);
+
+    const fetchData = async () => {
+      try {
+        const response = await makeApiRequest(
+          apiEndpoints.GetDataMetricReportByReportTypeAndDateRange,
+          {
+            from: formattedFromDate,
+            to: formattedToDate,
+            reportType: "WeeklyPatient",
+          }
+        );
+
+        if (response && response.ReportDetails) {
+          // Extract sales values and store them in an array
+          const salesArray = response.ReportDetails.map((item) => item.Total);
+          setWeeklyPatients(salesArray);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+    // console.log(weeklyPatients);
+  }, []);
+  useEffect(() => {
+    const currentDate = new Date();
+    const fromDate = new Date(currentDate);
+    fromDate.setDate(currentDate.getDate() - 7);
+
+    const formattedFromDate = formatDate(fromDate);
+    const formattedToDate = formatDate(currentDate);
+
+    const fetchData = async () => {
+      try {
+        const response = await makeApiRequest(
+          apiEndpoints.GetDataMetricReportByReportTypeAndDateRange,
+          {
+            from: formattedFromDate,
+            to: formattedToDate,
+            reportType: "WeeklyTest",
+          }
+        );
+
+        if (response && response.ReportDetails) {
+          // Extract sales values and store them in an array
+          const salesArray = response.ReportDetails.map((item) => item.Total);
+          setWeeklyTest(salesArray);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+    // console.log(weeklyTest);
+  }, []);
+
   return (
     <View style={styles.container}>
       {/* Display Company Details on Top of Dashboard */}

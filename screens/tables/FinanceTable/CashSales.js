@@ -125,8 +125,8 @@ const CashSales = (route) => {
   };
   const handleBackButton = () => {
     if (isModalVisible) {
-      closeModal(); // Close the modal when the back button is pressed
-      return true; // Prevent default behavior
+      closeModal();
+      return true;
     }
     return false;
   };
@@ -317,18 +317,6 @@ const CashSales = (route) => {
                   Rs.{item.TotalPrice}
                 </Text>
 
-                {/* <Text
-                  style={[
-                    styles.touchableOpacityText,
-                    {
-                      alignSelf: "flex-end",
-                      marginRight: 10,
-                      color: "grey",
-                    },
-                  ]}
-                >
-                  {item.CreatedOnNepaliDate}
-                </Text> */}
                 <Text
                   style={[
                     styles.touchableOpacityText,

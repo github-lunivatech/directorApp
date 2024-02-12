@@ -262,11 +262,16 @@ const TotalSales = (route) => {
         </View>
         {/* Export button */}
 
-        <ExportToPDFButton
-          tableData={filteredData}
-          pageTitle="Total Sales Report"
-          reportType="Total Sales"
-        />
+        {isDataVisible &&
+          (isLoading ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
+            <ExportToPDFButton
+              tableData={filteredData}
+              pageTitle="Total Sales Report"
+              reportType="Total Sales"
+            />
+          ))}
 
         <TouchableOpacity
           onPress={applyFilters}
