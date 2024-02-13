@@ -53,10 +53,7 @@ const ExportToPDFButton = ({ tableData = [], pageTitle, reportType }) => {
             h2, h3 {
               text-align: center;
             }
-            body{
-              transform: rotate(90deg); /* Rotate the table to landscape orientation */
-         transform-origin: left ; /* Set the rotation origin */
-         }
+          
           </style>
         </head>
         <body >
