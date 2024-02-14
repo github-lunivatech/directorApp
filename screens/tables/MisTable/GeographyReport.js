@@ -9,10 +9,8 @@ import {
   UIManager,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import { Table, Row } from "react-native-table-component";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Modal from "react-native-modal";
-import theme from "../../../theme";
 import Icon from "react-native-vector-icons/Feather";
 import { ActivityIndicator } from "react-native-paper";
 import ExportToPDFButton from "../../../components/ExportToPDFButton";
@@ -552,7 +550,11 @@ const GerographyReport = (route) => {
         )}
 
         {/* Modal to show entire data */}
-        <Modal isVisible={isModalVisible} onBackdropPress={closeModal}>
+        <Modal
+          isVisible={isModalVisible}
+          onBackdropPress={closeModal}
+          onBackButtonPress={closeModal}
+        >
           <View style={styles.modalContainer}>
             {/* Render the selectedData in the modal */}
             {selectedData &&

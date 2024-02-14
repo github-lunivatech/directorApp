@@ -4,7 +4,7 @@ import { makeApiRequest, apiEndpoints } from "../../../services/constants/url";
 
 const ReportComponent = ({ route }) => {
   const [patientDetails, setPatientDetails] = useState([]);
-  const [testList, setTestList] = useState([]);
+  const [groupedData, setGroupedData] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -19,6 +19,7 @@ const ReportComponent = ({ route }) => {
           }
         );
         const data = response || {};
+
         // Extracting patient details
         const patientDetailsData = data.PatientDetails || [];
         setPatientDetails(patientDetailsData);
@@ -27,17 +28,16 @@ const ReportComponent = ({ route }) => {
         const testListData = data.TestList || [];
         const groupedTestData = {};
 
-        // Grouping test list data by panel name
+        // Grouping test list data by panel name and group name
         testListData.forEach((test) => {
           const { Panel, GroupName, Testname, TestSubType, subtestId } = test;
           if (!groupedTestData[Panel]) {
             groupedTestData[Panel] = {};
           }
           if (!groupedTestData[Panel][GroupName]) {
-            groupedTestData[Panel][GroupName] = [];
+            groupedTestData[Panel][GroupName] = {};
           }
           if (subtestId) {
-            // If subtestId is present, group under Testname
             if (!groupedTestData[Panel][GroupName][Testname]) {
               groupedTestData[Panel][GroupName][Testname] = [];
             }
@@ -46,15 +46,14 @@ const ReportComponent = ({ route }) => {
               ...test,
             });
           } else {
-            // If subtestId is null, add as independent test
-            if (!groupedTestData[Panel][GroupName]) {
-              groupedTestData[Panel][GroupName] = [];
+            if (!groupedTestData[Panel][GroupName][Testname]) {
+              groupedTestData[Panel][GroupName][Testname] = [];
             }
-            groupedTestData[Panel][GroupName].push(test);
+            groupedTestData[Panel][GroupName][Testname].push(test);
           }
         });
 
-        setTestList(groupedTestData);
+        setGroupedData(groupedTestData);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching report data:", error);
@@ -89,49 +88,37 @@ const ReportComponent = ({ route }) => {
               ))}
             </View>
           </View>
-          <View>
-            <Text style={{ fontSize: 20, fontWeight: "bold" }}>Test List</Text>
-            {Object.keys(testList).map((panelName) => (
-              <View key={panelName}>
-                <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-                  {panelName}
-                </Text>
-                {Object.keys(testList[panelName]).map((groupName) => (
-                  <View key={groupName}>
-                    {groupName !== "Independent" && (
-                      <Text style={{ fontWeight: "bold" }}>
-                        Group Name: {groupName}
-                      </Text>
+          {Object.keys(groupedData).map((panelName, panelIndex) => (
+            <View key={panelIndex}>
+              <Text style={{ fontWeight: "bold" }}>{panelName}</Text>
+              {Object.keys(groupedData[panelName]).map(
+                (groupName, groupIndex) => (
+                  <View key={groupIndex}>
+                    {console.log(groupedData, "this is grouped data")}
+                    {<Text style={{ fontWeight: "bold" }}>{groupName}</Text>}
+                    {Object.keys(groupedData[panelName][groupName]).map(
+                      (testName, idx) => (
+                        <View key={idx}>
+                          <Text style={{ fontWeight: "bold" }}>{testName}</Text>
+                          {groupedData[panelName][groupName][testName].map(
+                            (subtest, subIdx) => (
+                              <View key={subIdx} style={{ paddingLeft: 10 }}>
+                                {subtest.TestSubType && (
+                                  <Text>
+                                    Test SubType: {subtest.TestSubType}
+                                  </Text>
+                                )}
+                              </View>
+                            )
+                          )}
+                        </View>
+                      )
                     )}
-                    {testList[panelName][groupName].map((test, index) => (
-                      <View key={index}>
-                        <Text>
-                          <Text style={{ fontWeight: "bold" }}>Test Name:</Text>{" "}
-                          {test.Testname}{" "}
-                          {test.subtestId && `(${test.TestSubType})`}
-                        </Text>
-                      </View>
-                    ))}
                   </View>
-                ))}
-                {testList[panelName]["Independent"] && (
-                  <View>
-                    <Text style={{ fontWeight: "bold" }}>
-                      Independent Tests
-                    </Text>
-                    {testList[panelName]["Independent"].map((test, index) => (
-                      <View key={index}>
-                        <Text>
-                          <Text style={{ fontWeight: "bold" }}>Test Name:</Text>{" "}
-                          {test.Testname}
-                        </Text>
-                      </View>
-                    ))}
-                  </View>
-                )}
-              </View>
-            ))}
-          </View>
+                )
+              )}
+            </View>
+          ))}
         </ScrollView>
       )}
     </View>

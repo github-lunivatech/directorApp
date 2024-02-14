@@ -8,6 +8,7 @@ import {
   LayoutAnimation,
   UIManager,
   BackHandler,
+  Alert,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { Table, Row } from "react-native-table-component";
@@ -123,22 +124,7 @@ const CashSales = (route) => {
       })
       .replace("at", ",");
   };
-  const handleBackButton = () => {
-    if (isModalVisible) {
-      closeModal();
-      return true;
-    }
-    return false;
-  };
 
-  useEffect(() => {
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      handleBackButton
-    );
-    return () => backHandler.remove();
-  }, [isModalVisible]);
-  const currentDate = new Date();
   return (
     <ScrollView>
       <View style={styles.container}>
@@ -221,7 +207,6 @@ const CashSales = (route) => {
           onConfirm={handleDatePickerChange}
           onCancel={() => setDatePickerVisibility(false)}
         />
-
         {/*TouchableOpacity Components */}
         {isDataVisible && (
           <ScrollView>
@@ -334,9 +319,13 @@ const CashSales = (route) => {
             ))}
           </ScrollView>
         )}
-
         {/* Modal to show entire data */}
-        <Modal isVisible={isModalVisible} onBackdropPress={closeModal}>
+
+        <Modal
+          isVisible={isModalVisible}
+          onBackdropPress={closeModal}
+          onBackButtonPress={closeModal}
+        >
           <View style={styles.modalContainer}>
             {/* Render the selectedData in the modal */}
             {selectedData &&
@@ -361,8 +350,9 @@ const styles = StyleSheet.create({
   },
   filterContainer: {
     flexDirection: "column",
-    alignItems: "center",
     marginBottom: 10,
+    flex: 1,
+    width: 320,
   },
   button: {
     padding: 10,
@@ -371,8 +361,9 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderColor: "#C1C0B9",
     backgroundColor: "white",
-    width: 320,
+    width: "100%",
   },
+
   applyButton: {
     backgroundColor: "#047bc2",
     width: 115,

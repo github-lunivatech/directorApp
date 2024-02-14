@@ -649,7 +649,11 @@ const SampleStatus = ({ navigation, route }) => {
           )}
 
           {/* Modal to show entire data */}
-          <Modal isVisible={isModalVisible} onBackdropPress={closeModal}>
+          <Modal
+            isVisible={isModalVisible}
+            onBackdropPress={closeModal}
+            onBackButtonPress={closeModal}
+          >
             <View style={styles.modalContainer}>
               {/* Render the selectedData in the modal */}
               {selectedData &&
