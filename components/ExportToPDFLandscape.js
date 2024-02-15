@@ -23,7 +23,7 @@ const ExportToPDFButton = ({ tableData = [], pageTitle, reportType, row }) => {
     const columnHeaders = Object.keys(tableData[0]);
     const numberOfColumns = columnHeaders.length;
 
-    const rowsPerPage = row || 15; // Adjust this number as needed
+    const rowsPerPage = 4; // Adjust this number as needed
     const columnsThresholdForRotation = 10; // Adjust this number as needed
 
     let tableSections = [];
@@ -61,12 +61,14 @@ const ExportToPDFButton = ({ tableData = [], pageTitle, reportType, row }) => {
         (section, index) => `
         <h2>${pageTitle}</h2>
         <h3>Report Type: ${reportType}</h3>
-        <table>
-          <thead>
-            <tr>${headerRow}</tr>
-          </thead>
-          <tbody>${section.join("")}</tbody>
-        </table>
+        <div class="${isRotate ? "landscape" : ""}">
+          <table>
+            <thead>
+              <tr>${headerRow}</tr>
+            </thead>
+            <tbody>${section.join("")}</tbody>
+          </table>
+        </div>
         ${
           index < tableSections.length - 1
             ? '<div class="page-break"></div>'
@@ -80,10 +82,31 @@ const ExportToPDFButton = ({ tableData = [], pageTitle, reportType, row }) => {
       <html>
         <head>
           <style>
-            @page {
-              margin: 20px;
-              ${isRotate ? "size: landscape" : ""}
-            }
+          .page {
+            size: landscape;
+            margin: 20px;
+            transform: rotate(90deg);
+            transform-origin: top left;
+          }
+          body {
+            width: 100vw;       
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            overflow: hidden;
+          }
+          .content {
+            transform: rotate(90deg);
+            transform-origin: top left;
+            overflow: hidden;
+            width: 100vh; /* Swap width and height to fit rotated content */
+            height: 100vw; /* Swap width and height to fit rotated content */
+          }
+          .page {
+            width: 100%; /* Adjust as needed */
+            height: 100%; /* Adjust as needed */
+          }
             table {
               width: 100%;
               border-collapse: collapse;
@@ -99,6 +122,7 @@ const ExportToPDFButton = ({ tableData = [], pageTitle, reportType, row }) => {
               background-color: #047bc2;
               color: white;
             }
+
             .page-break {
               page-break-before: always;
             }

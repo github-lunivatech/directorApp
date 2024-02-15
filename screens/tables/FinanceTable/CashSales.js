@@ -17,7 +17,7 @@ import Modal from "react-native-modal";
 import theme from "../../../theme";
 import Icon from "react-native-vector-icons/Feather";
 import { ActivityIndicator } from "react-native-paper";
-import ExportToPDFButton from "../../../components/ExportToPDFButton";
+import ExportToPDFButton from "../../../components/ExportToPDFLandscape";
 
 import { makeApiRequest, apiEndpoints } from "../../../services/constants/url";
 
@@ -124,6 +124,47 @@ const CashSales = (route) => {
       })
       .replace("at", ",");
   };
+  const getBackgroundColor = (paymentType) => {
+    switch (paymentType) {
+      case "Cash":
+        return "#F5FFF9";
+      case "Credit":
+        return "#FFE6E6";
+      case "CreditCollection":
+        return "#F5FFF9";
+      case "DueCollection":
+        return "#FFE6E6";
+      case "Due":
+        return "#FFE6E6";
+      case "Card":
+        return "#F5FFF9";
+      case "Bank":
+        return "#F5FFF9";
+      default:
+        return "#FFFFFF";
+    }
+  };
+
+  const getTextColor = (paymentType) => {
+    switch (paymentType) {
+      case "Cash":
+        return "#3DD598";
+      case "Credit":
+        return "#FF6347";
+      case "CreditCollection":
+        return "#FF6347";
+      case "DueCollection":
+        return "#FF6347";
+      case "Due":
+        return "#FF6347";
+      case "Card":
+        return "#3DD598";
+      case "Bank":
+        return "#3DD598";
+      default:
+        return "#000000";
+    }
+  };
 
   return (
     <ScrollView>
@@ -180,6 +221,7 @@ const CashSales = (route) => {
                 tableData={filteredData}
                 pageTitle="Cash, Due, Credit Sales Report"
                 reportType="Cash, Due, Credit Sales"
+                row={2}
               />
             ))}
           <TouchableOpacity
@@ -214,7 +256,12 @@ const CashSales = (route) => {
               <TouchableOpacity
                 key={index}
                 onPress={() => handleTouchableOpacityPress(item)}
-                style={styles.touchableOpacity}
+                style={[
+                  styles.touchableOpacity,
+                  {
+                    backgroundColor: getBackgroundColor(item.PaymentTYpe),
+                  },
+                ]}
               >
                 <View style={{ flexDirection: "row", marginBottom: -10 }}>
                   <Text
@@ -249,13 +296,9 @@ const CashSales = (route) => {
                       flex: 1,
                       padding: 10,
                       marginRight: 10,
-                      height: 35,
-                      backgroundColor:
-                        item.PaymentTYpe === "Cash" ? "#F5F9F9" : "#FFF4F4",
-                      color:
-                        item.PaymentTYpe === "Cash" ? "#3DD598" : "#FF5648",
+                      height: 40,
+
                       borderRadius: 10,
-                      marginBottom: 10,
                     }}
                   >
                     <Text
@@ -263,10 +306,7 @@ const CashSales = (route) => {
                         marginLeft: 10,
                         width: 90,
 
-                        backgroundColor:
-                          item.PaymentTYpe === "Cash" ? "#F5F9F9" : "#FFF4F4",
-                        color:
-                          item.PaymentTYpe === "Cash" ? "#3DD598" : "#FF5648",
+                        color: getTextColor(item.PaymentTYpe),
                       }}
                     >
                       {item.PaymentTYpe} Sales
@@ -283,6 +323,7 @@ const CashSales = (route) => {
                       marginLeft: 10,
                       color: "grey",
                       fontSize: 12,
+                      marginTop: 10,
                     },
                   ]}
                 >

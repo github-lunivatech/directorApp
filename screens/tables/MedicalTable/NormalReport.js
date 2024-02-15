@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ActivityIndicator, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
 import { makeApiRequest, apiEndpoints } from "../../../services/constants/url";
 
 const ReportComponent = ({ route }) => {
@@ -66,63 +72,201 @@ const ReportComponent = ({ route }) => {
   }, []);
 
   return (
-    <View>
-      {loading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
-      ) : error ? (
-        <Text>{error}</Text>
-      ) : (
-        <ScrollView>
-          <View>
-            <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-              Patient Details
-            </Text>
-            <View>
-              {patientDetails.map((patient, index) => (
-                <View key={index}>
-                  <Text>
-                    <Text style={{ fontWeight: "bold" }}>Name:</Text>{" "}
-                    {patient.FirstName}
-                  </Text>
-                </View>
-              ))}
-            </View>
-          </View>
-          {Object.keys(groupedData).map((panelName, panelIndex) => (
-            <View key={panelIndex}>
-              <Text style={{ fontWeight: "bold" }}>{panelName}</Text>
-              {Object.keys(groupedData[panelName]).map(
-                (groupName, groupIndex) => (
-                  <View key={groupIndex}>
-                    {console.log(groupedData, "this is grouped data")}
-                    {<Text style={{ fontWeight: "bold" }}>{groupName}</Text>}
-                    {Object.keys(groupedData[panelName][groupName]).map(
-                      (testName, idx) => (
-                        <View key={idx}>
-                          <Text style={{ fontWeight: "bold" }}>{testName}</Text>
-                          {groupedData[panelName][groupName][testName].map(
-                            (subtest, subIdx) => (
-                              <View key={subIdx} style={{ paddingLeft: 10 }}>
-                                {subtest.TestSubType && (
-                                  <Text>
-                                    Test SubType: {subtest.TestSubType}
-                                  </Text>
-                                )}
-                              </View>
-                            )
-                          )}
-                        </View>
-                      )
-                    )}
+    <ScrollView>
+      <View style={styles.container}>
+        {loading ? (
+          <ActivityIndicator size="large" color="#0000ff" />
+        ) : error ? (
+          <Text style={styles.errorText}>{error}</Text>
+        ) : (
+          <>
+            <View style={styles.sectionContainer}>
+              <Text style={styles.heading}>Patient Details</Text>
+              <View>
+                {patientDetails.map((patient, index) => (
+                  <View key={index} style={styles.dataContainer}>
+                    <Text>
+                      <Text style={styles.boldText}>Name:</Text>{" "}
+                      {patient.FirstName}
+                    </Text>
+                    <Text>
+                      <Text style={styles.boldText}>Sample Id:</Text>{" "}
+                      {route.params}
+                    </Text>
                   </View>
-                )
-              )}
+                ))}
+              </View>
             </View>
-          ))}
-        </ScrollView>
-      )}
-    </View>
+            {Object.keys(groupedData).map((panelName, panelIndex) => (
+              <View key={panelIndex} style={styles.panelContainer}>
+                <Text style={styles.panelText}>{panelName}</Text>
+                {Object.keys(groupedData[panelName]).map(
+                  (groupName, groupIndex) => (
+                    <View key={groupIndex} style={styles.groupContainer}>
+                      {panelName != groupName && (
+                        <Text style={styles.groupText}>{groupName}</Text>
+                      )}
+                      {Object.keys(groupedData[panelName][groupName]).map(
+                        (testName, idx) => (
+                          <View key={idx} style={styles.testContainer}>
+                            {panelName == groupName ? (
+                              <Text style={styles.testText}>{testName}</Text>
+                            ) : (
+                              <Text style={styles.testText}>{testName}</Text>
+                            )}
+                            {groupedData[panelName][groupName][testName].map(
+                              (subtest, subIdx) => (
+                                <View
+                                  key={subIdx}
+                                  style={styles.subtestContainer}
+                                >
+                                  {subtest.TestSubType && (
+                                    <Text
+                                      style={[
+                                        styles.subtestText,
+                                        { fontWeight: "bold" },
+                                      ]}
+                                    >
+                                      Sub Test: {subtest.TestSubType}
+                                    </Text>
+                                  )}
+                                  <Text
+                                    style={[
+                                      {
+                                        alignSelf: "flex-end",
+                                        marginLeft: 20,
+                                      },
+                                    ]}
+                                  >
+                                    {subtest.TestSubType && (
+                                      <Text style={[styles.subtestText]}>
+                                        {subtest.subresult}
+                                      </Text>
+                                    )}
+                                    {subtest.TestResult && (
+                                      <Text style={styles.subtestText}>
+                                        TestResult: {subtest.TestResult}
+                                      </Text>
+                                    )}
+                                  </Text>
+
+                                  <Text style={styles.subtestText}>
+                                    Test Method: {subtest.Method}
+                                  </Text>
+
+                                  <Text style={styles.subtestText}>
+                                    {subtest.Range &&
+                                    (subtest.Range.includes("</br>") ||
+                                      subtest.Range.includes("<br>"))
+                                      ? subtest.Range.replace("<br>", "</br>")
+                                          .split("</br>")
+                                          .map((range, index) => (
+                                            <Text key={index}>
+                                              {range}
+                                              {"\n"}
+                                            </Text>
+                                          ))
+                                      : subtest.Range &&
+                                        subtest.Range.replace(/<[^>]+>/g, "")}
+                                    {subtest.Max &&
+                                    (subtest.Max.includes("</br>") ||
+                                      subtest.Max.includes("<br>"))
+                                      ? subtest.Max.replace("</br>", "<br>")
+                                          .split("<br>")
+                                          .map((max, index) => (
+                                            <Text key={index}>
+                                              {max}
+                                              {"\n"}
+                                            </Text>
+                                          ))
+                                      : subtest.Max &&
+                                        subtest.Max.replace(/<[^>]+>/g, "")}
+                                  </Text>
+                                </View>
+                              )
+                            )}
+                          </View>
+                        )
+                      )}
+                    </View>
+                  )
+                )}
+              </View>
+            ))}
+          </>
+        )}
+      </View>
+    </ScrollView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 10,
+    backgroundColor: "#ffffff",
+  },
+  sectionContainer: {
+    marginBottom: 20,
+  },
+  dataContainer: {
+    marginBottom: 10,
+    padding: 10,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: "#cccccc",
+  },
+  heading: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  boldText: {
+    fontWeight: "bold",
+  },
+  panelContainer: {
+    marginBottom: 20,
+    backgroundColor: "#fff",
+    borderRadius: 5,
+    padding: 10,
+  },
+  panelText: {
+    fontWeight: "bold",
+    fontSize: 18,
+    marginBottom: 10,
+  },
+  groupContainer: {
+    marginBottom: 10,
+    backgroundColor: "#fff",
+  },
+  groupText: {
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+  testContainer: {
+    marginBottom: 10,
+    padding: 10,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: "#cccccc",
+  },
+  testText: {
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+  subtestContainer: {
+    marginBottom: 10,
+    padding: 10,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: "#cccccc",
+  },
+  subtestText: {},
+  errorText: {
+    fontSize: 16,
+    color: "red",
+    textAlign: "center",
+  },
+});
 
 export default ReportComponent;

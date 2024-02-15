@@ -154,17 +154,19 @@ const TotalSales = (route) => {
   const getBackgroundColor = (paymentType) => {
     switch (paymentType) {
       case "Cash":
-        return "#F5F9F9";
+        return "#F5FFF9";
       case "Credit":
-        return "#EFE6F5";
-      case "CreditCollection":
-        return "#FFFAE6";
-      case "DueCollection":
         return "#FFE6E6";
+      case "CreditCollection":
+        return "#F5FFF9";
+      case "DueCollection":
+        return "#F5FFF9";
       case "Due":
-        return "#F0F8FF";
+        return "#FFE6E6";
       case "Card":
-        return "#F0FFF0";
+        return "#F5FFF9";
+      case "Bank":
+        return "#F5FFF9";
       default:
         return "#FFFFFF";
     }
@@ -175,15 +177,17 @@ const TotalSales = (route) => {
       case "Cash":
         return "#3DD598";
       case "Credit":
-        return "#8A2BE2";
-      case "CreditCollection":
-        return "#FFD700";
-      case "DueCollection":
         return "#FF6347";
+      case "CreditCollection":
+        return "#3DD598";
+      case "DueCollection":
+        return "#3DD598";
       case "Due":
-        return "#1E90FF";
+        return "#FF6347";
       case "Card":
-        return "#008000";
+        return "#3DD598";
+      case "Bank":
+        return "#3DD598";
       default:
         return "#000000";
     }
@@ -326,7 +330,12 @@ const TotalSales = (route) => {
               <TouchableOpacity
                 key={index}
                 onPress={() => handleTouchableOpacityPress(item)}
-                style={styles.touchableOpacity}
+                style={[
+                  styles.touchableOpacity,
+                  {
+                    backgroundColor: getBackgroundColor(item.PaymentType),
+                  },
+                ]}
               >
                 <View style={{ flexDirection: "row" }}>
                   <Text
@@ -351,7 +360,7 @@ const TotalSales = (route) => {
                     style={{
                       flex: 1,
                       padding: 10,
-                      // backgroundColor: getBackgroundColor(item.PaymentType),
+                      marginBottom: 10,
                     }}
                   >
                     <Text
@@ -372,8 +381,6 @@ const TotalSales = (route) => {
                     {
                       alignSelf: "flex-end",
                       marginRight: 10,
-
-                      top: 20,
                     },
                   ]}
                 >
@@ -385,8 +392,6 @@ const TotalSales = (route) => {
                     {
                       alignSelf: "flex-end",
                       marginRight: 10,
-
-                      top: 20,
                     },
                   ]}
                 >
@@ -398,24 +403,10 @@ const TotalSales = (route) => {
                     {
                       alignSelf: "flex-end",
                       marginRight: 10,
-                      top: 20,
                     },
                   ]}
                 >
                   Remaining Amount: Rs.{item.Remaining}
-                </Text>
-                <Text
-                  style={[
-                    styles.touchableOpacityText,
-                    {
-                      alignSelf: "flex-end",
-                      marginRight: 10,
-                      color: "grey",
-                      marginBottom: 10,
-                    },
-                  ]}
-                >
-                  {item.CreatedOnNepaliDate}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -475,10 +466,7 @@ const styles = StyleSheet.create({
   buttonTexts: {
     color: "#fff",
   },
-  header: { height: 50, backgroundColor: theme.primaryColor },
-  row: { height: 40, backgroundColor: "#F1F8FF" },
-  text: { textAlign: "center" },
-  headerText: { textAlign: "center", fontWeight: "600", color: "white" },
+
   pickerModal: {
     backgroundColor: "white",
     padding: 20,
@@ -495,7 +483,7 @@ const styles = StyleSheet.create({
   },
 
   touchableOpacity: {
-    height: 140,
+    height: 110,
     backgroundColor: "#FAFAFB",
     justifyContent: "center",
     alignItems: "center",
