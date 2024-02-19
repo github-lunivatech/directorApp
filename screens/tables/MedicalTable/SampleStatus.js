@@ -584,6 +584,8 @@ const SampleStatus = ({ navigation, route }) => {
                 >
                   <View style={{ flexDirection: "row" }}>
                     <Text
+                      numberOfLines={2}
+                      ellipsizeMode="tail"
                       style={[
                         styles.touchableOpacityText,
                         {
@@ -618,6 +620,8 @@ const SampleStatus = ({ navigation, route }) => {
                   </View>
 
                   <Text
+                    numberOfLines={2}
+                    ellipsizeMode="tail"
                     style={[
                       styles.touchableOpacityText,
                       {
@@ -638,8 +642,7 @@ const SampleStatus = ({ navigation, route }) => {
                         alignSelf: "flex-end",
                         marginRight: 10,
                         color: "grey",
-                        marginTop: 20,
-                        marginBottom: 10,
+                        marginTop: 30,
                       },
                     ]}
                   >
@@ -704,10 +707,6 @@ const styles = StyleSheet.create({
   buttonTexts: {
     color: "#fff",
   },
-  header: { height: 50, backgroundColor: theme.primaryColor },
-  row: { height: 40, backgroundColor: "#F1F8FF" },
-  text: { textAlign: "center" },
-  headerText: { textAlign: "center", fontWeight: "600", color: "white" },
   pickerModal: {
     backgroundColor: "white",
     padding: 20,
@@ -724,7 +723,7 @@ const styles = StyleSheet.create({
   },
 
   touchableOpacity: {
-    height: 170,
+    height: 150,
     backgroundColor: "#FAFAFB",
     justifyContent: "center",
     alignItems: "center",

@@ -20,7 +20,7 @@ const MessageScreen = () => {
   return (
     <View style={styles.container}>
       {!showWebView ? (
-        <TouchableOpacity onPress={handleLinkPress}>
+        <TouchableOpacity onPress={handleLinkPress} style={styles.linkButton}>
           <Text style={styles.link}>Open Link</Text>
         </TouchableOpacity>
       ) : (
@@ -50,8 +50,7 @@ const styles = StyleSheet.create({
   },
   link: {
     fontSize: 16,
-    color: "blue",
-    textDecorationLine: "underline",
+    color: "#fff",
   },
   webviewContainer: {
     flex: 1,
@@ -65,6 +64,12 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 20,
     right: 20,
+    backgroundColor: "#047bc2",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  linkButton: {
     backgroundColor: "#047bc2",
     paddingVertical: 10,
     paddingHorizontal: 20,
