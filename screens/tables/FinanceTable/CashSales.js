@@ -70,6 +70,7 @@ const CashSales = (route) => {
       setDataVisibility(true);
     } catch (error) {
       console.error("Error fetching data:", error);
+      Alert.alert("Data not available");
     } finally {
       setLoading(false);
     }
@@ -127,19 +128,19 @@ const CashSales = (route) => {
   const getBackgroundColor = (paymentType) => {
     switch (paymentType) {
       case "Cash":
-        return "#F5FFF9";
+        return "#E0FFF1";
       case "Credit":
         return "#FFE6E6";
       case "CreditCollection":
-        return "#F5FFF9";
+        return "#E0FFF1";
       case "DueCollection":
         return "#FFE6E6";
       case "Due":
         return "#FFE6E6";
       case "Card":
-        return "#F5FFF9";
+        return "#E0FFF1";
       case "Bank":
-        return "#F5FFF9";
+        return "#E0FFF1";
       default:
         return "#FFFFFF";
     }

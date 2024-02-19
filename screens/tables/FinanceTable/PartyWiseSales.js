@@ -8,6 +8,7 @@ import {
   LayoutAnimation,
   UIManager,
   BackHandler,
+  Alert,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { Table, Row } from "react-native-table-component";
@@ -78,6 +79,7 @@ const PartyWiseSales = (route) => {
       setDataVisibility(true);
     } catch (error) {
       console.error("Error fetching data:", error);
+      Alert.alert("Data not available");
     } finally {
       setLoading(false);
     }

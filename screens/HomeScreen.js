@@ -7,12 +7,11 @@ import {
   Button,
   Image,
   ScrollView,
+  StatusBar,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import theme from "../theme";
 import { makeApiRequest, apiEndpoints } from "../services/constants/url";
-import patient from "../assets/patient.png";
-import staff from "../assets/staff.png";
 import LastSevenDaysDateRange from "../components/LastSevenDate";
 import LineChart from "../components/LineChart";
 
@@ -399,8 +398,8 @@ const HomeScreen = ({ navigation }) => {
                 Financial Reports{" "}
               </Text>
               <Text style={{ color: "#61598B" }}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-                eiusmod.
+                Concise summaries of a company's financial performance and
+                health.
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -420,8 +419,8 @@ const HomeScreen = ({ navigation }) => {
                 Medical Reports{" "}
               </Text>
               <Text style={{ color: "#479696" }}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-                eiusmod.
+                Document detailing a patient's medical history, diagnosis, and
+                treatment.
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -435,8 +434,7 @@ const HomeScreen = ({ navigation }) => {
                 MIS Reports{" "}
               </Text>
               <Text style={{ color: "#C93F8D" }}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-                eiusmod.
+                Summary of Management Information System data for analysis.
               </Text>
             </TouchableOpacity>
 
@@ -451,8 +449,7 @@ const HomeScreen = ({ navigation }) => {
                 Analysis Reports
               </Text>
               <Text style={{ color: "#61598B" }}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-                eiusmod.
+                Detailed examination of data to derive insights and conclusions.
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -466,8 +463,8 @@ const HomeScreen = ({ navigation }) => {
                 Inventory
               </Text>
               <Text style={{ color: "#C93F8D" }}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-                eiusmod.
+                Inventory management summary detailing stock levels, movements,
+                and trends.
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -480,9 +477,9 @@ const HomeScreen = ({ navigation }) => {
               <Text style={{ ...styles.navButtonText, color: "#479696" }}>
                 Settings
               </Text>
-              <Text style={{ color: "grey" }}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-                eiusmod.
+              <Text style={{ color: "#479696" }}>
+                Configuration options allowing customization of software or
+                device preferences.
               </Text>
             </TouchableOpacity>
           </View>
@@ -543,13 +540,13 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
     alignItems: "center",
-    width: 110,
-    height: 120,
+    width: "32%",
+    height: "120%",
   },
   bigNavButton: {
     padding: 15,
     borderRadius: 15,
-    alignItems: "center",
+
     marginLeft: 20,
     width: 250,
     height: 170,
@@ -559,7 +556,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     width: "90%",
-    height: "14%",
+    height: "15%",
   },
   navigationButtons: {
     display: "flex",

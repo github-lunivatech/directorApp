@@ -8,6 +8,7 @@ import {
   LayoutAnimation,
   UIManager,
   BackHandler,
+  Alert,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { Table, Row } from "react-native-table-component";
@@ -83,6 +84,7 @@ const TotalSales = (route) => {
       setDataVisibility(true);
     } catch (error) {
       console.error("Error fetching data:", error);
+      Alert.alert("Data not available");
     } finally {
       setLoading(false);
     }
@@ -154,19 +156,19 @@ const TotalSales = (route) => {
   const getBackgroundColor = (paymentType) => {
     switch (paymentType) {
       case "Cash":
-        return "#F5FFF9";
+        return "#E0FFF1";
       case "Credit":
         return "#FFE6E6";
       case "CreditCollection":
-        return "#F5FFF9";
+        return "#E0FFF1";
       case "DueCollection":
         return "#F5FFF9";
       case "Due":
         return "#FFE6E6";
       case "Card":
-        return "#F5FFF9";
+        return "#E0FFF1";
       case "Bank":
-        return "#F5FFF9";
+        return "#E0FFF1";
       default:
         return "#FFFFFF";
     }

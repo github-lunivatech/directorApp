@@ -1,13 +1,9 @@
-// BottomTabNavigator.js
 import React, { useState, useEffect } from "react";
-import {
-  NavigationContainer,
-  TouchableOpacity,
-} from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
+
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
-import { StatusBar, Text, View } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome";
+import { StatusBar } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import LoginScreen from "./screens/login/LoginScreen";
 
@@ -42,13 +38,14 @@ import ConsumptionReport from "./screens/tables/InventoryTable/ConsumptionReport
 import CurrentRemaining from "./screens/tables/InventoryTable/CurrentRemaining";
 import MinimumQuantity from "./screens/tables/InventoryTable/MinimumQuantity";
 
-import { Image } from "react-native";
+import { Image, TouchableOpacity } from "react-native";
 import homebutton from "./assets/home.png";
 import chat from "./assets/Chat.png";
 import calendar from "./assets/calendar.png";
 import profile from "./assets/Profile.png";
 import PartyWiseSummary from "./screens/tables/FinanceTable/PartyWiseSummary";
 import NormalReport from "./screens/tables/MedicalTable/NormalReport";
+import Icon from "react-native-vector-icons/Feather";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -129,10 +126,28 @@ const InventoryStackNavigator = () => {
   );
 };
 
-const HomeStack = () => {
+const HomeStack = ({ navigation }) => {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Setting")}
+              style={{ marginRight: 10 }}
+            >
+              <Icon
+                name="settings"
+                size={30}
+                color="grey"
+                style={{ marginRight: 5 }}
+              />
+            </TouchableOpacity>
+          ),
+        }}
+      />
       <Stack.Screen
         name="Financial"
         component={FinanceStackNavigator}
@@ -186,24 +201,7 @@ const BottomTabNavigator = () => {
   }
   return (
     <NavigationContainer>
-      <StatusBar
-        backgroundColor="#ffffff" // Set the background color of the status bar
-        barStyle="dark-content" // Set the style of the status bar icons (light or dark)
-      >
-        {/* <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "flex-end",
-            alignItems: "center",
-            marginRight: 10,
-            zIndex: 1,
-          }}
-        >
-          <TouchableOpacity onPress={console.log("Pressed")}>
-            <Text style={{ color: "blue", marginRight: 10 }}>Settings</Text>
-          </TouchableOpacity>
-        </View> */}
-      </StatusBar>
+      <StatusBar backgroundColor="#ffffff" barStyle="dark-content"></StatusBar>
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ color, size }) => {
@@ -254,27 +252,6 @@ const BottomTabNavigator = () => {
           {() => <ProfileScreen setIsLoggedIn={setIsLoggedIn} />}
         </Tab.Screen>
       </Tab.Navigator>
-
-      {/* <TouchableOpacity
-        style={{
-          position: "absolute",
-          top: 0,
-          right: 15,
-          height: StatusBar.currentHeight || 30,
-          width: 30,
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-        onPress={() => navigation.navigate("Setting")}
-      >
-        <Image
-          source={homebutton}
-          style={{
-            width: 20,
-            height: 20,
-          }}
-        />
-      </TouchableOpacity> */}
     </NavigationContainer>
   );
 };

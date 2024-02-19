@@ -8,6 +8,7 @@ import {
   LayoutAnimation,
   UIManager,
   BackHandler,
+  Alert,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
@@ -83,6 +84,8 @@ const TestWiseSales = (route) => {
       setFilteredData(data);
       setDataVisibility(true);
     } catch (error) {
+      Alert.alert("Data not available");
+
       console.error("Error fetching data:", error);
     } finally {
       setLoading(false);

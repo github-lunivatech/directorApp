@@ -1,23 +1,42 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  Image,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { makeApiRequest, apiEndpoints } from "../../services/constants/url";
+import Icon from "react-native-vector-icons/Feather";
 
 const LoginScreen = ({ setIsLoggedIn }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [companyDetails, setCompanyDetails] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    const fetchCompanyDetails = async () => {
+      try {
+        const response = await makeApiRequest(apiEndpoints.GetCompanyDetails);
+        if (response && response.ReportType && response.ReportType[0]) {
+          setCompanyDetails(response.ReportType[0]);
+        }
+      } catch (error) {
+        console.error("Error fetching company details:", error);
+      }
+    };
+    fetchCompanyDetails();
+  }, []);
 
   const handleLogin = async () => {
-    console.log(username, "Password", password);
     try {
-      // Make API call to check login validity
       const response = await makeApiRequest(
         apiEndpoints.CheckValidLoginDirectorApp,
         {
@@ -25,19 +44,11 @@ const LoginScreen = ({ setIsLoggedIn }) => {
           password: password,
         }
       );
-      console.log(response);
-      // Check if login is successful
       if (response) {
-        // Set user token or any other necessary data to AsyncStorage or context
-        // For now, just set isLoggedIn to true
-        console.log("Login true");
-        const userToken = response; // Assuming token is returned in the response
+        const userToken = response;
         await AsyncStorage.setItem("userToken", JSON.stringify(response));
-
-        console.log(userToken);
         setIsLoggedIn(true);
       } else {
-        console.log("Invaid login details");
         setError("Invalid username or password");
       }
     } catch (error) {
@@ -47,40 +58,85 @@ const LoginScreen = ({ setIsLoggedIn }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.heading}>Login</Text>
-      {error ? <Text style={styles.error}>{error}</Text> : null}
-      <TextInput
-        style={styles.input}
-        placeholder="Username"
-        value={username}
-        onChangeText={(text) => setUsername(text)}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        secureTextEntry
-        value={password}
-        onChangeText={(text) => setPassword(text)}
-      />
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
-      </TouchableOpacity>
-    </View>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <ScrollView contentContainerStyle={styles.scrollViewContent}>
+        {companyDetails && companyDetails.COmpanyLOgo && (
+          <View style={styles.logoContainer}>
+            <Image
+              source={{
+                uri: `data:image/jpeg;base64,${companyDetails.COmpanyLOgo}`,
+              }}
+              style={styles.logo}
+            />
+            <Text style={[styles.companyName, { marginTop: 10 }]}>
+              {companyDetails.CompanyName}
+            </Text>
+          </View>
+        )}
+        <Text style={styles.versionText}>Director App Version 1.0</Text>
+        {error ? <Text style={styles.error}>{error}</Text> : null}
+        <TextInput
+          style={styles.input}
+          placeholder="Username"
+          value={username}
+          onChangeText={(text) => setUsername(text)}
+        />
+        <View style={styles.passwordContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            secureTextEntry={!showPassword}
+            value={password}
+            onChangeText={(text) => setPassword(text)}
+          />
+          <TouchableOpacity
+            style={styles.eyeIconContainer}
+            onPress={() => setShowPassword(!showPassword)}
+          >
+            <Icon
+              name={showPassword ? "eye" : "eye-off"}
+              size={24}
+              color="#aaa"
+            />
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Login</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
     backgroundColor: "#fff",
   },
-  heading: {
-    fontSize: 24,
+  scrollViewContent: {
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  logoContainer: {
+    alignItems: "center",
+    marginBottom: 40,
+  },
+  logo: {
+    width: 130,
+    height: 130,
+  },
+  companyName: {
     fontWeight: "bold",
+    fontSize: 22,
+  },
+  versionText: {
     marginBottom: 20,
+    fontWeight: "bold",
+    color: "tomato",
   },
   input: {
     width: "80%",
@@ -90,6 +146,25 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
     marginBottom: 20,
+  },
+  passwordContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 20,
+    position: "relative",
+  },
+  passwordInput: {
+    flex: 1,
+    height: 40,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    paddingHorizontal: 10,
+  },
+  eyeIconContainer: {
+    position: "absolute",
+    right: 10,
+    top: 8,
   },
   button: {
     width: "80%",
