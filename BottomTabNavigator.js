@@ -209,7 +209,7 @@ const BottomTabNavigator = () => {
 
             if (route.name === "Home") {
               iconSource = homebutton;
-            } else if (route.name === "Messages") {
+            } else if (route.name === "Link") {
               iconSource = chat;
             } else if (route.name === "Calendar") {
               iconSource = calendar;
@@ -239,7 +239,7 @@ const BottomTabNavigator = () => {
           options={{ headerShown: false, tabBarLabel: "" }}
         />
         <Tab.Screen
-          name="Messages"
+          name="Link"
           component={MessagesScreen}
           options={{ tabBarLabel: "" }}
         />

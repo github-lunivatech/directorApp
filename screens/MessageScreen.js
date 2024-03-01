@@ -21,15 +21,15 @@ const MessageScreen = () => {
     <View style={styles.container}>
       {!showWebView ? (
         <TouchableOpacity onPress={handleLinkPress} style={styles.linkButton}>
-          <Text style={styles.link}>Open Link</Text>
+          <Text style={styles.link}>Press to open Bill Test Login</Text>
         </TouchableOpacity>
       ) : (
         <View style={styles.webviewContainer}>
           <WebView
             source={{
-              uri: "http://lunivacare.ddns.net:8080/luniva360pphlbagmati/login",
+              uri: "https://lunivat.ddns.net/billTest/Carelab/Account/Login",
             }}
-            style={styles.webview}
+            style={[styles.webview]}
             ref={webViewRef}
           />
           <TouchableOpacity onPress={goBack} style={styles.backButton}>
@@ -45,7 +45,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    justifyContent: "center",
     alignItems: "center",
   },
   link: {
@@ -74,6 +73,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
+    marginTop: 10,
   },
   buttonText: {
     color: "#fff",

@@ -13,6 +13,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { makeApiRequest, apiEndpoints } from "../../services/constants/url";
 import Icon from "react-native-vector-icons/Feather";
+import mutu from "../../assets/mutu.png";
 
 const LoginScreen = ({ setIsLoggedIn }) => {
   const [username, setUsername] = useState("");
@@ -21,6 +22,7 @@ const LoginScreen = ({ setIsLoggedIn }) => {
   const [companyDetails, setCompanyDetails] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
 
+  const currentYear = new Date().getFullYear();
   useEffect(() => {
     const fetchCompanyDetails = async () => {
       try {
@@ -53,7 +55,7 @@ const LoginScreen = ({ setIsLoggedIn }) => {
       }
     } catch (error) {
       console.error("Error logging in:", error);
-      setError("An error occurred. Please try again later.");
+      setError("Invalid username or password");
     }
   };
 
@@ -76,8 +78,10 @@ const LoginScreen = ({ setIsLoggedIn }) => {
             </Text>
           </View>
         )}
-        <Text style={styles.versionText}>Director App Version 1.0</Text>
-        {error ? <Text style={styles.error}>{error}</Text> : null}
+        <View>
+          <Text style={styles.versionText}>Director App Version 1.0</Text>
+        </View>
+        <View>{error ? <Text style={styles.error}>{error}</Text> : null}</View>
         <TextInput
           style={styles.input}
           placeholder="Username"
@@ -106,6 +110,28 @@ const LoginScreen = ({ setIsLoggedIn }) => {
         <TouchableOpacity style={styles.button} onPress={handleLogin}>
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            marginTop: 50,
+          }}
+        >
+          <Text style={{ fontSize: 14 }}>Powered by: </Text>
+          <Image
+            source={mutu}
+            resizeMode="contain"
+            style={{ width: 35, height: 50 }}
+          />
+          <Text style={{ color: "tomato", fontSize: 14 }}>
+            LUNIVA<Text style={{ color: "black" }}>TECH</Text>
+          </Text>
+        </View>
+        <View>
+          <Text style={{ color: "grey", fontSize: 10 }}>
+            All Rights Reserved © {currentYear}
+          </Text>
+        </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );

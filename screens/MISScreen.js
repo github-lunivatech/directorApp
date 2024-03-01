@@ -17,31 +17,31 @@ const MISScreen = ({ navigation }) => {
   };
 
   const touchableData = [
-    {
-      key: "touchable1",
-      heading: "Age Wise Report By Date Range",
-      description: "View the age-wise report based on a specific date range.",
-      icon: "date-range",
-    },
-    {
-      key: "touchable2",
-      heading: "Total Male, Female, Others Report",
-      description: "Check the total count of male, female, and others.",
-      icon: "people",
-    },
+    // {
+    //   key: "touchable1",
+    //   heading: "Age Wise Report By Date Range",
+    //   description: "View the age-wise report based on a specific date range.",
+    //   icon: "date-range",
+    // },
+    // {
+    //   key: "touchable2",
+    //   heading: "Total Male, Female, Others Report",
+    //   description: "Check the total count of male, female, and others.",
+    //   icon: "people",
+    // },
     {
       key: "GeographyReport",
       heading: "Geographical Report",
       description: "Explore geographical distribution data.",
       icon: "location-on",
     },
-    {
-      key: "touchable4",
-      heading: "Positive/Negative, Reactive non reactive count Report",
-      description:
-        "Get counts of positive, negative, reactive, and non-reactive.",
-      icon: "check-circle",
-    },
+    // {
+    //   key: "touchable4",
+    //   heading: "Positive/Negative, Reactive non reactive count Report",
+    //   description:
+    //     "Get counts of positive, negative, reactive, and non-reactive.",
+    //   icon: "check-circle",
+    // },
     {
       key: "DynamicReport",
       heading: "Dynamic Report With input Date Range and Report Type",

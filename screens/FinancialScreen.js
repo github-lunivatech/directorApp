@@ -83,6 +83,8 @@ const FinancialScreen = ({ navigation }) => {
     },
   ];
   const [chartData, setChartData] = useState([]);
+  const [errorData, setErrortData] = useState();
+
   useEffect(() => {
     fetchDataForPieChart();
   }, []);
@@ -101,6 +103,7 @@ const FinancialScreen = ({ navigation }) => {
       setChartData(response?.ReportDetails);
     } catch (error) {
       console.error("Error fetching data:", error);
+      setErrortData(error);
     }
   };
   const availableColors = [
@@ -179,7 +182,11 @@ const FinancialScreen = ({ navigation }) => {
           />
         </View>
       )}
-
+      {errorData && (
+        <Text style={{ color: "red" }}>
+          Error fetching data. Please try again.
+        </Text>
+      )}
       {touchableData.map(({ key, heading, description, icon }, index) => (
         <TouchableOpacity
           key={key}

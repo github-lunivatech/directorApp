@@ -23,12 +23,12 @@ const MedicalScreen = ({ navigation }) => {
       description: "Explore the list of detailed information about samples.",
       icon: "list",
     },
-    {
-      key: "touchable3",
-      heading: "Radiology Reports",
-      description: "Authorize reports with additional options.",
-      icon: "how-to-vote",
-    },
+    // {
+    //   key: "touchable3",
+    //   heading: "Radiology Reports",
+    //   description: "Authorize reports with additional options.",
+    //   icon: "how-to-vote",
+    // },
     // {
     //   key: "touchable4",
     //   heading: "View Report Read only form",
