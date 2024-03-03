@@ -54,7 +54,6 @@ const MedicalStack = createStackNavigator();
 const MisStack = createStackNavigator();
 const AnalysisStack = createStackNavigator();
 const InventoryStack = createStackNavigator();
-
 const FinanceStackNavigator = () => {
   return (
     <FinanceStack.Navigator>
@@ -126,7 +125,7 @@ const InventoryStackNavigator = () => {
   );
 };
 
-const HomeStack = ({ navigation }) => {
+const HomeStack = ({ navigation, roleName }) => {
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -148,11 +147,13 @@ const HomeStack = ({ navigation }) => {
           ),
         }}
       />
-      <Stack.Screen
-        name="Financial"
-        component={FinanceStackNavigator}
-        options={{ headerShown: false }}
-      />
+      {roleName === "Admin" && (
+        <Stack.Screen
+          name="Financial"
+          component={FinanceStackNavigator}
+          options={{ headerShown: false }}
+        />
+      )}
       <Stack.Screen
         name="Medical"
         component={MedicalStackNavigator}
@@ -182,15 +183,12 @@ const BottomTabNavigator = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    // Check if the user is already logged in
     checkLoginStatus();
   }, []);
 
   const checkLoginStatus = async () => {
-    // Check if the user is logged in from async storage or any other method
     const userToken = await AsyncStorage.getItem("userToken");
     if (userToken) {
-      // User is logged in
       setIsLoggedIn(true);
     }
   };
@@ -235,20 +233,66 @@ const BottomTabNavigator = () => {
       >
         <Tab.Screen
           name="Home"
-          component={HomeStack}
-          options={{ headerShown: false, tabBarLabel: "" }}
-        />
+          options={{ headerShown: false, tabBarLabel: "Home" }}
+        >
+          {() => <HomeStack />}
+        </Tab.Screen>
         <Tab.Screen
           name="Link"
           component={MessagesScreen}
-          options={{ tabBarLabel: "" }}
+          options={{
+            headerRight: () => (
+              <TouchableOpacity
+                onPress={() => navigation.navigate("Setting")}
+                style={{ marginRight: 10 }}
+              >
+                <Icon
+                  name="settings"
+                  size={30}
+                  color="grey"
+                  style={{ marginRight: 5 }}
+                />
+              </TouchableOpacity>
+            ),
+          }}
         />
         <Tab.Screen
           name="Calendar"
           component={CalendarScreen}
-          options={{ tabBarLabel: "" }}
+          options={{
+            headerRight: () => (
+              <TouchableOpacity
+                onPress={() => navigation.navigate("Setting")}
+                style={{ marginRight: 10 }}
+              >
+                <Icon
+                  name="settings"
+                  size={30}
+                  color="grey"
+                  style={{ marginRight: 5 }}
+                />
+              </TouchableOpacity>
+            ),
+          }}
         />
-        <Tab.Screen name="Profile" options={{ tabBarLabel: "" }}>
+        <Tab.Screen
+          name="Profile"
+          options={{
+            headerRight: () => (
+              <TouchableOpacity
+                onPress={() => navigation.navigate("Setting")}
+                style={{ marginRight: 10 }}
+              >
+                <Icon
+                  name="settings"
+                  size={30}
+                  color="grey"
+                  style={{ marginRight: 5 }}
+                />
+              </TouchableOpacity>
+            ),
+          }}
+        >
           {() => <ProfileScreen setIsLoggedIn={setIsLoggedIn} />}
         </Tab.Screen>
       </Tab.Navigator>

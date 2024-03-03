@@ -14,10 +14,33 @@ import theme from "../theme";
 import { makeApiRequest, apiEndpoints } from "../services/constants/url";
 import LastSevenDaysDateRange from "../components/LastSevenDate";
 import LineChart from "../components/LineChart";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const HomeScreen = ({ navigation }) => {
   const [companyDetails, setCompanyDetails] = useState(null);
   const [reportData, setReportData] = useState(null);
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    const retrieveUserData = async () => {
+      try {
+        const data = await AsyncStorage.getItem("userToken");
+        if (data !== null) {
+          setUserData(JSON.parse(data));
+        }
+      } catch (error) {
+        console.error("Error retrieving user data:", error);
+      }
+    };
+
+    retrieveUserData();
+  }, []);
+  console.log(userData);
+  const roleName =
+    userData &&
+    userData.CheckValidLoginDirectorApp &&
+    userData.CheckValidLoginDirectorApp[0] &&
+    userData.CheckValidLoginDirectorApp[0].roleName;
 
   const navigateToOtherScreen = (props) => {
     if (props === "a") {
@@ -387,21 +410,23 @@ const HomeScreen = ({ navigation }) => {
       <ScrollView horizontal>
         <View style={styles.navigationButtons}>
           <View style={styles.row}>
-            <TouchableOpacity
-              style={{ ...styles.bigNavButton, backgroundColor: "#F6F5FB" }}
-              onPress={() => navigateToOtherScreen("a")}
-            >
-              <View style={styles.iconContainer}>
-                <Icon name="line-chart" size={20} color="#61598B" />
-              </View>
-              <Text style={{ ...styles.navButtonText, color: "#61598B" }}>
-                Financial Reports{" "}
-              </Text>
-              <Text style={{ color: "#61598B" }}>
-                Concise summaries of a company's financial performance and
-                health.
-              </Text>
-            </TouchableOpacity>
+            {roleName == "Admin" && (
+              <TouchableOpacity
+                style={{ ...styles.bigNavButton, backgroundColor: "#F6F5FB" }}
+                onPress={() => navigateToOtherScreen("a")}
+              >
+                <View style={styles.iconContainer}>
+                  <Icon name="line-chart" size={20} color="#61598B" />
+                </View>
+                <Text style={{ ...styles.navButtonText, color: "#61598B" }}>
+                  Financial Reports{" "}
+                </Text>
+                <Text style={{ color: "#61598B" }}>
+                  Concise summaries of a company's financial performance and
+                  health.
+                </Text>
+              </TouchableOpacity>
+            )}
             <TouchableOpacity
               style={{ ...styles.bigNavButton, backgroundColor: "#F5F9F9" }}
               onPress={() => navigateToOtherScreen("b")}
