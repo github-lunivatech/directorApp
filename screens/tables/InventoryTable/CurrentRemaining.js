@@ -186,7 +186,13 @@ const CurrentRemaining = (route) => {
               <TouchableOpacity
                 key={index}
                 onPress={() => handleTouchableOpacityPress(item)}
-                style={[styles.touchableOpacity]}
+                style={[
+                  styles.touchableOpacity,
+                  {
+                    backgroundColor:
+                      item.MinQty > item.RemainingCount ? "#FFE6E6" : "#FAFAFB",
+                  },
+                ]}
               >
                 <View style={{ flexDirection: "row", marginBottom: -10 }}>
                   <Text

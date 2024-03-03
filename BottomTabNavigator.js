@@ -7,6 +7,8 @@ import { StatusBar } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import LoginScreen from "./screens/login/LoginScreen";
 
+import LoadingScreen from "./components/LoadingScreen";
+
 import HomeScreen from "./screens/HomeScreen";
 import MessagesScreen from "./screens/MessageScreen";
 import CalendarScreen from "./screens/CalendarScreen";
@@ -125,7 +127,7 @@ const InventoryStackNavigator = () => {
   );
 };
 
-const HomeStack = ({ navigation, roleName }) => {
+const HomeStack = ({ navigation }) => {
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -147,13 +149,13 @@ const HomeStack = ({ navigation, roleName }) => {
           ),
         }}
       />
-      {roleName === "Admin" && (
-        <Stack.Screen
-          name="Financial"
-          component={FinanceStackNavigator}
-          options={{ headerShown: false }}
-        />
-      )}
+
+      <Stack.Screen
+        name="Financial"
+        component={FinanceStackNavigator}
+        options={{ headerShown: false }}
+      />
+
       <Stack.Screen
         name="Medical"
         component={MedicalStackNavigator}
@@ -181,6 +183,15 @@ const HomeStack = ({ navigation, roleName }) => {
 
 const BottomTabNavigator = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     checkLoginStatus();
@@ -190,12 +201,20 @@ const BottomTabNavigator = () => {
     const userToken = await AsyncStorage.getItem("userToken");
     if (userToken) {
       setIsLoggedIn(true);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 2000);
     }
   };
-
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
   if (!isLoggedIn) {
-    // If not logged in, show the login screen
     return <LoginScreen setIsLoggedIn={setIsLoggedIn} />;
+  }
+
+  if (isLoading) {
+    return <LoadingScreen />;
   }
   return (
     <NavigationContainer>

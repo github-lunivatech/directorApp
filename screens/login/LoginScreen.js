@@ -47,7 +47,6 @@ const LoginScreen = ({ setIsLoggedIn }) => {
         }
       );
       if (response) {
-        const userToken = response;
         await AsyncStorage.setItem("userToken", JSON.stringify(response));
         setIsLoggedIn(true);
       } else {
