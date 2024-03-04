@@ -1,42 +1,61 @@
-import React, { useState, useRef } from "react";
-import { View, StyleSheet, TouchableOpacity, Text } from "react-native";
+import React, { useState, useRef, useEffect } from "react";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  ActivityIndicator,
+} from "react-native";
 import { WebView } from "react-native-webview";
+import { makeApiRequest, apiEndpoints } from "../services/constants/url";
 
 const MessageScreen = () => {
   const [showWebView, setShowWebView] = useState(false);
+  const [reportLink, setReportLink] = useState("");
+  const [loading, setLoading] = useState(true);
   const webViewRef = useRef(null);
 
-  const handleLinkPress = () => {
-    setShowWebView(true);
+  useEffect(() => {
+    // Fetch the report link from the API
+    const fetchReportLink = async () => {
+      try {
+        const response = await makeApiRequest(apiEndpoints.GetWebReportLink);
+        const link = response.ReportLInk[0].ReportLink;
+        setReportLink(link);
+      } catch (error) {
+        console.error("Error fetching report link:", error);
+      }
+    };
+
+    fetchReportLink();
+  }, []);
+
+  const onLoadStart = () => {
+    setLoading(true);
   };
 
-  const goBack = () => {
-    setShowWebView(false);
-    if (webViewRef.current) {
-      webViewRef.current.goBack();
-    }
+  const onLoadEnd = () => {
+    setLoading(false);
   };
 
   return (
     <View style={styles.container}>
-      {!showWebView ? (
-        <TouchableOpacity onPress={handleLinkPress} style={styles.linkButton}>
-          <Text style={styles.link}>Press to open Bill Test Login</Text>
-        </TouchableOpacity>
-      ) : (
-        <View style={styles.webviewContainer}>
-          <WebView
-            source={{
-              uri: "https://lunivat.ddns.net/billTest/Carelab/Account/Login",
-            }}
-            style={[styles.webview]}
-            ref={webViewRef}
-          />
-          <TouchableOpacity onPress={goBack} style={styles.backButton}>
-            <Text style={styles.buttonText}>Go Back</Text>
-          </TouchableOpacity>
+      {loading && (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#047bc2" />
         </View>
       )}
+      <View style={styles.webviewContainer}>
+        <WebView
+          source={{
+            uri: reportLink,
+          }}
+          style={[styles.webview]}
+          ref={webViewRef}
+          onLoadStart={onLoadStart}
+          onLoadEnd={onLoadEnd}
+        />
+      </View>
     </View>
   );
 };
@@ -47,10 +66,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
   },
-  link: {
-    fontSize: 16,
-    color: "#fff",
-  },
   webviewContainer: {
     flex: 1,
     width: "100%",
@@ -59,25 +74,11 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
   },
-  backButton: {
-    position: "absolute",
-    bottom: 20,
-    right: 20,
-    backgroundColor: "#047bc2",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-  },
-  linkButton: {
-    backgroundColor: "#047bc2",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    marginTop: 10,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
+  loadingContainer: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(255, 255, 255, 0.7)",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 

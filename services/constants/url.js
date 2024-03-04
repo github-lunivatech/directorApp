@@ -71,6 +71,9 @@ export const apiEndpoints = {
     "GetActualConsumptionReportByDateRange",
   GetCurrentRemainingStockCountById: "GetCurrentRemainingStockCountById",
   GetListOfItemsNearToMinQuantity: "GetListOfItemsNearToMinQuantity",
+
+  //Link
+  GetWebReportLink: "GetWebReportLink",
 };
 
 // Utility function to make API requests

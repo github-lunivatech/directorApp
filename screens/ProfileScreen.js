@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
+import luniva360 from ".././assets/character.jpg";
+import logoutIcon from "../assets/logout.png";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import background from "../assets/bkg6.png";
 
 const ProfileScreen = ({ setIsLoggedIn }) => {
   const [userData, setUserData] = useState(null);
@@ -29,22 +32,34 @@ const ProfileScreen = ({ setIsLoggedIn }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.userDataContainer}>
-        <Text style={styles.heading}>User Details</Text>
-        {userData ? (
-          <>
-            <Text style={styles.userDataText}>
-              Username: {userData.CheckValidLoginDirectorApp[0].usrUsername}
+      {/* <Image
+        source={background}
+        style={styles.backgroundImage}
+        resizeMode="cover"
+      /> */}
+      <View style={styles.profileContainer}>
+        <Image source={luniva360} style={styles.profileImage} />
+        {userData && (
+          <View style={styles.userDataContainer}>
+            <Text style={styles.usernameText}>
+              Name: {userData.CheckValidLoginDirectorApp[0].usrUsername}
             </Text>
-            <Text style={styles.userDataText}>
+            <Text style={styles.roleText}>
               Role: {userData.CheckValidLoginDirectorApp[0].roleName}
             </Text>
-          </>
-        ) : (
-          <Text style={styles.noDataText}>No user data found</Text>
+            {userData.contact && (
+              <Text style={styles.additionalInfo}>
+                Contact: {userData.contact}
+              </Text>
+            )}
+            {userData.email && (
+              <Text style={styles.additionalInfo}>Email: {userData.email}</Text>
+            )}
+          </View>
         )}
       </View>
       <TouchableOpacity style={styles.button} onPress={handleLogout}>
+        <Image source={logoutIcon} style={styles.logoutIcon} />
         <Text style={styles.buttonText}>Logout</Text>
       </TouchableOpacity>
     </View>
@@ -54,40 +69,93 @@ const ProfileScreen = ({ setIsLoggedIn }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "space-between",
+    justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: "#FFF",
+  },
+  backgroundImage: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    opacity: 0.2,
+  },
+  profileContainer: {
+    alignItems: "center",
+    backgroundColor: "#FFF",
     padding: 20,
+    borderRadius: 30,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    // shadowOpacity: 0.25,
+    // shadowRadius: 3.84,
+    // elevation: 5,
+  },
+  profileImage: {
+    width: 180,
+    height: 180,
+    borderRadius: 0,
+    marginBottom: 20,
+
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   userDataContainer: {
     alignItems: "center",
   },
-  heading: {
-    fontSize: 24,
+  usernameText: {
+    fontSize: 22,
+    marginBottom: 5,
     fontWeight: "bold",
-    marginBottom: 20,
+    color: "#333",
   },
-  userDataText: {
-    fontSize: 18,
+  roleText: {
+    fontSize: 20,
     marginBottom: 10,
+    color: "#555",
   },
-  noDataText: {
+  additionalInfo: {
     fontSize: 18,
-    fontStyle: "italic",
-    color: "gray",
+    marginBottom: 5,
+    color: "#777",
   },
   button: {
-    width: "100%",
-    height: 40,
-    backgroundColor: "tomato",
-    justifyContent: "center",
+    flexDirection: "row",
     alignItems: "center",
-    borderRadius: 5,
-    marginTop: 20,
+    width: "60%",
+    height: 50,
+    backgroundColor: "#FF6F61",
+    justifyContent: "center",
+    borderRadius: 25,
+    marginTop: 40,
+    alignSelf: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   buttonText: {
     color: "#fff",
     fontWeight: "bold",
+    fontSize: 18,
+    marginLeft: 10,
+  },
+  logoutIcon: {
+    width: 24,
+    height: 24,
+    tintColor: "#fff",
   },
 });
 

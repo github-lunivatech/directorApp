@@ -130,25 +130,7 @@ const InventoryStackNavigator = () => {
 const HomeStack = ({ navigation }) => {
   return (
     <Stack.Navigator>
-      <Stack.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{
-          headerRight: () => (
-            <TouchableOpacity
-              onPress={() => navigation.navigate("Setting")}
-              style={{ marginRight: 10 }}
-            >
-              <Icon
-                name="settings"
-                size={30}
-                color="grey"
-                style={{ marginRight: 5 }}
-              />
-            </TouchableOpacity>
-          ),
-        }}
-      />
+      <Stack.Screen name="Home" component={HomeScreen} options={{}} />
 
       <Stack.Screen
         name="Financial"
@@ -256,62 +238,9 @@ const BottomTabNavigator = () => {
         >
           {() => <HomeStack />}
         </Tab.Screen>
-        <Tab.Screen
-          name="Link"
-          component={MessagesScreen}
-          options={{
-            headerRight: () => (
-              <TouchableOpacity
-                onPress={() => navigation.navigate("Setting")}
-                style={{ marginRight: 10 }}
-              >
-                <Icon
-                  name="settings"
-                  size={30}
-                  color="grey"
-                  style={{ marginRight: 5 }}
-                />
-              </TouchableOpacity>
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="Calendar"
-          component={CalendarScreen}
-          options={{
-            headerRight: () => (
-              <TouchableOpacity
-                onPress={() => navigation.navigate("Setting")}
-                style={{ marginRight: 10 }}
-              >
-                <Icon
-                  name="settings"
-                  size={30}
-                  color="grey"
-                  style={{ marginRight: 5 }}
-                />
-              </TouchableOpacity>
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="Profile"
-          options={{
-            headerRight: () => (
-              <TouchableOpacity
-                onPress={() => navigation.navigate("Setting")}
-                style={{ marginRight: 10 }}
-              >
-                <Icon
-                  name="settings"
-                  size={30}
-                  color="grey"
-                  style={{ marginRight: 5 }}
-                />
-              </TouchableOpacity>
-            ),
-          }}
-        >
+        <Tab.Screen name="Link" component={MessagesScreen} options={{}} />
+        <Tab.Screen name="Calendar" component={CalendarScreen} options={{}} />
+        <Tab.Screen name="Profile" options={{}}>
           {() => <ProfileScreen setIsLoggedIn={setIsLoggedIn} />}
         </Tab.Screen>
       </Tab.Navigator>

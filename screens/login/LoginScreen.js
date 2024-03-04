@@ -13,7 +13,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { makeApiRequest, apiEndpoints } from "../../services/constants/url";
 import Icon from "react-native-vector-icons/Feather";
-import mutu from "../../assets/mutu.png";
+import mutu from "../../assets/luniva360.png";
 
 const LoginScreen = ({ setIsLoggedIn }) => {
   const [username, setUsername] = useState("");
@@ -78,7 +78,7 @@ const LoginScreen = ({ setIsLoggedIn }) => {
           </View>
         )}
         <View>
-          <Text style={styles.versionText}>Director App Version 1.0</Text>
+          <Text style={styles.versionText}>Luniva360 Doctor App V1.0</Text>
         </View>
         <View>{error ? <Text style={styles.error}>{error}</Text> : null}</View>
         <TextInput
@@ -113,21 +113,18 @@ const LoginScreen = ({ setIsLoggedIn }) => {
           style={{
             flexDirection: "row",
             alignItems: "center",
-            marginTop: 50,
+            top: 50,
           }}
         >
           <Text style={{ fontSize: 14 }}>Powered by: </Text>
           <Image
             source={mutu}
             resizeMode="contain"
-            style={{ width: 35, height: 50 }}
+            style={{ width: 100, height: 100 }}
           />
-          <Text style={{ color: "tomato", fontSize: 14 }}>
-            LUNIVA<Text style={{ color: "black" }}>TECH</Text>
-          </Text>
         </View>
         <View>
-          <Text style={{ color: "grey", fontSize: 10 }}>
+          <Text style={{ color: "grey", fontSize: 10, top: 25 }}>
             All Rights Reserved © {currentYear}
           </Text>
         </View>
@@ -175,7 +172,7 @@ const styles = StyleSheet.create({
   passwordContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: 10,
     position: "relative",
   },
   passwordInput: {

@@ -25,7 +25,7 @@ const ReportComponent = ({ route }) => {
           }
         );
         const data = response || {};
-
+        console.log(data);
         // Extracting patient details
         const patientDetailsData = data.PatientDetails || [];
         setPatientDetails(patientDetailsData);
@@ -93,6 +93,12 @@ const ReportComponent = ({ route }) => {
                       <Text style={styles.boldText}>Sample Id:</Text>{" "}
                       {route.params}
                     </Text>
+                    <Text>
+                      <Text style={styles.boldText}>Sex:</Text> {patient.Sex}
+                    </Text>
+                    <Text>
+                      <Text style={styles.boldText}>Age:</Text> {patient.Age}
+                    </Text>
                   </View>
                 ))}
               </View>
@@ -130,29 +136,41 @@ const ReportComponent = ({ route }) => {
                                       Sub Test: {subtest.TestSubType}
                                     </Text>
                                   )}
-                                  <Text
-                                    style={[
-                                      {
-                                        alignSelf: "flex-end",
-                                        marginLeft: 20,
-                                      },
-                                    ]}
-                                  >
-                                    {subtest.TestSubType && (
-                                      <Text style={[styles.subtestText]}>
-                                        {subtest.subresult}
-                                      </Text>
-                                    )}
-                                    {subtest.TestResult && (
-                                      <Text style={styles.subtestText}>
-                                        TestResult: {subtest.TestResult}
-                                      </Text>
-                                    )}
-                                  </Text>
-
-                                  <Text style={styles.subtestText}>
-                                    Test Method: {subtest.Method}
-                                  </Text>
+                                  <View style={{ flexDirection: "row" }}>
+                                    <Text style={styles.subtestText}>
+                                      Test Method: {subtest.Method}
+                                    </Text>
+                                    <Text
+                                      style={[
+                                        {
+                                          marginLeft: 70,
+                                        },
+                                      ]}
+                                    >
+                                      {subtest.TestSubType && (
+                                        <Text
+                                          style={[
+                                            styles.subtestText,
+                                            {
+                                              fontWeight: "bold",
+                                            },
+                                          ]}
+                                        >
+                                          {subtest.subresult}
+                                        </Text>
+                                      )}
+                                      {subtest.TestResult && (
+                                        <Text
+                                          style={[
+                                            styles.subtestText,
+                                            { fontWeight: "bold" },
+                                          ]}
+                                        >
+                                          TestResult: {subtest.TestResult}
+                                        </Text>
+                                      )}
+                                    </Text>
+                                  </View>
 
                                   <Text style={styles.subtestText}>
                                     {subtest.Range &&
